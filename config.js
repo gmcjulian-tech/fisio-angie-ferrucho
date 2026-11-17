@@ -3,6 +3,6 @@
 // ("anon" o "publishable"). NUNCA pongas aquí la clave "service_role" o "secret".
 // Si los dos valores quedan vacíos, la aplicación abre en modo demostración.
 window.FISIO_CONFIG = {
-  supabaseUrl: '',
-  supabaseAnonKey: ''
+  supabaseUrl: 'https://upblyplwesucfwvrkzrx.supabase.co/rest/v1/',
+  supabaseAnonKey: 'sb_publishable_gqe5NcASQVlUQxvJuno8nQ_pvSl0Guw'
 };
