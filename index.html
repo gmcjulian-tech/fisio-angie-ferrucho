@@ -2030,8 +2030,17 @@ class Component extends DCLogic {
 </div>
 </div>
 <div style="display: flex; flex-direction: column; gap: 6px"><label for="se-fecha" style="font-size: 14px; font-weight: 700">Fecha</label><input id="se-fecha" type="date" value="{{fecha}}" onChange="{{setFecha}}" style="min-height: 48px; padding: 0 14px; border: 1.5px solid #CBD5E1; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A"></div>
-<div style="display: flex; flex-direction: column; gap: 6px"><label for="se-serv" style="font-size: 14px; font-weight: 700">Terapia aplicada</label><select id="se-serv" value="{{servicio}}" onChange="{{setServicio}}" style="min-height: 48px; padding: 0 12px; border: 1.5px solid #CBD5E1; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A; background: #FFFFFF"><option value="">Selecciona una terapia</option><template data-sc="for" list="{{serviciosOpts}}" as="o" hint-placeholder-count="7"><option value="{{o.nombre}}">{{o.nombre}}</option></template></select><a href="Terapias.dc.html" style="align-self: flex-start; font-size: 13px; font-weight: 700">Editar lista de terapias</a></div>
+
 </div>
+<fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 8px">
+<legend style="font-size: 14px; font-weight: 700; padding: 0; margin-bottom: 8px">Terapias aplicadas (puedes marcar varias)</legend>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<template data-sc="for" list="{{terapias}}" as="t" hint-placeholder-count="7">
+<button type="button" onClick="{{t.pick}}" aria-pressed="{{t.on}}" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 2px solid {{t.borde}}; background: {{t.bg}}; color: {{t.fg}}; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer">{{t.marca}}{{t.nombre}}</button>
+</template>
+</div>
+<a href="Terapias.dc.html" style="align-self: flex-start; font-size: 13px; font-weight: 700">Editar lista de terapias</a>
+</fieldset>
 <template data-sc="if" value="{{faltaConsent}}" hint-placeholder-val="{{ false }}">
 <div role="alert" style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 14px 16px; border-radius: 14px; background: #FFF7ED; border: 1px solid #FED7AA; color: #7C2D12">
 <span style="flex: 1 1 260px; font-size: 15px; font-weight: 700">{{falta.texto}}</span>
@@ -2113,9 +2122,8 @@ Tomar o agregar fotos
 <label style="display: flex; align-items: center; gap: 8px; min-height: 40px; font-size: 15px; cursor: pointer"><input type="checkbox" checked="{{inclFotos}}" onChange="{{toggleFotos}}" style="width: 20px; height: 20px; accent-color: #1D4ED8">Incluir las fotos</label>
 </div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px">
-<button type="button" onClick="{{compartir}}" disabled="{{noGuardada}}" style="min-height: 50px; border-radius: 999px; border: 0; background: #1D4ED8; color: #FFFFFF; font-family: inherit; font-weight: 800; font-size: 15px; cursor: pointer">Compartir con imágenes</button>
-<button type="button" onClick="{{enviarWa}}" disabled="{{noGuardada}}" style="min-height: 50px; border-radius: 999px; border: 0; background: #15803D; color: #FFFFFF; font-family: inherit; font-weight: 800; font-size: 15px; cursor: pointer">WhatsApp (texto)</button>
-<button type="button" onClick="{{enviarCorreo}}" disabled="{{noGuardada}}" style="min-height: 50px; border-radius: 999px; border: 1.5px solid #CBD5E1; background: #FFFFFF; color: #0F2A4A; font-family: inherit; font-weight: 800; font-size: 15px; cursor: pointer">Correo (texto)</button>
+<button type="button" onClick="{{enviarWa}}" disabled="{{noGuardada}}" style="min-height: 50px; border-radius: 999px; border: 0; background: #15803D; color: #FFFFFF; font-family: inherit; font-weight: 800; font-size: 15px; cursor: pointer">Enviar por WhatsApp</button>
+<button type="button" onClick="{{enviarCorreo}}" disabled="{{noGuardada}}" style="min-height: 50px; border-radius: 999px; border: 1.5px solid #CBD5E1; background: #FFFFFF; color: #0F2A4A; font-family: inherit; font-weight: 800; font-size: 15px; cursor: pointer">Enviar por correo</button>
 <button type="button" onClick="{{descargarDibujo}}" disabled="{{sinDibujo}}" style="min-height: 50px; border-radius: 999px; border: 1.5px solid #CBD5E1; background: #FFFFFF; color: #0F2A4A; font-family: inherit; font-weight: 800; font-size: 15px; cursor: pointer">Descargar dibujo</button>
 </div>
 </section>
@@ -2146,7 +2154,7 @@ class Component extends DCLogic {
       sesionId: null, cita: null, pacienteId: null, pacQuery: '', pacFijo: false,
       fecha: APP.f.hoy(), servicio: '', resumen: '', notas: '', ejercicios: '',
       fotos: [], dibujoRuta: null, guardada: false,
-      color: '#0F2A4A', grosor: 4, inclDibujo: true, inclFotos: false
+      color: '#0F2A4A', grosor: 4, inclDibujo: true, inclFotos: true
     };
   }
   lienzo() { return APP.lienzo('dibujo'); }
@@ -2223,7 +2231,7 @@ class Component extends DCLogic {
   guardar() {
     var self = this, s = this.state, lz = this.lienzo();
     if (!s.pacienteId && !s.pacQuery.trim()) { this.aviso('Elige o escribe el paciente.', true); return; }
-    if (!s.servicio) { this.aviso('Selecciona la terapia aplicada.', true); return; }
+    if (!s.servicio) { this.aviso('Selecciona al menos una terapia aplicada.', true); return; }
     this.setState({ ocupado: true }); this.aviso('Guardando…');
     var pacienteId;
     var paso = s.pacienteId ? Promise.resolve({ id: s.pacienteId }) : APP.db.pacientePorNombre(s.pacQuery);
@@ -2260,7 +2268,7 @@ class Component extends DCLogic {
   mensaje() {
     var s = this.state, F = APP.f, p = this.paciente();
     var t = 'Hola ' + (p.nombre || '').split(' ')[0] + ', te comparto el resumen de tu sesión de fisioterapia del ' + F.larga(s.fecha) + '.\n\n'
-      + 'Terapia aplicada: ' + s.servicio + '\n';
+      + (s.servicio.indexOf(', ') >= 0 ? 'Terapias aplicadas: ' : 'Terapia aplicada: ') + s.servicio + '\n';
     if (s.resumen.trim()) t += '\nLo que realizamos:\n' + s.resumen.trim() + '\n';
     if (s.ejercicios.trim()) t += '\nEjercicios para casa:\n' + s.ejercicios.trim() + '\n';
     return t + '\nSi sientes alguna molestia o tienes dudas, escríbeme.\n\n' + APP.u.contacto;
@@ -2270,6 +2278,15 @@ class Component extends DCLogic {
     if (s.inclDibujo && lz && !lz.vacio) lista.push(lz.blob().then(function (b) { return new File([b], 'ejercicio.png', { type: 'image/png' }); }));
     if (s.inclFotos) s.fotos.forEach(function (f, i) { if (f.url) lista.push(APP.u.aArchivo(f.url, 'foto-' + (i + 1) + '.jpg')); });
     return Promise.all(lista);
+  }
+  enlaces() {
+    // Enlaces privados de 7 días a las imágenes elegidas (para WhatsApp por enlace y correo).
+    var s = this.state, rutas = [];
+    if (s.inclDibujo && s.dibujoRuta) rutas.push(['Dibujo del ejercicio', s.dibujoRuta]);
+    if (s.inclFotos) s.fotos.forEach(function (f, i) { if (f.ruta) rutas.push(['Foto ' + (i + 1), f.ruta]); });
+    if (!rutas.length || APP.db.demo) return Promise.resolve('');
+    return Promise.all(rutas.map(function (r) { return APP.db.url(r[1], 7 * 24 * 3600).then(function (u) { return r[0] + ': ' + u; }); }))
+      .then(function (l) { return '\n\nImágenes de tu sesión (disponibles por 7 días):\n' + l.join('\n'); });
   }
   componentWillUnmount() { clearTimeout(this._t); }
 
@@ -2287,10 +2304,16 @@ class Component extends DCLogic {
       .reduce(function (acc, c) { return acc.concat(c.servicios || []); }, []);
     var tiene = function (re) { return firmados.some(function (x) { return re.test(x); }); };
     var falta = null;
-    if (s.pacienteId && s.servicio && s.servicio !== 'Valoración') {
-      if (/sueroterapia/i.test(s.servicio)) { if (!tiene(/sueroterapia/i)) falta = { texto: 'Este paciente no tiene firmado el consentimiento de sueroterapia.', a: ['iv', 'Firmar intravenosa'], b: ['neb', 'Firmar nebulizada'] }; }
-      else if (/punci|electropunci|neural/i.test(s.servicio)) { if (!tiene(/agujas/i)) falta = { texto: 'Para ' + s.servicio.toLowerCase() + ' falta el consentimiento de fisioterapia con la autorización de técnicas con agujas.', a: ['fisio', 'Firmar consentimiento'] }; }
-      else if (!tiene(/^fisioterapia$/i)) falta = { texto: 'Este paciente no tiene firmado el consentimiento de fisioterapia.', a: ['fisio', 'Firmar consentimiento'] };
+    var lista = s.servicio ? s.servicio.split(', ') : [];
+    if (s.pacienteId && lista.length) {
+      if (lista.some(function (x) { return /sueroterapia/i.test(x); }) && !tiene(/sueroterapia/i))
+        falta = { texto: 'Este paciente no tiene firmado el consentimiento de sueroterapia.', a: ['iv', 'Firmar intravenosa'], b: ['neb', 'Firmar nebulizada'] };
+      else {
+        var agujas = lista.filter(function (x) { return /punci|electropunci|neural/i.test(x); });
+        var otras = lista.filter(function (x) { return !/sueroterapia|punci|electropunci|neural|^valoraci/i.test(x); });
+        if (agujas.length && !tiene(/agujas/i)) falta = { texto: 'Para ' + agujas.join(', ').toLowerCase() + ' falta el consentimiento de fisioterapia con la autorización de técnicas con agujas.', a: ['fisio', 'Firmar consentimiento'] };
+        else if (otras.length && !tiene(/^fisioterapia$/i)) falta = { texto: 'Este paciente no tiene firmado el consentimiento de fisioterapia.', a: ['fisio', 'Firmar consentimiento'] };
+      }
     }
     var faltaConsent = !!falta;
     var puede = APP.u.puedeCompartirArchivos();
@@ -2305,6 +2328,15 @@ class Component extends DCLogic {
       sugP: sugP, haySugP: sugP.length > 0,
       fecha: s.fecha, setFecha: set('fecha'),
       servicio: s.servicio, setServicio: set('servicio'), serviciosOpts: s.servicios,
+      terapias: s.servicios.map(function (o) {
+        var on = lista.indexOf(o.nombre) >= 0;
+        return { nombre: o.nombre, marca: on ? '✓ ' : '', on: on ? 'true' : 'false', bg: on ? '#EFF6FF' : '#FFFFFF', borde: on ? '#1D4ED8' : '#CBD5E1', fg: on ? '#1E3A8A' : '#334155',
+          pick: function () {
+            var l = self.state.servicio ? self.state.servicio.split(', ') : [], i = l.indexOf(o.nombre);
+            if (i >= 0) l.splice(i, 1); else l.push(o.nombre);
+            self.setState({ servicio: l.join(', '), guardada: false });
+          } };
+      }),
       resumen: s.resumen, setResumen: set('resumen'),
       notas: s.notas, setNotas: set('notas'),
       ejercicios: s.ejercicios, setEjercicios: set('ejercicios'),
@@ -2352,18 +2384,26 @@ class Component extends DCLogic {
       toggleDibujo: function () { self.setState({ inclDibujo: !self.state.inclDibujo }); },
       toggleFotos: function () { self.setState({ inclFotos: !self.state.inclFotos }); },
       ayudaEnvio: !s.guardada ? 'Guarda la sesión para poder enviarla.'
-        : puede ? '"Compartir con imágenes" abre WhatsApp, Gmail u otra aplicación con el resumen, el dibujo y las fotos que elijas. WhatsApp y Correo (texto) envían solo el resumen escrito.'
-        : 'En este equipo no se pueden adjuntar imágenes automáticamente: usa WhatsApp o Correo para el texto y "Descargar dibujo" para adjuntarlo a mano. En el celular o la tableta, "Compartir con imágenes" lo envía todo junto.',
+        : puede ? 'WhatsApp abre el menú de compartir con las imágenes: elige WhatsApp y luego el chat del paciente. El texto queda copiado por si WhatsApp no lo muestra: mantén presionado el campo de mensaje y pega.'
+        : 'En el computador, WhatsApp y el correo envían el resumen con enlaces privados a las imágenes, válidos por 7 días. En el celular o la tableta las imágenes se envían como fotos.',
       noGuardada: !s.guardada, sinDibujo: !lz || lz.vacio,
-      compartir: function () {
-        self.archivos().then(function (fs) { return APP.u.compartir('Resumen de tu sesión', self.mensaje(), fs); })
-          .catch(function (e) { self.aviso(e.message, true); });
-      },
       enviarWa: function () {
-        APP.u.whatsapp(p.celular, self.mensaje());
-        if (lz && !lz.vacio && self.state.inclDibujo) self.aviso('WhatsApp por enlace solo lleva texto. Para el dibujo usa "Compartir con imágenes" o adjúntalo a mano.');
+        var texto = self.mensaje();
+        if (puede && (self.state.inclDibujo || self.state.inclFotos)) {
+          APP.u.copiar(texto);
+          self.archivos().then(function (fs) { return APP.u.compartir('Resumen de tu sesión', texto, fs); })
+            .catch(function (e) { self.aviso(e.message, true); });
+          return;
+        }
+        APP.u.abrirLuego(self.enlaces().then(function (ex) { return APP.u.urlWhatsapp(p.celular, texto + ex); }))
+          .catch(function (e) { self.aviso(APP.mensajeError(e), true); });
+        if (APP.db.demo && (self.state.inclFotos || self.state.inclDibujo)) self.aviso('En modo demostración no se generan enlaces a las imágenes.');
       },
-      enviarCorreo: function () { APP.u.correo(p.email, 'Resumen de tu sesión de fisioterapia', self.mensaje()); },
+      enviarCorreo: function () {
+        var texto = self.mensaje();
+        self.enlaces().then(function (ex) { APP.u.correo(p.email, 'Resumen de tu sesión de fisioterapia', texto + ex); })
+          .catch(function (e) { self.aviso(APP.mensajeError(e), true); });
+      },
       descargarDibujo: function () {
         var lz2 = self.lienzo(); if (!lz2 || lz2.vacio) return;
         var a = document.createElement('a'); a.href = lz2.png(); a.download = 'ejercicio-' + (p.nombre || 'paciente').split(' ')[0].toLowerCase() + '.png';
@@ -3117,8 +3157,8 @@ class Component extends DCLogic {
               .then(function (x) { if (x.error) throw new Error(x.error.message); return ruta; });
           });
         },
-        url: function (ruta) {
-          return sb.storage.from('evidencias').createSignedUrl(ruta, 3600)
+        url: function (ruta, segundos) {
+          return sb.storage.from('evidencias').createSignedUrl(ruta, segundos || 3600)
             .then(function (x) { if (x.error) throw new Error(x.error.message); return x.data.signedUrl; });
         }
       };
@@ -3344,6 +3384,14 @@ class Component extends DCLogic {
       var n = telefonoWa(tel);
       abrir('https://wa.me/' + (n || '') + '?text=' + encodeURIComponent(texto));
     },
+    // Abre una ventana ya mismo (para que el navegador no la bloquee) y la dirige cuando la URL esté lista.
+    abrirLuego: function (promesaUrl) {
+      var w = window.open('', '_blank');
+      return promesaUrl.then(function (url) { if (w) w.location.href = url; else location.href = url; })
+        .catch(function (e) { if (w) w.close(); throw e; });
+    },
+    urlWhatsapp: function (tel, texto) { return 'https://wa.me/' + (telefonoWa(tel) || '') + '?text=' + encodeURIComponent(texto); },
+    copiar: function (t) { try { return navigator.clipboard.writeText(t).catch(function () {}); } catch (e) { return Promise.resolve(); } },
     correo: function (email, asunto, cuerpo) {
       location.href = 'mailto:' + encodeURIComponent(email || '') + '?subject=' + encodeURIComponent(asunto) + '&body=' + encodeURIComponent(cuerpo);
     },
