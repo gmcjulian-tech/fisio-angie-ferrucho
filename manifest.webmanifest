@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "Angie Ferrucho · Fisioterapeuta",
-  "short_name": "Fisio Angie",
-  "description": "Historia clínica, agenda de citas y seguimiento de pacientes de fisioterapia.",
+  "name": "YoFisio",
+  "short_name": "YoFisio",
+  "description": "YoFisio: historia clínica, agenda de citas y domicilios, y seguimiento de pacientes de fisioterapia.",
   "lang": "es-CO",
   "start_url": "./",
   "scope": "./",
