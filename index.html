@@ -201,7 +201,7 @@ var TIPOS = {
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { cargando: true, error: '', citas: [], pacientes: [], sesiones: [], semana: [] };
+    this.state = { cargando: true, error: '', citas: [], pacientes: [], sesiones: [], semana: [], historias: [] };
   }
   alMostrar() {
     var self = this, f = APP.f, hoy = f.hoy(), lun = f.lunes(hoy);
@@ -210,9 +210,10 @@ class Component extends DCLogic {
       APP.db.listar('citas', { eq: [['fecha', hoy]], order: ['hora'] }),
       APP.db.listar('pacientes'),
       APP.db.listar('sesiones'),
-      APP.db.listar('citas', { gte: ['fecha', lun], lte: ['fecha', f.sumar(lun, 6)] })
+      APP.db.listar('citas', { gte: ['fecha', lun], lte: ['fecha', f.sumar(lun, 6)] }),
+      APP.db.listar('historias', { order: ['created_at', false] })
     ]).then(function (r) {
-      self.setState({ cargando: false, citas: r[0], pacientes: r[1], sesiones: r[2], semana: r[3] });
+      self.setState({ cargando: false, citas: r[0], pacientes: r[1], sesiones: r[2], semana: r[3], historias: r[4] });
     }).catch(function (e) { self.setState({ cargando: false, error: APP.mensajeError(e) }); });
   }
   renderVals() {
@@ -232,6 +233,12 @@ class Component extends DCLogic {
     porTerminar.forEach(function (p) {
       var resta = p.plan_sesiones - (cuenta[p.id] || 0);
       avisos.push({ texto: p.nombre + (resta <= 0 ? ' completó su plan: programa la revaloración.' : ' termina su plan en ' + resta + (resta === 1 ? ' sesión' : ' sesiones') + '.') });
+    });
+    activos.forEach(function (p) {
+      var hc = s.historias.find(function (h) { return h.paciente_id === p.id; });
+      if (!hc) return;
+      var desde = s.sesiones.filter(function (x) { return x.paciente_id === p.id && x.fecha >= f.local(hc.created_at); }).length;
+      if (desde >= APP.REVALORAR_CADA) avisos.push({ texto: p.nombre + ': repetir el cuestionario detox (' + desde + ' sesiones desde la última valoración).' });
     });
     return {
       fechaHoy: f.cap(f.larga(hoy)),
@@ -1220,6 +1227,18 @@ class Component extends DCLogic {
 </div>
 </template>
 
+<template data-sc="if" value="{{hayAlertasSeg}}" hint-placeholder-val="{{ false }}">
+<section aria-labelledby="t-seg" style="padding: 18px 20px; border-radius: 18px; background: #FFF7ED; border: 1px solid #FED7AA; color: #7C2D12; display: flex; flex-direction: column; gap: 8px">
+<h2 id="t-seg" style="margin: 0; font-size: 17px; font-weight: 800">Antes de sueroterapia</h2>
+<template data-sc="for" list="{{alertasSeg}}" as="a" hint-placeholder-count="1"><p style="margin: 0; font-size: 15px; line-height: 1.45"><strong>{{a.texto}}</strong> <span style="color: #9A3412">Por: {{a.por}}</span></p></template>
+</section>
+</template>
+<template data-sc="if" value="{{hayRemision}}" hint-placeholder-val="{{ false }}">
+<section aria-labelledby="t-rem" style="padding: 18px 20px; border-radius: 18px; background: #FEF2F2; border: 1px solid #FECACA; color: #7F1D1D; display: flex; flex-direction: column; gap: 8px">
+<h2 id="t-rem" style="margin: 0; font-size: 17px; font-weight: 800">Considerar remisión</h2>
+<template data-sc="for" list="{{remision}}" as="a" hint-placeholder-count="1"><p style="margin: 0; font-size: 15px; line-height: 1.45"><strong>{{a.texto}}</strong> <span style="color: #991B1B">Por: {{a.por}}</span></p></template>
+</section>
+</template>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px">
 <div style="padding: 22px; border-radius: 22px; background: {{nivel.bg}}; color: {{nivel.fg}}; display: flex; flex-direction: column; gap: 4px">
 <span style="font-size: 14px; font-weight: 700">Puntaje global</span>
@@ -1247,7 +1266,7 @@ class Component extends DCLogic {
 <div style="display: flex; align-items: center; gap: 12px">
 <span style="width: 30px; height: 30px; flex: none; border-radius: 99px; background: {{r.bg}}; color: {{r.fg}}; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800">{{r.pos}}</span>
 <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px">
-<div style="display: flex; justify-content: space-between; gap: 8px; font-size: 15px"><span style="font-weight: 700">{{r.nombre}}</span><span style="font-weight: 800">{{r.total}} <span style="font-weight: 600; color: #4D6584">/ {{r.max}}</span></span></div>
+<div style="display: flex; justify-content: space-between; gap: 8px; font-size: 15px"><span style="font-weight: 700">{{r.nombre}}</span><span style="font-weight: 800">{{r.total}} <span style="font-weight: 600; color: #4D6584">/ {{r.max}} · {{r.pctTxt}}</span></span></div>
 <div style="height: 10px; border-radius: 99px; background: #EEF3FA; overflow: hidden"><div style="height: 10px; border-radius: 99px; background: {{r.dot}}; width: {{r.pct}}"></div></div>
 </div>
 <template data-sc="if" value="{{r.objetivo}}" hint-placeholder-val="{{ false }}"><span style="flex: none; padding: 4px 8px; border-radius: 999px; background: #EDE4FF; color: #4C1D95; font-size: 12px; font-weight: 800">Objetivo</span></template>
@@ -1271,6 +1290,29 @@ class Component extends DCLogic {
 </section>
 </div>
 
+<template data-sc="if" value="{{hayPrioridades}}" hint-placeholder-val="{{ false }}">
+<section aria-labelledby="t-pri" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 22px; padding: 24px; display: flex; flex-direction: column; gap: 12px">
+<h2 id="t-pri" style="margin: 0; font-size: 20px; font-weight: 800">Prioridades para el plan de fisioterapia</h2>
+<template data-sc="for" list="{{prioridades}}" as="x" hint-placeholder-count="2">
+<div style="display: flex; gap: 12px; align-items: flex-start"><span style="width: 10px; height: 10px; margin-top: 7px; flex: none; border-radius: 99px; background: #1D4ED8"></span><p style="margin: 0; font-size: 15px; line-height: 1.5"><strong>{{x.titulo}}:</strong> {{x.texto}}</p></div>
+</template>
+</section>
+</template>
+
+<template data-sc="if" value="{{hayComparacion}}" hint-placeholder-val="{{ false }}">
+<section aria-labelledby="t-comp" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 22px; padding: 24px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px">
+<h2 id="t-comp" style="margin: 0; font-size: 20px; font-weight: 800">Comparación con la valoración del {{comp.fecha}}</h2>
+<span style="font-size: 15px; font-weight: 800">Global: {{comp.globalAntes}} → {{comp.globalAhora}} ({{comp.globalCambio}})</span>
+</div>
+<div style="overflow-x: auto"><table style="width: 100%; min-width: 420px; border-collapse: collapse; font-size: 15px">
+<thead><tr style="text-align: left; color: #475569"><th scope="col" style="padding: 8px; border-bottom: 1px solid #E2E8F0">Sistema</th><th scope="col" style="padding: 8px; border-bottom: 1px solid #E2E8F0">Antes</th><th scope="col" style="padding: 8px; border-bottom: 1px solid #E2E8F0">Ahora</th><th scope="col" style="padding: 8px; border-bottom: 1px solid #E2E8F0">Cambio</th></tr></thead>
+<tbody><template data-sc="for" list="{{comp.filas}}" as="f" hint-placeholder-count="8"><tr><td style="padding: 8px; border-bottom: 1px solid #F1F5F9"><span style="display: inline-block; width: 10px; height: 10px; border-radius: 99px; background: {{f.dot}}; margin-right: 8px"></span>{{f.nombre}}</td><td style="padding: 8px; border-bottom: 1px solid #F1F5F9">{{f.antes}}</td><td style="padding: 8px; border-bottom: 1px solid #F1F5F9; font-weight: 800">{{f.ahora}}</td><td style="padding: 8px; border-bottom: 1px solid #F1F5F9; font-weight: 800; color: {{f.color}}">{{f.cambio}}</td></tr></template></tbody>
+</table></div>
+<template data-sc="if" value="{{comp.haySintomas}}" hint-placeholder-val="{{ false }}"><div style="display: flex; flex-wrap: wrap; gap: 6px"><span style="font-size: 14px; font-weight: 700; color: #475569; width: 100%">Síntomas que cambiaron 2 puntos o más:</span><template data-sc="for" list="{{comp.sintomas}}" as="x" hint-placeholder-count="2"><span style="padding: 6px 12px; border-radius: 999px; background: #F8FAFC; border: 1px solid #E2E8F0; color: {{x.color}}; font-size: 14px; font-weight: 700">{{x.texto}}</span></template></div></template>
+</section>
+</template>
+
 <section aria-labelledby="t-obj" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 22px; padding: 24px; display: flex; flex-direction: column; gap: 14px">
 <div style="display: flex; flex-direction: column; gap: 4px">
 <h2 id="t-obj" style="margin: 0; font-size: 20px; font-weight: 800">Objetivos terapéuticos sugeridos</h2>
@@ -1286,6 +1328,30 @@ class Component extends DCLogic {
 </div>
 <template data-sc="if" value="{{sinObjetivos}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; font-size: 15px; color: #4D6584">Ningún sistema supera los 5 puntos.</p></template>
 </section>
+<section aria-labelledby="t-env" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 22px; padding: 24px; display: flex; flex-direction: column; gap: 12px">
+<h2 id="t-env" style="margin: 0; font-size: 20px; font-weight: 800">Resumen para el paciente</h2>
+<p style="margin: 0; font-size: 15px; color: #475569">Le explica en palabras sencillas en qué van a trabajar, sin puntajes ni términos técnicos. Guarda la historia antes de enviarlo.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<button type="button" onClick="{{enviarWaPaciente}}" style="min-height: 50px; padding: 0 22px; border-radius: 999px; border: 0; background: #15803D; color: #FFFFFF; font-family: inherit; font-weight: 800; font-size: 15px; cursor: pointer">Enviar por WhatsApp</button>
+<button type="button" onClick="{{enviarCorreoPaciente}}" style="min-height: 50px; padding: 0 22px; border-radius: 999px; border: 1.5px solid #CBD5E1; background: #FFFFFF; color: #0F2A4A; font-family: inherit; font-weight: 800; font-size: 15px; cursor: pointer">Enviar por correo</button>
+</div>
+</section>
+
+<section aria-labelledby="t-reg" style="display: flex; flex-direction: column; gap: 12px">
+<button type="button" onClick="{{toggleReglas}}" aria-expanded="{{verReglas}}" style="align-self: flex-start; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1.5px solid #CBD5E1; background: #FFFFFF; color: #0F2A4A; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer"><span id="t-reg">{{textoReglas}}</span></button>
+<template data-sc="if" value="{{verReglas}}" hint-placeholder-val="{{ false }}">
+<div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 4px">
+<p style="margin: 0 0 8px; font-size: 14px; color: #475569">Desde qué puntaje de cada síntoma aparece la alerta. Los cambios se guardan solos y aplican a todos los pacientes.</p>
+<template data-sc="for" list="{{reglas}}" as="r" hint-placeholder-count="6">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #F1F5F9">
+<div style="flex: 1 1 260px; display: flex; flex-direction: column"><label for="{{r.id}}" style="font-size: 15px; font-weight: 800">{{r.sintoma}}</label><span style="font-size: 13px; color: #475569">{{r.tipo}} · {{r.texto}}</span></div>
+<select id="{{r.id}}" value="{{r.valor}}" onChange="{{r.set}}" style="min-height: 44px; padding: 0 10px; border: 1.5px solid #CBD5E1; border-radius: 12px; font-family: inherit; font-size: 14px; color: #0F2A4A; background: #FFFFFF"><template data-sc="for" list="{{opcionesUmbral}}" as="o" hint-placeholder-count="5"><option value="{{o.v}}">{{o.l}}</option></template></select>
+</div>
+</template>
+</div>
+</template>
+</section>
+
 </div>
 </template>
 
@@ -1346,6 +1412,39 @@ var IMC_T = [
   { lim: 40, rango: '35.0 a 39.9', label: 'Obesidad clase 2', bg: '#FEE2E2', fg: '#991B1B' },
   { lim: Infinity, rango: '40.0 o más', label: 'Obesidad clase 3 (severa)', bg: '#FECACA', fg: '#7F1D1D' }
 ];
+// Reglas de alerta: propuesta inicial que Angie puede ajustar (umbral 0 = desactivada).
+var REGLAS = [
+  { id: 's-calculos', tipo: 'seguridad', item: 'rin-2', umbral: 2, texto: 'Revisar función renal antes de sueroterapia intravenosa (no recomendada en enfermedad renal severa).' },
+  { id: 's-oliguria', tipo: 'seguridad', item: 'rin-4', umbral: 2, texto: 'Revisar función renal antes de sueroterapia intravenosa (no recomendada en enfermedad renal severa).' },
+  { id: 's-hematuria', tipo: 'seguridad', item: 'rin-3', umbral: 1, texto: 'Revisar función renal antes de sueroterapia intravenosa (no recomendada en enfermedad renal severa).' },
+  { id: 's-sinusitis', tipo: 'seguridad', item: 'ong-2', umbral: 3, texto: 'Confirmar que el cuadro respiratorio esté controlado antes de sueroterapia nebulizada (no recomendada en enfermedad respiratoria descompensada).' },
+  { id: 's-rinitis', tipo: 'seguridad', item: 'ong-5', umbral: 3, texto: 'Confirmar que el cuadro respiratorio esté controlado antes de sueroterapia nebulizada (no recomendada en enfermedad respiratoria descompensada).' },
+  { id: 's-tos', tipo: 'seguridad', item: 'ong-7', umbral: 3, texto: 'Confirmar que el cuadro respiratorio esté controlado antes de sueroterapia nebulizada (no recomendada en enfermedad respiratoria descompensada).' },
+  { id: 's-resfriados', tipo: 'seguridad', item: 'ong-1', umbral: 3, texto: 'Confirmar que el cuadro respiratorio esté controlado antes de sueroterapia nebulizada (no recomendada en enfermedad respiratoria descompensada).' },
+  { id: 'r-depresion', tipo: 'remision', item: 'emo-8', umbral: 3, texto: 'Considerar remisión a psicología o salud mental.' },
+  { id: 'r-hematuria', tipo: 'remision', item: 'rin-3', umbral: 1, texto: 'Remitir a valoración médica.' },
+  { id: 'r-memoria', tipo: 'remision', item: 'men-10', umbral: 2, texto: 'Remitir a valoración médica.' },
+  { id: 'r-confusion', tipo: 'remision', item: 'emo-7', umbral: 3, texto: 'Remitir a valoración médica.' },
+  { id: 'r-hipoglucemia', tipo: 'remision', item: 'met-1', umbral: 2, texto: 'Remitir a valoración médica.' },
+  { id: 'r-vomitos', tipo: 'remision', item: 'dig-7', umbral: 3, texto: 'Remitir a valoración médica.' },
+  { id: 'r-abdominal', tipo: 'remision', item: 'dig-5', umbral: 3, texto: 'Remitir a valoración médica.' },
+  { id: 'r-edemas', tipo: 'remision', item: 'met-3', umbral: 3, texto: 'Remitir a valoración médica.' }
+];
+var PRIORIDAD_SISTEMA = {
+  art: 'Hacer valoración funcional (dolor con escala EVA, rangos de movimiento y fuerza) y priorizar en el plan las zonas comprometidas.',
+  men: 'Revisar calidad del sueño y concentración; incluir pautas de higiene del sueño.',
+  emo: 'Incluir manejo del estrés (respiración, relajación) y valorar remisión a psicología si persiste.',
+  met: 'Considerar acondicionamiento físico progresivo dentro del plan.',
+  ong: 'Verificar el estado respiratorio antes de cada sesión, en especial si hay nebulización.',
+  dig: 'Si los síntomas digestivos persisten, sugerir valoración por medicina o nutrición.',
+  rin: 'Promover hidratación adecuada y confirmar valoración médica si los síntomas urinarios persisten.',
+  pie: 'Revisar la piel de las zonas de punción o aplicación antes de cada procedimiento.'
+};
+var PRIORIDAD_SINTOMA = [
+  { item: 'men-5', umbral: 2, texto: 'Valorar región cervical y postura como posible origen.' },
+  { item: 'art-0', umbral: 3, texto: 'Registrar EVA en cada sesión para seguir la evolución del dolor.' },
+  { item: 'met-5', umbral: 2, texto: 'Incluir acondicionamiento físico y control del peso en los objetivos.' }
+];
 var PASOS = ['Datos del paciente', 'Valoración inicial', 'Cuestionario detox', 'Resultados'];
 
 
@@ -1355,7 +1454,8 @@ class Component extends DCLogic {
   constructor(props) {
     super(props);
     this.state = { paso: 0, sis: 0, toast: '', punt: {}, obj: {}, d: this.datosVacios(),
-      pacientes: [], pacienteId: null, historiaId: null, historiaFecha: null, ocupado: false, error: '' };
+      pacientes: [], pacienteId: null, historiaId: null, historiaFecha: null, ocupado: false, error: '',
+      historiasPac: [], umbrales: {}, verReglas: false };
   }
   datosVacios() {
     return { nombre: '', cc: '', cel: '', email: '', nac: '', rh: '', est: '', peso: '', motivo: '', pat: '', qui: '', far: '', tox: '' };
@@ -1363,13 +1463,14 @@ class Component extends DCLogic {
   alMostrar(params) {
     var self = this, pid = params && params.p ? params.p : null;
     this.setState({ paso: 0, sis: 0, error: '' });
+    APP.db.ajuste('reglas_alertas').then(function (u) { self.setState({ umbrales: u || {} }); }).catch(function () {});
     APP.db.listar('pacientes', { order: ['nombre'] }).then(function (ps) {
       self.setState({ pacientes: ps });
       if (pid) self.cargarPaciente(pid); else self.limpiarTodo();
     }).catch(function (e) { self.setState({ error: APP.mensajeError(e) }); });
   }
   limpiarTodo() {
-    this.setState({ pacienteId: null, historiaId: null, historiaFecha: null, punt: {}, obj: {}, d: this.datosVacios() });
+    this.setState({ pacienteId: null, historiaId: null, historiaFecha: null, punt: {}, obj: {}, d: this.datosVacios(), historiasPac: [] });
   }
   cargarPaciente(pid) {
     var self = this;
@@ -1378,10 +1479,12 @@ class Component extends DCLogic {
     var d = this.datosVacios();
     d.nombre = p.nombre || ''; d.cc = p.cc || ''; d.cel = p.celular || ''; d.email = p.email || ''; d.nac = p.fecha_nacimiento || '';
     d.rh = p.rh || ''; d.est = p.estatura != null ? String(p.estatura) : ''; d.peso = p.peso != null ? String(p.peso) : '';
-    this.setState({ pacienteId: pid, historiaId: null, historiaFecha: null, punt: {}, obj: {}, d: d });
-    APP.db.listar('historias', { eq: [['paciente_id', pid]], order: ['created_at', false], limit: 1 }).then(function (hs) {
+    this.setState({ pacienteId: pid, historiaId: null, historiaFecha: null, punt: {}, obj: {}, d: d, historiasPac: [] });
+    APP.db.listar('historias', { eq: [['paciente_id', pid]], order: ['created_at', false] }).then(function (hs) {
       var h = hs[0];
-      if (!h || self.state.pacienteId !== pid) return;
+      if (self.state.pacienteId !== pid) return;
+      self.setState({ historiasPac: hs });
+      if (!h) return;
       var d2 = Object.assign({}, self.state.d, { motivo: h.motivo || '', pat: h.ant_patologicos || '', qui: h.ant_quirurgicos || '',
         far: h.ant_farmacologicos || '', tox: h.ant_toxicoalergicos || '' });
       self.setState({ historiaId: h.id, historiaFecha: APP.f.local(h.created_at), d: d2, punt: h.detox || {}, obj: h.objetivos || {} });
@@ -1394,7 +1497,7 @@ class Component extends DCLogic {
     var datosP = { nombre: d.nombre.trim(), cc: d.cc.trim() || null, celular: d.cel.trim() || null, email: d.email.trim() || null, fecha_nacimiento: d.nac || null,
       rh: d.rh || null, estatura: est > 0 ? Math.round(est * 100) / 100 : null, peso: num(d.peso) > 0 ? num(d.peso) : null };
     var datosH = { motivo: d.motivo || null, ant_patologicos: d.pat || null, ant_quirurgicos: d.qui || null,
-      ant_farmacologicos: d.far || null, ant_toxicoalergicos: d.tox || null, detox: s.punt, objetivos: s.obj,
+      ant_farmacologicos: d.far || null, ant_toxicoalergicos: d.tox || null, detox: s.punt, objetivos: Object.assign({}, s.obj, { _analisis: this._analisis || null }),
       puntaje_global: global, nivel: nivel, updated_at: new Date().toISOString() };
     this.setState({ ocupado: true, error: '' });
     var pasoP = s.pacienteId ? APP.db.actualizar('pacientes', s.pacienteId, datosP) : APP.db.crear('pacientes', datosP);
@@ -1417,6 +1520,69 @@ class Component extends DCLogic {
   }
   componentWillUnmount() { clearTimeout(this._t); }
 
+  reglasActivas() {
+    var u = this.state.umbrales || {};
+    return REGLAS.map(function (r) { return Object.assign({}, r, { umbral: u[r.id] !== undefined ? u[r.id] : r.umbral }); });
+  }
+  nombreItem(key) {
+    var p = key.split('-'), sx = SIS.find(function (x) { return x.k === p[0]; });
+    return sx ? sx.items[+p[1]] : key;
+  }
+  analizar(punt, sistemas) {
+    var self = this, grupos = { seguridad: {}, remision: {} };
+    this.reglasActivas().forEach(function (r) {
+      var v = punt[r.item] || 0;
+      if (r.umbral > 0 && v >= r.umbral) {
+        var g = grupos[r.tipo];
+        (g[r.texto] = g[r.texto] || []).push(self.nombreItem(r.item) + ' (' + v + ')');
+      }
+    });
+    function lista(g) { return Object.keys(g).map(function (t) { return { texto: t, por: g[t].join(', ') }; }); }
+    var prioridades = [];
+    sistemas.slice().sort(function (a, b) { return b.total - a.total; }).forEach(function (x) {
+      if (x.total > 5) prioridades.push({ titulo: x.sx.nombre, texto: PRIORIDAD_SISTEMA[x.sx.k] });
+    });
+    PRIORIDAD_SINTOMA.forEach(function (r) {
+      var v = punt[r.item] || 0;
+      if (v >= r.umbral) prioridades.push({ titulo: self.nombreItem(r.item), texto: r.texto });
+    });
+    return { seguridad: lista(grupos.seguridad), remision: lista(grupos.remision), prioridades: prioridades };
+  }
+  previa() {
+    var s = this.state;
+    return s.historiasPac.find(function (h) { return h.id !== s.historiaId && (!s.historiaFecha || APP.f.local(h.created_at) <= s.historiaFecha); }) || null;
+  }
+  comparar(prev, sistemas) {
+    if (!prev) return null;
+    var d = prev.detox || {};
+    var filas = sistemas.map(function (x) {
+      var antes = x.sx.items.reduce(function (a, _, i) { return a + (d[x.sx.k + '-' + i] || 0); }, 0);
+      return { nombre: x.sx.nombre, antes: antes, ahora: x.total, cambio: x.total - antes, dot: x.sx.dot };
+    });
+    var sintomas = [];
+    sistemas.forEach(function (x) {
+      x.items.forEach(function (it) {
+        var a = d[it.key] || 0, b = it.v || 0;
+        if (Math.abs(b - a) >= 2) sintomas.push({ nombre: it.nombre, antes: a, ahora: b, cambio: b - a });
+      });
+    });
+    var ga = filas.reduce(function (a, f) { return a + f.antes; }, 0);
+    return { fecha: APP.f.local(prev.created_at), filas: filas, sintomas: sintomas, globalAntes: ga };
+  }
+  mensajePaciente(rank) {
+    var s = this.state, d = s.d;
+    var foco = rank.filter(function (x) { return x.total > 5; });
+    if (!foco.length) foco = rank.filter(function (x) { return x.total > 0; }).slice(0, 3);
+    var t = 'Hola ' + (d.nombre || '').split(' ')[0] + ', gracias por responder el cuestionario de síntomas.\n\n';
+    if (foco.length) {
+      t += 'Estos son los aspectos en los que vamos a trabajar:\n';
+      foco.slice(0, 4).forEach(function (x, i) {
+        var o = s.obj[x.sx.k] !== undefined ? s.obj[x.sx.k] : x.sx.obj;
+        t += '\n' + (i + 1) + '. ' + x.sx.nombre + ': ' + o.charAt(0).toLowerCase() + o.slice(1) + '\n';
+      });
+    } else t += 'Tus respuestas muestran pocas molestias. Seguiremos acompañando tu bienestar.\n';
+    return t + '\nVolveremos a aplicar el cuestionario en unas 4 sesiones para ver cómo vas.\n\n' + APP.u.contacto;
+  }
   imprimir(sistemas, rank, global, nivel, edad, imc) {
     var u = APP.u, d = this.state.d, s = this.state;
     var e = u.esc;
@@ -1440,8 +1606,19 @@ class Component extends DCLogic {
       + '<h2>Ranking de sistemas</h2><table><tr><th>#</th><th>Sistema</th><th>Puntos</th><th>Síntomas con mayor puntaje</th></tr>'
       + rank.map(function (x, i) {
         var top = x.mx > 0 ? x.items.filter(function (it) { return it.v === x.mx; }).map(function (it) { return it.nombre; }).join(', ') : '—';
-        return '<tr><td>' + (i + 1) + '</td><td>' + e(x.sx.nombre) + '</td><td>' + x.total + ' / ' + x.max + '</td><td>' + e(top) + '</td></tr>';
+        return '<tr><td>' + (i + 1) + '</td><td>' + e(x.sx.nombre) + '</td><td>' + x.total + ' / ' + x.max + ' (' + Math.round(x.total / x.max * 100) + '%)</td><td>' + e(top) + '</td></tr>';
       }).join('') + '</table>'
+      + (function (self) {
+        var an = self.analizar(s.punt, sistemas), h = '';
+        if (an.seguridad.length) h += '<h2>Alertas antes de sueroterapia</h2>' + an.seguridad.map(function (a) { return '<p>• ' + e(a.texto) + ' <span class="k">Por: ' + e(a.por) + '</span></p>'; }).join('');
+        if (an.remision.length) h += '<h2>Considerar remisión</h2>' + an.remision.map(function (a) { return '<p>• ' + e(a.texto) + ' <span class="k">Por: ' + e(a.por) + '</span></p>'; }).join('');
+        if (an.prioridades.length) h += '<h2>Prioridades para el plan de fisioterapia</h2>' + an.prioridades.map(function (a) { return '<p><b>' + e(a.titulo) + ':</b> ' + e(a.texto) + '</p>'; }).join('');
+        var c = self.comparar(self.previa(), sistemas);
+        if (c) h += '<h2>Comparación con la valoración del ' + e(c.fecha) + '</h2><table><tr><th>Sistema</th><th>Antes</th><th>Ahora</th><th>Cambio</th></tr>'
+          + c.filas.map(function (f) { return '<tr><td>' + e(f.nombre) + '</td><td>' + f.antes + '</td><td>' + f.ahora + '</td><td>' + (f.cambio > 0 ? '+' : '') + f.cambio + '</td></tr>'; }).join('')
+          + '<tr><th>Global</th><th>' + c.globalAntes + '</th><th>' + global + '</th><th>' + (global - c.globalAntes > 0 ? '+' : '') + (global - c.globalAntes) + '</th></tr></table>';
+        return h;
+      })(this)
       + '<h2>Objetivos terapéuticos</h2>'
       + (rank.filter(function (x) { return x.total > 5; }).map(function (x) {
         var t = s.obj[x.sx.k] !== undefined ? s.obj[x.sx.k] : x.sx.obj;
@@ -1525,10 +1702,13 @@ class Component extends DCLogic {
       };
     });
 
+    var an = this.analizar(punt, sistemas);
+    this._analisis = { seguridad: an.seguridad, remision: an.remision };
+    var comp = this.comparar(this.previa(), sistemas);
     var ranking = rank.map(function (x, i) {
       return {
         pos: i + 1, nombre: x.sx.nombre, total: x.total, max: x.max,
-        pct: Math.round(x.total / x.max * 100) + '%', bg: x.sx.bg, fg: x.sx.fg, dot: x.sx.dot,
+        pct: Math.round(x.total / x.max * 100) + '%', pctTxt: Math.round(x.total / x.max * 100) + '%', bg: x.sx.bg, fg: x.sx.fg, dot: x.sx.dot,
         objetivo: x.total > 5
       };
     });
@@ -1581,6 +1761,34 @@ class Component extends DCLogic {
       siguen: hay ? rank.slice(1, 3).map(function (x) { return x.sx.nombre + ' (' + x.total + ')'; }).join(', ') : '—',
       ranking: ranking, sintomas: sintomas, sinSintomas: sintomas.length === 0,
       objetivos: objetivos, sinObjetivos: objetivos.length === 0,
+      hayAlertasSeg: an.seguridad.length > 0, alertasSeg: an.seguridad,
+      hayRemision: an.remision.length > 0, remision: an.remision,
+      hayPrioridades: an.prioridades.length > 0, prioridades: an.prioridades,
+      hayComparacion: !!comp, comp: comp ? {
+        fecha: APP.f.corta(comp.fecha), globalAntes: comp.globalAntes, globalAhora: global,
+        globalCambio: (global - comp.globalAntes > 0 ? '+' : '') + (global - comp.globalAntes),
+        filas: comp.filas.map(function (f) {
+          return { nombre: f.nombre, antes: f.antes, ahora: f.ahora, dot: f.dot,
+            cambio: f.cambio === 0 ? 'Igual' : (f.cambio > 0 ? '▲ +' + f.cambio : '▼ ' + f.cambio),
+            color: f.cambio > 0 ? '#B91C1C' : f.cambio < 0 ? '#047857' : '#475569' };
+        }),
+        haySintomas: comp.sintomas.length > 0,
+        sintomas: comp.sintomas.map(function (x) { return { texto: x.nombre + ': ' + x.antes + ' → ' + x.ahora, color: x.cambio > 0 ? '#B91C1C' : '#047857' }; })
+      } : {},
+      verReglas: s.verReglas, textoReglas: s.verReglas ? 'Ocultar reglas de alertas' : 'Ajustar reglas de alertas',
+      toggleReglas: function () { self.setState({ verReglas: !self.state.verReglas }); },
+      reglas: this.reglasActivas().map(function (r) {
+        return { id: 'regla-' + r.id, sintoma: self.nombreItem(r.item), tipo: r.tipo === 'seguridad' ? 'Antes de sueroterapia' : 'Remisión', texto: r.texto,
+          valor: String(r.umbral),
+          set: function (e) {
+            var u = Object.assign({}, self.state.umbrales); u[r.id] = parseInt(e.target.value, 10);
+            self.setState({ umbrales: u });
+            APP.db.guardarAjuste('reglas_alertas', u).then(function () { self.toastMsg('Regla actualizada'); }).catch(function (er) { self.toastMsg(APP.mensajeError(er)); });
+          } };
+      }),
+      opcionesUmbral: [{ v: '0', l: 'Desactivada' }, { v: '1', l: 'Desde 1 punto' }, { v: '2', l: 'Desde 2 puntos' }, { v: '3', l: 'Desde 3 puntos' }, { v: '4', l: 'Solo con 4 puntos' }],
+      enviarWaPaciente: function () { APP.u.whatsapp(self.state.d.cel, self.mensajePaciente(rank)); },
+      enviarCorreoPaciente: function () { APP.u.correo(self.state.d.email, 'Resultado de tu cuestionario de síntomas', self.mensajePaciente(rank)); },
       verResultados: function () { self.setState({ paso: 3 }); },
       esPrimero: s.paso === 0, esUltimo: s.paso === 3,
       opAnt: s.paso === 0 ? '0.4' : '1', opSig: s.paso === 3 ? '0.4' : '1',
@@ -2240,6 +2448,33 @@ class Component extends DCLogic {
 </template>
 </section>
 
+<template data-sc="if" value="{{revalorar}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 16px; background: #F5F3FF; border: 1px solid #DDD6FE; color: #4C1D95">
+<span style="flex: 1 1 260px; font-size: 15px; font-weight: 700">{{textoRevalorar}}</span>
+<a href="HistoriaClinica.dc.html?p={{pid}}" style="min-height: 44px; display: inline-flex; align-items: center; padding: 0 16px; border-radius: 999px; background: #6D28D9; color: #FFFFFF; text-decoration: none; font-weight: 800; font-size: 14px">Aplicar cuestionario</a>
+</div>
+</template>
+
+<template data-sc="if" value="{{hayComp}}" hint-placeholder-val="{{ false }}">
+<section aria-labelledby="t-cmp" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px">
+<h2 id="t-cmp" style="margin: 0; font-size: 18px; font-weight: 800">Primera valoración ({{comp.desde}}) frente a la última ({{comp.hasta}})</h2>
+<span style="font-size: 15px; font-weight: 800">Global: {{comp.global}}</span>
+</div>
+<template data-sc="for" list="{{comp.filas}}" as="f" hint-placeholder-count="8">
+<div style="display: grid; grid-template-columns: minmax(130px, 200px) 1fr auto; align-items: center; gap: 10px">
+<span style="font-size: 14px; font-weight: 700">{{f.nombre}}</span>
+<div style="display: flex; flex-direction: column; gap: 3px">
+<div style="height: 8px; border-radius: 99px; background: #F1F5F9; overflow: hidden"><div style="height: 8px; border-radius: 99px; background: #CBD5E1; width: {{f.anchoA}}"></div></div>
+<div style="height: 8px; border-radius: 99px; background: #F1F5F9; overflow: hidden"><div style="height: 8px; border-radius: 99px; background: {{f.dot}}; width: {{f.anchoB}}"></div></div>
+</div>
+<span style="font-size: 14px; font-weight: 800; color: {{f.color}}; min-width: 90px; text-align: right">{{f.antes}} → {{f.ahora}} · {{f.cambio}}</span>
+</div>
+</template>
+<span style="font-size: 13px; color: #475569">Barra gris: primera valoración. Barra de color: última valoración.</span>
+</section>
+</template>
+
 <div role="tablist" aria-label="Filtrar" style="display: flex; flex-wrap: wrap; gap: 8px">
 <template data-sc="for" list="{{filtros}}" as="f" hint-placeholder-count="4">
 <button type="button" role="tab" aria-selected="{{f.on}}" onClick="{{f.pick}}" style="min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1.5px solid {{f.borde}}; background: {{f.bg}}; color: {{f.fg}}; font-family: inherit; font-size: 14px; font-weight: 800; cursor: pointer">{{f.label}}</button>
@@ -2370,6 +2605,21 @@ class Component extends DCLogic {
     var self = this, s = this.state, F = APP.f, p = s.paciente;
     var ev = this.eventos();
     var ult = s.sesiones[0], hc = s.historias[0];
+    var desde = hc ? s.sesiones.filter(function (x) { return x.fecha >= F.local(hc.created_at); }).length : s.sesiones.length;
+    var revalorar = !!p && s.sesiones.length > 0 && (!hc || desde >= APP.REVALORAR_CADA);
+    var comp = null;
+    if (s.historias.length >= 2) {
+      var ini = s.historias[s.historias.length - 1], fin = s.historias[0];
+      var a = APP.totalesDetox(ini.detox), b = APP.totalesDetox(fin.detox);
+      comp = { desde: F.corta(F.local(ini.created_at)), hasta: F.corta(F.local(fin.created_at)),
+        global: (ini.puntaje_global || 0) + ' → ' + (fin.puntaje_global || 0),
+        filas: a.map(function (x, i) {
+          var c = b[i].total - x.total;
+          return { nombre: x.nombre, dot: x.dot, antes: x.total, ahora: b[i].total,
+            anchoA: Math.round(x.total / x.max * 100) + '%', anchoB: Math.round(b[i].total / x.max * 100) + '%',
+            cambio: c === 0 ? 'Igual' : (c > 0 ? '▲ +' + c : '▼ ' + c), color: c > 0 ? '#B91C1C' : c < 0 ? '#047857' : '#475569' };
+        }) };
+    }
     var opciones = [{ k: 'todo', l: 'Todo' }, { k: 'sesiones', l: 'Sesiones (' + s.sesiones.length + ')' }, { k: 'valoraciones', l: 'Valoraciones (' + s.historias.length + ')' }, { k: 'consentimientos', l: 'Consentimientos (' + s.consentimientos.length + ')' }];
     return {
       subtitulo: s.error || (p ? p.nombre + (p.cc ? ' · CC ' + p.cc : '') : (s.cargando ? 'Cargando…' : 'Paciente no encontrado')),
@@ -2390,6 +2640,9 @@ class Component extends DCLogic {
         return Object.assign({}, x, { dia: d.getDate(), mes: MESES[d.getMonth()],
           hayResumen: !!x.resumen, hayNotas: !!x.notas, hayEjercicios: !!x.ejercicios, hayImagenes: x.imagenes.length > 0 });
       }),
+      revalorar: revalorar,
+      textoRevalorar: hc ? 'Han pasado ' + desde + ' sesiones desde la última valoración: es buen momento para repetir el cuestionario.' : 'Este paciente aún no tiene cuestionario detox.',
+      hayComp: !!comp, comp: comp || {},
       vacio: ev.length === 0,
       textoVacio: s.cargando ? 'Cargando…' : 'Todavía no hay registros. Empieza con "Registrar sesión".',
       imprimir: function () { self.imprimir(); }
@@ -2659,6 +2912,21 @@ class Component extends DCLogic {
     if (!w) location.href = url;
   }
 
+  // Sistemas del cuestionario detox (clave, nombre, número de síntomas, color)
+  APP.SISTEMAS = [
+    { k: 'emo', nombre: 'Emociones', n: 10, dot: '#D946EF' }, { k: 'men', nombre: 'Mente y cerebro', n: 11, dot: '#84CC16' },
+    { k: 'art', nombre: 'Articular-muscular', n: 5, dot: '#0EA5E9' }, { k: 'met', nombre: 'Metabolismo', n: 6, dot: '#22C55E' },
+    { k: 'ong', nombre: 'Oído-nariz-garganta', n: 8, dot: '#F97316' }, { k: 'dig', nombre: 'Aparato digestivo', n: 9, dot: '#EAB308' },
+    { k: 'rin', nombre: 'Riñón', n: 5, dot: '#06B6D4' }, { k: 'pie', nombre: 'Piel', n: 9, dot: '#F43F5E' }
+  ];
+  APP.totalesDetox = function (detox) {
+    detox = detox || {};
+    return APP.SISTEMAS.map(function (x) {
+      var t = 0; for (var i = 0; i < x.n; i++) t += detox[x.k + '-' + i] || 0;
+      return { k: x.k, nombre: x.nombre, total: t, max: x.n * 4, dot: x.dot };
+    });
+  };
+  APP.REVALORAR_CADA = 4;   // sesiones entre cuestionarios
   APP.u = {
     esc: esc,
     logo: LOGO,
