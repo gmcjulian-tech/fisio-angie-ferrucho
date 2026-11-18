@@ -878,7 +878,7 @@ class Component extends DCLogic {
       return {
         id: p.id, k: k, nombre: p.nombre, ini: ini,
         avBg: AV[i % AV.length].bg, avFg: AV[i % AV.length].fg,
-        dx: !hc ? 'Sin historia clínica' : (hc.nivel ? 'Detox: ' + hc.nivel + ' (' + (hc.puntaje_global || 0) + ' pts)' : ((hc.objetivos && hc.objetivos._servicios && hc.objetivos._servicios.length) ? hc.objetivos._servicios.join(', ') : 'Historia clínica registrada')),
+        dx: !hc ? 'Sin historia clínica' : (hc.cie10 && hc.cie10[0]) ? hc.cie10[0].codigo + ' · ' + hc.cie10[0].descripcion : (hc.nivel ? 'Detox: ' + hc.nivel + ' (' + (hc.puntaje_global || 0) + ' pts)' : ((hc.objetivos && hc.objetivos._servicios && hc.objetivos._servicios.length) ? hc.objetivos._servicios.join(', ') : 'Historia clínica registrada')),
         contacto: p.celular ? 'Cel. ' + p.celular : '',
         estado: e.label, estBg: e.bg, estFg: e.fg, barra: e.barra,
         ses: plan ? hechas + ' de ' + plan : hechas + ' (sin plan)',
@@ -1187,6 +1187,45 @@ class Component extends DCLogic {
 </section>
 </template>
 
+<template data-sc="if" value="{{p5}}" hint-placeholder-val="{{ false }}">
+<section aria-labelledby="t-dx" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 22px; padding: 24px; display: flex; flex-direction: column; gap: 18px">
+<h2 id="t-dx" style="margin: 0; font-size: 20px; font-weight: 800">Diagnóstico y objetivos</h2>
+
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="dx-examenes" style="font-size: 14px; font-weight: 800; color: #0F2A4A">Exámenes médicos</label><span style="font-size: 13px; color: #475569">Resultados de exámenes que el paciente trae y que conviene tener en cuenta (radiografías, resonancias, laboratorios…).</span><textarea id="dx-examenes" rows="3" value="{{d.examenes}}" onChange="{{set.examenes}}" style="padding: 12px 14px; border: 1.5px solid #CBD5E1; border-radius: 14px; font-family: inherit; font-size: 15px; line-height: 1.5; color: #0F2A4A; resize: vertical"></textarea></div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label for="dx-cie" style="font-size: 14px; font-weight: 800; color: #0F2A4A">Diagnóstico CIE-10</label>
+<div style="position: relative">
+<input id="dx-cie" type="search" autocomplete="off" value="{{cieQ}}" onChange="{{setCieQ}}" placeholder="Buscar por palabra o código: hombro, lumbago, M755…" style="width: 100%; min-height: 50px; padding: 0 16px; border: 1.5px solid #CBD5E1; border-radius: 14px; font-family: inherit; font-size: 15px; color: #0F2A4A; background: #FFFFFF">
+<template data-sc="if" value="{{hayCieRes}}" hint-placeholder-val="{{ false }}">
+<div class="sugerencias" role="listbox" aria-label="Códigos CIE-10 encontrados">
+<template data-sc="for" list="{{cieRes}}" as="o" hint-placeholder-count="5"><button type="button" role="option" onClick="{{o.pick}}" style="flex-direction: row; align-items: baseline; gap: 10px"><span style="font-weight: 800; color: #1D4ED8; min-width: 48px">{{o.marca}}{{o.codigo}}</span><span style="font-size: 14px">{{o.descripcion}}</span></button></template>
+<template data-sc="if" value="{{sinCieRes}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 12px 14px; font-size: 14px; color: #475569">No hay códigos con esas palabras. Prueba con otra palabra.</p></template>
+</div>
+</template>
+</div>
+<span style="font-size: 13px; color: #475569">{{cieAyuda}}</span>
+<template data-sc="if" value="{{hayCieSel}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<template data-sc="for" list="{{cieSel}}" as="c" hint-placeholder-count="1">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; background: #EFF6FF; border: 1px solid #BFDBFE">
+<span style="font-weight: 800; color: #1E3A8A; min-width: 48px">{{c.codigo}}</span>
+<span style="flex: 1 1 200px; font-size: 15px">{{c.descripcion}}</span>
+<span style="font-size: 12px; font-weight: 800; padding: 3px 10px; border-radius: 999px; background: #FFFFFF; color: #1D4ED8">{{c.tipo}}</span>
+<template data-sc="if" value="{{c.esRel}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{c.principal}}" style="min-height: 36px; padding: 0 10px; border-radius: 999px; border: 1px solid #BFDBFE; background: #FFFFFF; color: #1D4ED8; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer">Hacer principal</button></template>
+<button type="button" onClick="{{c.quitar}}" aria-label="Quitar {{c.codigo}}" style="width: 36px; height: 36px; border-radius: 99px; border: 0; background: #FFFFFF; color: #B91C1C; font-size: 18px; cursor: pointer">×</button>
+</div>
+</template>
+</div>
+</template>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="dx-fisio" style="font-size: 14px; font-weight: 800; color: #0F2A4A">Diagnóstico fisioterapéutico</label><span style="font-size: 13px; color: #475569">Resultados de la valoración: hallazgos, limitaciones y condición funcional.</span><textarea id="dx-fisio" rows="5" value="{{d.dx}}" onChange="{{set.dx}}" style="padding: 12px 14px; border: 1.5px solid #CBD5E1; border-radius: 14px; font-family: inherit; font-size: 15px; line-height: 1.5; color: #0F2A4A; resize: vertical"></textarea></div>
+
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="dx-obj" style="font-size: 14px; font-weight: 800; color: #0F2A4A">Objetivos terapéuticos</label><textarea id="dx-obj" rows="4" value="{{d.objf}}" onChange="{{set.objf}}" style="padding: 12px 14px; border: 1.5px solid #CBD5E1; border-radius: 14px; font-family: inherit; font-size: 15px; line-height: 1.5; color: #0F2A4A; resize: vertical"></textarea></div>
+</section>
+</template>
+
 <template data-sc="if" value="{{p3}}" hint-placeholder-val="{{ true }}">
 <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start">
 <section aria-labelledby="t-detox" style="flex: 3 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
@@ -1486,7 +1525,8 @@ var PRIORIDAD_SINTOMA = [
   { item: 'met-5', umbral: 2, texto: 'Incluir acondicionamiento físico y control del peso en los objetivos.' }
 ];
 function esSuero(n) { return /sueroterapia/i.test(n || ''); }
-var PASOS = ['Datos del paciente', 'Valoración inicial', 'Cuestionario detox', 'Resultados'];
+var PASOS = ['Datos del paciente', 'Valoración inicial', 'Cuestionario detox', 'Resultados', 'Diagnóstico y objetivos'];
+function aplicaFisio(elegidos) { return !elegidos.length || elegidos.some(function (n) { return !esSuero(n); }); }
 
 
 function num(v) { var n = parseFloat(String(v || '').replace(',', '.')); return isNaN(n) ? 0 : n; }
@@ -1494,12 +1534,12 @@ function num(v) { var n = parseFloat(String(v || '').replace(',', '.')); return 
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { paso: 0, sis: 0, toast: '', punt: {}, obj: {}, d: this.datosVacios(), elegidos: [], conDetox: false, catalogo: [],
+    this.state = { paso: 0, sis: 0, toast: '', punt: {}, obj: {}, d: this.datosVacios(), elegidos: [], conDetox: false, catalogo: [], cie: [], cieQ: '', cieLista: null, cieError: '',
       pacientes: [], pacienteId: null, historiaId: null, historiaFecha: null, ocupado: false, error: '',
       historiasPac: [], umbrales: {}, verReglas: false };
   }
   datosVacios() {
-    return { nombre: '', cc: '', cel: '', email: '', plan: '', nac: '', rh: '', est: '', peso: '', motivo: '', pat: '', qui: '', far: '', tox: '' };
+    return { nombre: '', cc: '', cel: '', email: '', plan: '', nac: '', rh: '', est: '', peso: '', motivo: '', pat: '', qui: '', far: '', tox: '', examenes: '', dx: '', objf: '' };
   }
   alMostrar(params) {
     var self = this, pid = params && params.p ? params.p : null;
@@ -1512,7 +1552,7 @@ class Component extends DCLogic {
     }).catch(function (e) { self.setState({ error: APP.mensajeError(e) }); });
   }
   limpiarTodo() {
-    this.setState({ pacienteId: null, historiaId: null, historiaFecha: null, punt: {}, obj: {}, d: this.datosVacios(), historiasPac: [], elegidos: [], conDetox: false });
+    this.setState({ pacienteId: null, historiaId: null, historiaFecha: null, punt: {}, obj: {}, d: this.datosVacios(), historiasPac: [], elegidos: [], conDetox: false, cie: [], cieQ: '' });
   }
   cargarPaciente(pid) {
     var self = this;
@@ -1521,18 +1561,18 @@ class Component extends DCLogic {
     var d = this.datosVacios();
     d.nombre = p.nombre || ''; d.cc = p.cc || ''; d.cel = p.celular || ''; d.email = p.email || ''; d.nac = p.fecha_nacimiento || '';
     d.rh = p.rh || ''; d.plan = p.plan_sesiones ? String(p.plan_sesiones) : ''; d.est = p.estatura != null ? String(p.estatura) : ''; d.peso = p.peso != null ? String(p.peso) : '';
-    this.setState({ pacienteId: pid, historiaId: null, historiaFecha: null, punt: {}, obj: {}, d: d, historiasPac: [], elegidos: [], conDetox: false });
+    this.setState({ pacienteId: pid, historiaId: null, historiaFecha: null, punt: {}, obj: {}, d: d, historiasPac: [], elegidos: [], conDetox: false, cie: [], cieQ: '' });
     APP.db.listar('historias', { eq: [['paciente_id', pid]], order: ['created_at', false] }).then(function (hs) {
       var h = hs[0];
       if (self.state.pacienteId !== pid) return;
       self.setState({ historiasPac: hs });
       if (!h) return;
       var d2 = Object.assign({}, self.state.d, { motivo: h.motivo || '', pat: h.ant_patologicos || '', qui: h.ant_quirurgicos || '',
-        far: h.ant_farmacologicos || '', tox: h.ant_toxicoalergicos || '' });
+        far: h.ant_farmacologicos || '', tox: h.ant_toxicoalergicos || '', examenes: h.examenes || '', dx: h.diagnostico_fisio || '', objf: h.objetivos_fisio || '' });
       var o = h.objetivos || {};
       var conDetox = o._detox !== undefined ? !!o._detox : (o._tipo ? o._tipo !== 'fisio' : !!(h.detox && Object.keys(h.detox).length));
       self.setState({ historiaId: h.id, historiaFecha: APP.f.local(h.created_at), d: d2, punt: h.detox || {}, obj: o,
-        elegidos: Array.isArray(o._servicios) ? o._servicios : [], conDetox: conDetox });
+        elegidos: Array.isArray(o._servicios) ? o._servicios : [], conDetox: conDetox, cie: Array.isArray(h.cie10) ? h.cie10 : [] });
     }).catch(function (e) { self.setState({ error: APP.mensajeError(e) }); });
   }
   guardarTodo(global, nivel) {
@@ -1546,6 +1586,7 @@ class Component extends DCLogic {
       puntaje_global: global, nivel: nivel, updated_at: new Date().toISOString() };
     if (!s.conDetox) { datosH.detox = {}; datosH.puntaje_global = null; datosH.nivel = null; datosH.objetivos = {}; }
     datosH.objetivos._servicios = s.elegidos;
+    if (aplicaFisio(s.elegidos)) { datosH.examenes = d.examenes || null; datosH.cie10 = s.cie; datosH.diagnostico_fisio = d.dx || null; datosH.objetivos_fisio = d.objf || null; }
     datosH.objetivos._detox = !!s.conDetox;
     this.setState({ ocupado: true, error: '' });
     var pasoP = s.pacienteId ? APP.db.actualizar('pacientes', s.pacienteId, datosP) : APP.db.crear('pacientes', datosP);
@@ -1644,6 +1685,10 @@ class Component extends DCLogic {
       + '<h2>Valoración inicial</h2>'
       + '<p><b>Antecedentes patológicos:</b> ' + e(d.pat || '—') + '</p><p><b>Antecedentes quirúrgicos:</b> ' + e(d.qui || '—') + '</p>'
       + '<p><b>Antecedentes farmacológicos:</b> ' + e(d.far || '—') + '</p><p><b>Antecedentes toxicoalérgicos:</b> ' + e(d.tox || '—') + '</p>'
+      + (aplicaFisio(s.elegidos) ? '<h2>Exámenes médicos</h2><pre>' + e(d.examenes || 'Sin exámenes registrados.') + '</pre>'
+        + '<h2>Diagnóstico CIE-10</h2>' + (s.cie.length ? '<table><tr><th style="width:80px">Código</th><th>Descripción</th><th style="width:100px">Tipo</th></tr>' + s.cie.map(function (c, i) { return '<tr><td>' + e(c.codigo) + '</td><td>' + e(c.descripcion) + '</td><td>' + (i === 0 ? 'Principal' : 'Relacionado') + '</td></tr>'; }).join('') + '</table>' : '<p>—</p>')
+        + '<h2>Diagnóstico fisioterapéutico</h2><pre>' + e(d.dx || '—') + '</pre>'
+        + '<h2>Objetivos terapéuticos</h2><pre>' + e(d.objf || '—') + '</pre>' : '')
       + '<p><b>Servicios:</b> ' + e(s.elegidos.length ? s.elegidos.join(', ') : 'Sin especificar') + '</p>'
       + (!conDetox ? '<p class="k">Esta valoración no incluye cuestionario detox.</p>' : '<h2>Cuestionario detox</h2><p>Escala: 0 nunca o casi nunca · 1 ocasional · 2 ocasional e intenso · 3 frecuente, no intenso · 4 frecuente e intenso.</p>'
       + '<p><b>Puntaje global: ' + global + ' · Nivel de toxicidad ' + e(nivel.label) + '</b> (menos de 30 bajo, 30 a 60 moderado, más de 60 alto)</p>'
@@ -1668,7 +1713,7 @@ class Component extends DCLogic {
           + '<tr><th>Global</th><th>' + c.globalAntes + '</th><th>' + global + '</th><th>' + (global - c.globalAntes > 0 ? '+' : '') + (global - c.globalAntes) + '</th></tr></table>';
         return h;
       })(this)
-      + '<h2>Objetivos terapéuticos</h2>'
+      + '<h2>Objetivos por sistema (cuestionario detox)</h2>'
       + (rank.filter(function (x) { return x.total > 5; }).map(function (x) {
         var t = s.obj[x.sx.k] !== undefined ? s.obj[x.sx.k] : x.sx.obj;
         return '<p><b>' + e(x.sx.nombre) + ' (' + x.total + ' pts):</b> ' + e(t) + '</p>';
@@ -1780,12 +1825,13 @@ class Component extends DCLogic {
     function resumen(x) { return { nombre: x.sx.nombre, total: x.total, dot: x.sx.dot }; }
 
     var set = {};
-    ['nombre', 'cc', 'cel', 'email', 'plan', 'nac', 'rh', 'est', 'peso', 'motivo', 'pat', 'qui', 'far', 'tox'].forEach(function (k) {
+    ['nombre', 'cc', 'cel', 'email', 'plan', 'nac', 'rh', 'est', 'peso', 'motivo', 'pat', 'qui', 'far', 'tox', 'examenes', 'dx', 'objf'].forEach(function (k) {
       set[k] = function (ev) { self.setDato(k, ev.target.value); };
     });
 
     var conDetox = !!s.conDetox;
-    var visibles = conDetox ? [0, 1, 2, 3] : [0, 1];
+    var conFisio = aplicaFisio(s.elegidos);
+    var visibles = [0, 1].concat(conFisio ? [4] : [], conDetox ? [2, 3] : []);
     var paso = visibles.indexOf(s.paso) >= 0 ? s.paso : visibles[visibles.length - 1];
     var pos = visibles.indexOf(paso);
     var pasos = visibles.map(function (i, n) {
@@ -1800,7 +1846,31 @@ class Component extends DCLogic {
     });
 
     return {
-      pasos: pasos, p1: paso === 0, p2: paso === 1, p3: paso === 2, p4: paso === 3,
+      pasos: pasos, p1: paso === 0, p2: paso === 1, p3: paso === 2, p4: paso === 3, p5: paso === 4,
+      cieQ: s.cieQ,
+      setCieQ: function (e) {
+        var v = e.target.value; self.setState({ cieQ: v });
+        if (!self.state.cieLista && !self._cargandoCie) {
+          self._cargandoCie = true;
+          APP.cie10.cargar().then(function (l) { self._cargandoCie = false; self.setState({ cieLista: l, cieError: '' }); })
+            .catch(function (er) { self._cargandoCie = false; self.setState({ cieError: er.message }); });
+        }
+      },
+      cieRes: (s.cieLista && s.cieQ.trim().length >= 2 ? APP.cie10.buscar(s.cieLista, s.cieQ, 40) : []).map(function (x) {
+        var ya = s.cie.some(function (c) { return c.codigo === x.codigo; });
+        return { codigo: x.codigo, descripcion: x.descripcion, marca: ya ? '✓ ' : '',
+          pick: function () { if (!ya) self.setState({ cie: self.state.cie.concat([{ codigo: x.codigo, descripcion: x.descripcion }]), cieQ: '' }); else self.setState({ cieQ: '' }); } };
+      }),
+      cieAyuda: s.cieError ? s.cieError : (s.cieQ.trim().length >= 2 && !s.cieLista ? 'Cargando catálogo CIE-10…' : (s.cieQ.trim().length >= 2 && s.cieLista ? '' : 'Escribe una palabra (ej.: hombro, lumbago) o un código (ej.: M755).')),
+      cieSel: s.cie.map(function (c, i) {
+        return { codigo: c.codigo, descripcion: c.descripcion, tipo: i === 0 ? 'Principal' : 'Relacionado',
+          quitar: function () { self.setState({ cie: self.state.cie.filter(function (_, j) { return j !== i; }) }); },
+          principal: function () { var l = self.state.cie.slice(); var x = l.splice(i, 1)[0]; l.unshift(x); self.setState({ cie: l }); },
+          esRel: i > 0 };
+      }),
+      hayCieSel: s.cie.length > 0,
+      hayCieRes: !!(s.cieLista && s.cieQ.trim().length >= 2),
+      sinCieRes: !!(s.cieLista && s.cieQ.trim().length >= 2) && !(APP.cie10.buscar(s.cieLista, s.cieQ, 1).length),
       serviciosAtencion: s.catalogo.map(function (o) {
         var on = s.elegidos.indexOf(o.nombre) >= 0;
         return { nombre: o.nombre, marca: on ? '✓ ' : '', on: on ? 'true' : 'false', bg: on ? '#EFF6FF' : '#FFFFFF', borde: on ? '#1D4ED8' : '#CBD5E1', fg: on ? '#1E3A8A' : '#334155',
@@ -1910,9 +1980,9 @@ class Component extends DCLogic {
 </div>
 <template data-sc="if" value="{{faltaConsent}}" hint-placeholder-val="{{ false }}">
 <div role="alert" style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 14px 16px; border-radius: 14px; background: #FFF7ED; border: 1px solid #FED7AA; color: #7C2D12">
-<span style="flex: 1 1 260px; font-size: 15px; font-weight: 700">Este paciente no tiene firmado el consentimiento de sueroterapia.</span>
-<a href="Consentimiento.dc.html?p={{pidActual}}&amp;t=iv" style="min-height: 44px; display: inline-flex; align-items: center; padding: 0 16px; border-radius: 999px; background: #EA580C; color: #FFFFFF; text-decoration: none; font-weight: 800; font-size: 14px">Firmar intravenosa</a>
-<a href="Consentimiento.dc.html?p={{pidActual}}&amp;t=neb" style="min-height: 44px; display: inline-flex; align-items: center; padding: 0 16px; border-radius: 999px; background: #FFFFFF; border: 1.5px solid #EA580C; color: #9A3412; text-decoration: none; font-weight: 800; font-size: 14px">Firmar nebulizada</a>
+<span style="flex: 1 1 260px; font-size: 15px; font-weight: 700">{{falta.texto}}</span>
+<a href="Consentimiento.dc.html?p={{pidActual}}&amp;t={{falta.ta}}" style="min-height: 44px; display: inline-flex; align-items: center; padding: 0 16px; border-radius: 999px; background: #EA580C; color: #FFFFFF; text-decoration: none; font-weight: 800; font-size: 14px">{{falta.la}}</a>
+<template data-sc="if" value="{{falta.hayB}}" hint-placeholder-val="{{ false }}"><a href="Consentimiento.dc.html?p={{pidActual}}&amp;t={{falta.tb}}" style="min-height: 44px; display: inline-flex; align-items: center; padding: 0 16px; border-radius: 999px; background: #FFFFFF; border: 1.5px solid #EA580C; color: #9A3412; text-decoration: none; font-weight: 800; font-size: 14px">{{falta.lb}}</a></template>
 </div>
 </template>
 </section>
@@ -2159,13 +2229,21 @@ class Component extends DCLogic {
         pick: function () { self.setState({ pacienteId: p.id, pacQuery: p.nombre }); } };
     }) : [];
     var p = this.paciente();
-    var faltaConsent = !!s.pacienteId && /sueroterapia/i.test(s.servicio) && !s.consentimientos.some(function (c) {
-      return c.paciente_id === s.pacienteId && (c.servicios || []).some(function (x) { return /sueroterapia/i.test(x); });
-    });
+    var firmados = s.consentimientos.filter(function (c) { return c.paciente_id === s.pacienteId; })
+      .reduce(function (acc, c) { return acc.concat(c.servicios || []); }, []);
+    var tiene = function (re) { return firmados.some(function (x) { return re.test(x); }); };
+    var falta = null;
+    if (s.pacienteId && s.servicio && s.servicio !== 'Valoración') {
+      if (/sueroterapia/i.test(s.servicio)) { if (!tiene(/sueroterapia/i)) falta = { texto: 'Este paciente no tiene firmado el consentimiento de sueroterapia.', a: ['iv', 'Firmar intravenosa'], b: ['neb', 'Firmar nebulizada'] }; }
+      else if (/punci|electropunci|neural/i.test(s.servicio)) { if (!tiene(/agujas/i)) falta = { texto: 'Para ' + s.servicio.toLowerCase() + ' falta el consentimiento de fisioterapia con la autorización de técnicas con agujas.', a: ['fisio', 'Firmar consentimiento'] }; }
+      else if (!tiene(/^fisioterapia$/i)) falta = { texto: 'Este paciente no tiene firmado el consentimiento de fisioterapia.', a: ['fisio', 'Firmar consentimiento'] };
+    }
+    var faltaConsent = !!falta;
     var puede = APP.u.puedeCompartirArchivos();
     var set = function (k) { return function (e) { var o = { guardada: false }; o[k] = e.target.value; self.setState(o); }; };
     return {
       faltaConsent: faltaConsent, pidActual: s.pacienteId || '',
+      falta: falta ? { texto: falta.texto, ta: falta.a[0], la: falta.a[1], hayB: !!falta.b, tb: falta.b ? falta.b[0] : '', lb: falta.b ? falta.b[1] : '' } : {},
       titulo: s.sesionId ? 'Sesión del ' + APP.f.corta(s.fecha) : 'Registrar sesión',
       subtitulo: s.cargando ? 'Cargando…' : (p.nombre ? p.nombre : 'Elige el paciente para empezar') + (s.cita && s.cita.hora != null ? ' · cita de las ' + APP.f.hora(s.cita.hora) : ''),
       pacQuery: s.pacQuery, pacFijo: s.pacFijo,
@@ -2307,6 +2385,7 @@ class Component extends DCLogic {
 <div style="display: flex; flex-direction: column; gap: 6px"><label for="c-doc" style="font-size: 14px; font-weight: 700">Documento</label><div style="display: flex; gap: 8px"><label for="c-tipodoc" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Tipo de documento</label><select id="c-tipodoc" value="{{tipoDoc}}" onChange="{{setTipoDoc}}" style="min-height: 48px; padding: 0 10px; border: 1.5px solid #CBD5E1; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A; background: #FFFFFF"><template data-sc="for" list="{{tiposDoc}}" as="t" hint-placeholder-count="5"><option value="{{t.v}}">{{t.v}}</option></template></select><input id="c-doc" type="text" value="{{documento}}" onChange="{{setDocumento}}" style="flex: 1; min-width: 0; min-height: 48px; padding: 0 14px; border: 1.5px solid #CBD5E1; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A"></div></div>
 </div>
 <label style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #EFF6FF; font-size: 15px; line-height: 1.45; cursor: pointer"><input type="checkbox" checked="{{acepta}}" onChange="{{toggleAcepta}}" style="width: 22px; height: 22px; margin-top: 1px; flex: none; accent-color: #1D4ED8">Leí el texto anterior, recibí información clara y suficiente, resolví mis dudas y autorizo el procedimiento de forma libre y voluntaria.</label>
+<template data-sc="if" value="{{hayAgujas}}" hint-placeholder-val="{{ false }}"><label style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #FFF7ED; font-size: 15px; line-height: 1.45; cursor: pointer"><input type="checkbox" checked="{{agujas}}" onChange="{{toggleAgujas}}" style="width: 22px; height: 22px; margin-top: 1px; flex: none; accent-color: #EA580C">Además, acepto que, si es necesario y después de explicarme el procedimiento, puedan proponerse técnicas con agujas (punción seca, electropunción o terapia neural). <span style="color: #9A3412; font-weight: 700">Opcional</span></label></template>
 </section>
 
 <section aria-labelledby="t-c4" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 20px; padding: 22px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px">
@@ -2352,21 +2431,36 @@ var PLANTILLAS = [
       + 'Yo, {firmante}, identificado(a) con {tipo_documento} No. {documento}{calidad}, autorizo de manera libre, voluntaria e informada a la fisioterapeuta ANGIE LORENA FERRUCHO, profesional certificada, para realizar el procedimiento de sueroterapia nebulizada y la administración de soluciones terapéuticas.\n\n'
       + 'Declaro que he recibido información clara y suficiente, que he resuelto mis dudas satisfactoriamente y que me encuentro en capacidad de expresar mi consentimiento.\n\n'
       + 'Fecha: {fecha}' },
-  { id: 'fisio', nombre: 'Fisioterapia', servicio: null, borrador: true, titulo: 'CONSENTIMIENTO INFORMADO PARA ATENCIÓN EN FISIOTERAPIA',
-    texto: 'Yo, {firmante}, identificado(a) con {tipo_documento} No. {documento}{calidad}, autorizo de manera libre, voluntaria e informada a la fisioterapeuta ANGIE LORENA FERRUCHO para realizar la valoración y el tratamiento de fisioterapia.\n\n'
-      + 'Declaro que me explicaron el plan de tratamiento, sus beneficios esperados, los riesgos y molestias posibles y las alternativas disponibles; que debo informar cualquier enfermedad, medicamento, alergia, embarazo o cambio en mi estado de salud; y que puedo retirar este consentimiento en cualquier momento sin que eso afecte mi atención.\n\n'
-      + 'Manifiesto que mis preguntas fueron resueltas y que autorizo de manera libre y voluntaria los procedimientos indicados.\n\n'
-      + 'Fecha: {fecha}' }
+  { id: 'fisio', nombre: 'Fisioterapia', servicio: null, idProfesional: 'TP 1001315761',
+    titulo: 'CONSENTIMIENTO INFORMADO PARA ATENCIÓN DE FISIOTERAPIA Y PROCEDIMIENTOS TERAPÉUTICOS',
+    opciones: [
+      { id: 'general', obligatoria: true, texto: 'ACEPTO recibir las intervenciones de fisioterapia que sean consideradas adecuadas después de mi valoración.' },
+      { id: 'agujas', obligatoria: false, registro: 'Fisioterapia: técnicas con agujas', texto: 'ACEPTO QUE, SI ES NECESARIO Y DESPUÉS DE EXPLICARME EL PROCEDIMIENTO, PUEDAN PROPONERSE TÉCNICAS CON AGUJAS, como punción seca, electropunción o terapia neural.' }
+    ],
+    texto: 'DATOS DEL PACIENTE\n\nNombre completo: {paciente_nombre}\nDocumento de identidad: {paciente_documento}\nEdad: {edad}\n\n'
+      + 'OBJETIVO DE LA ATENCIÓN\n\nDeclaro que he recibido información clara y comprensible acerca de la atención de fisioterapia, cuyo objetivo es realizar una valoración de mi condición física y establecer, de acuerdo con los hallazgos clínicos y mis necesidades, un plan de intervención orientado a disminuir síntomas, recuperar o mejorar la movilidad, fuerza, función, capacidad física y desempeño en mis actividades, según corresponda a mi condición.\n\n'
+      + 'Entiendo que la fisioterapia puede requerir varias sesiones y que la evolución y los resultados pueden variar de una persona a otra. No se me garantiza un resultado específico, ya que la recuperación depende, entre otros factores, de mi condición clínica, adherencia al tratamiento, evolución individual y cumplimiento de las recomendaciones dadas.\n\n'
+      + 'PROCEDIMIENTO\n\nSegún mi valoración, el tratamiento puede incluir ejercicios terapéuticos, estiramientos, técnicas manuales, masaje terapéutico y electroterapia (TENS/EMS), entre otras técnicas indicadas para mi condición.\n\n'
+      + 'POSIBLES RIESGOS\n\nEl tratamiento puede ocasionar dolor o sensibilidad temporal, fatiga, aumento transitorio de las molestias, irritación de la piel o contracciones musculares durante la aplicación de corriente eléctrica.\n\n'
+      + 'En algunos casos pueden proponerse técnicas con agujas, como punción seca, electropunción o terapia neural. Estas no se aplican a todos los pacientes y solo se realizarán cuando estén indicadas y yo las autorice.\n\n'
+      + 'Pueden ocasionar dolor, sangrado, hematomas, inflamación, mareo y, con menor frecuencia, infección, reacción alérgica o lesión de estructuras cercanas. En la terapia neural también existen riesgos asociados a la sustancia utilizada. Se me informarán los riesgos específicos antes de cada procedimiento.\n\n'
+      + 'INFORMACIÓN DE SALUD\n\nMe comprometo a informar sobre alergias, enfermedades, cirugías recientes, embarazo, problemas de coagulación, medicamentos, dispositivos implantados y cualquier otra condición relevante para la seguridad del tratamiento.\n\n'
+      + 'MI DECISIÓN\n\nDeclaro que he recibido información clara sobre la atención de fisioterapia, sus objetivos, las técnicas que pueden utilizarse y sus posibles molestias o riesgos.\n\n'
+      + 'He podido realizar preguntas y estas han sido respondidas. Entiendo que no se me garantiza un resultado específico, ya que la evolución depende de mi condición, respuesta al tratamiento, asistencia a las sesiones, cumplimiento de las recomendaciones y otros factores individuales.\n\n'
+      + 'AUTORIZACIÓN\n\n{autorizacion}\n\n'
+      + 'El paciente se compromete a respetar el plan de fisioterapia contratado desde el inicio. En caso de no completar las sesiones acordadas por decisión propia, las sesiones realizadas se liquidarán a la tarifa individual vigente al momento de la contratación. Para cancelar o reprogramar una cita, deberá avisar con mínimo 24 horas de anticipación; de lo contrario, la sesión se contará como realizada y se descontará del paquete, excepto cuando se presente una urgencia o situación de fuerza mayor debidamente justificada.\n\n'
+      + 'Firma: {firmante}{calidad}, {tipo_documento} {documento}\n\nFecha: {fecha}' }
 ];
 var TIPOS_DOC = ['CC', 'TI', 'CE', 'Pasaporte', 'Otro'];
 var CC_PROFESIONAL = '1001315761';
+var NOMBRE_PROFESIONAL = 'Angie Lorena Ferrucho Sánchez';
 
 class Component extends DCLogic {
   constructor(props) { super(props); this.state = this.vacio(); }
   vacio() {
     return { cargando: true, ocupado: false, estado: '', error: false, paciente: null, tipo: 'iv', textos: {},
       editando: false, borrador: '', relacion: 'paciente', firmante: '', tipoDoc: 'CC', documento: '',
-      acepta: false, firmados: [], recordarFirma: true };
+      acepta: false, agujas: false, firmados: [], recordarFirma: true };
   }
   aviso(t, error) { this.setState({ estado: t, error: !!error }); }
   lz(id) { return APP.lienzo(id); }
@@ -2401,7 +2495,15 @@ class Component extends DCLogic {
     var calidad = s.relacion === 'acudiente' && s.paciente ? ', en calidad de responsable de ' + s.paciente.nombre : '';
     var d = new Date();
     var fecha = ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2) + '/' + d.getFullYear() + ', ' + d.getHours() + ':' + ('0' + d.getMinutes()).slice(-2);
-    return pl.titulo + '\n\n' + pl.texto.replace(/\{firmante\}/g, s.firmante.trim() || '________')
+    var p = s.paciente || {}, edad = '________';
+    if (p.fecha_nacimiento) { var n = F.deIso(p.fecha_nacimiento), e = d.getFullYear() - n.getFullYear(); if (d.getMonth() < n.getMonth() || (d.getMonth() === n.getMonth() && d.getDate() < n.getDate())) e--; edad = e + ' años'; }
+    var aut = (pl.opciones || []).map(function (o) {
+      var marcada = o.id === 'general' ? s.acepta : !!s[o.id];
+      return (marcada ? '☒ ' : '☐ ') + o.texto;
+    }).join('\n\n');
+    return pl.titulo + '\n\n' + pl.texto.replace(/\{paciente_nombre\}/g, p.nombre || '________')
+      .replace(/\{paciente_documento\}/g, p.cc ? 'CC ' + p.cc : '________').replace(/\{edad\}/g, edad).replace(/\{autorizacion\}/g, aut)
+      .replace(/\{firmante\}/g, s.firmante.trim() || '________')
       .replace(/\{tipo_documento\}/g, s.tipoDoc).replace(/\{documento\}/g, s.documento.trim() || '________')
       .replace(/\{calidad\}/g, calidad).replace(/\{fecha\}/g, fecha);
   }
@@ -2418,7 +2520,8 @@ class Component extends DCLogic {
     this.setState({ ocupado: true }); this.aviso('Guardando…');
     APP.u.sha256(JSON.stringify(datos)).then(function (huella) {
       return APP.db.crear('consentimientos', {
-        paciente_id: s.paciente.id, version_texto: pl.version || 1, texto: texto, servicios: [pl.nombre],
+        paciente_id: s.paciente.id, version_texto: pl.version || 1, texto: texto,
+        servicios: [pl.nombre].concat((pl.opciones || []).filter(function (o) { return o.registro && s[o.id]; }).map(function (o) { return o.registro; })),
         firmante_nombre: datos.firmante, firmante_documento: datos.documento, firmante_relacion: s.relacion,
         firma_paciente: fp, firma_profesional: fa, huella_sha256: huella, dispositivo: navigator.userAgent.slice(0, 200)
       });
@@ -2439,7 +2542,7 @@ class Component extends DCLogic {
     var cuerpo = '<pre style="font-size:11pt">' + u.esc(c.texto) + '</pre>'
       + '<div class="firma"><div><img src="' + c.firma_paciente + '" alt="Firma"><br><b>' + u.esc(c.firmante_nombre) + '</b><br>'
       + (c.firmante_documento ? u.esc(c.firmante_documento) + '<br>' : '') + (c.firmante_relacion === 'acudiente' ? 'Responsable de ' + u.esc(s.paciente.nombre) : 'Paciente') + '</div>'
-      + '<div><img src="' + c.firma_profesional + '" alt="Firma"><br><b>Angie Lorena Ferrucho</b><br>Fisioterapeuta · CC ' + CC_PROFESIONAL + '</div></div>'
+      + '<div><img src="' + c.firma_profesional + '" alt="Firma"><br><b>' + NOMBRE_PROFESIONAL + '</b><br>Fisioterapeuta · ' + (tipo === 'Fisioterapia' ? 'TP ' : 'CC ') + CC_PROFESIONAL + '</div></div>'
       + '<p class="nota">Firmado electrónicamente el ' + u.esc(cuando.toLocaleString('es-CO')) + '. Versión del texto: ' + (c.version_texto || 1)
       + '. Huella SHA-256 del documento: ' + u.esc(c.huella_sha256) + '. Registro ' + u.esc(c.id) + '.</p>';
     u.imprimir('Consentimiento informado – ' + tipo, cuerpo);
@@ -2461,7 +2564,7 @@ class Component extends DCLogic {
         return { nombre: x.nombre, on: on ? 'true' : 'false', bg: on ? '#EFF6FF' : '#FFFFFF', fg: on ? '#1E3A8A' : '#334155', borde: on ? '#1D4ED8' : '#CBD5E1',
           nota: f ? 'Firmado el ' + new Date(f.firmado_en || Date.now()).toLocaleDateString('es-CO') : (x.borrador && !s.textos[x.id] ? 'Pendiente del formato' : 'Sin firmar'),
           notaColor: f ? '#065F46' : '#64748B',
-          pick: function () { self.setState({ tipo: x.id, editando: false, acepta: false }); } };
+          pick: function () { self.setState({ tipo: x.id, editando: false, acepta: false, agujas: false }); } };
       }),
       esBorrador: !!pl.borrador,
       editando: s.editando, plantillaTxt: s.borrador, versionSiguiente: (pl.version || 0) + 1, nombreTipo: pl.nombre,
@@ -2486,6 +2589,8 @@ class Component extends DCLogic {
       setFirmante: function (e) { self.setState({ firmante: e.target.value }); },
       setDocumento: function (e) { self.setState({ documento: e.target.value }); },
       setTipoDoc: function (e) { self.setState({ tipoDoc: e.target.value }); },
+      hayAgujas: !!(pl.opciones && pl.opciones.some(function (o) { return o.id === 'agujas'; })),
+      agujas: s.agujas, toggleAgujas: function () { self.setState({ agujas: !self.state.agujas }); },
       acepta: s.acepta, toggleAcepta: function () { self.setState({ acepta: !self.state.acepta }); },
       recordarFirma: s.recordarFirma, toggleRecordar: function () { self.setState({ recordarFirma: !self.state.recordarFirma }); },
       borrarFirmaP: function () { if (lp) lp.limpiar(); },
@@ -2564,7 +2669,7 @@ class Component extends DCLogic {
 <span style="padding: 4px 12px; border-radius: 999px; background: {{e.bg}}; color: {{e.fg}}; font-size: 13px; font-weight: 800">{{e.etiqueta}}</span>
 </div>
 <template data-sc="if" value="{{e.hayResumen}}" hint-placeholder-val="{{ true }}"><div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; font-weight: 800; color: #475569">{{e.tituloResumen}}</span><p style="margin: 0; font-size: 15px; line-height: 1.5; white-space: pre-wrap">{{e.resumen}}</p></div></template>
-<template data-sc="if" value="{{e.hayNotas}}" hint-placeholder-val="{{ false }}"><div style="display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 12px; background: #F8FAFC"><span style="font-size: 13px; font-weight: 800; color: #475569">Notas clínicas (privadas)</span><p style="margin: 0; font-size: 15px; line-height: 1.5; white-space: pre-wrap">{{e.notas}}</p></div></template>
+<template data-sc="if" value="{{e.hayNotas}}" hint-placeholder-val="{{ false }}"><div style="display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 12px; background: #F8FAFC"><span style="font-size: 13px; font-weight: 800; color: #475569">{{e.tituloNotas}}</span><p style="margin: 0; font-size: 15px; line-height: 1.5; white-space: pre-wrap">{{e.notas}}</p></div></template>
 <template data-sc="if" value="{{e.hayEjercicios}}" hint-placeholder-val="{{ false }}"><div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; font-weight: 800; color: #047857">Ejercicios para casa</span><p style="margin: 0; font-size: 15px; line-height: 1.5; white-space: pre-wrap">{{e.ejercicios}}</p></div></template>
 <template data-sc="if" value="{{e.hayImagenes}}" hint-placeholder-val="{{ false }}">
 <div style="display: flex; flex-wrap: wrap; gap: 8px">
@@ -2630,7 +2735,7 @@ class Component extends DCLogic {
       if (x.dibujo && s.urls[x.dibujo]) imgs.push({ url: s.urls[x.dibujo], alt: 'Dibujo de la sesión' });
       (Array.isArray(x.fotos) ? x.fotos : []).forEach(function (f, i) { if (s.urls[f]) imgs.push({ url: s.urls[f], alt: 'Foto de evidencia ' + (i + 1) }); });
       lista.push({ fecha: x.fecha, tipo: 'sesion', titulo: 'Sesión ' + numero[x.id] + (s.paciente && s.paciente.plan_sesiones ? ' de ' + s.paciente.plan_sesiones : ''),
-        etiqueta: x.servicio || 'Sesión', bg: '#DBEAFE', fg: '#1E3A8A', tituloResumen: 'Lo que se realizó',
+        etiqueta: x.servicio || 'Sesión', bg: '#DBEAFE', fg: '#1E3A8A', tituloResumen: 'Lo que se realizó', tituloNotas: 'Notas clínicas (privadas)',
         resumen: x.resumen || '', notas: x.notas || '', ejercicios: x.ejercicios || '', imagenes: imgs,
         enlace: 'Sesion.dc.html?s=' + x.id, textoEnlace: 'Abrir sesión completa', orden: x.created_at || x.fecha });
     });
@@ -2638,13 +2743,14 @@ class Component extends DCLogic {
       var fecha = F.local(h.created_at);
       var conDx = !!h.nivel;
       lista.push({ fecha: fecha, tipo: 'valoracion', titulo: conDx ? 'Valoración y cuestionario detox' : 'Valoración inicial', etiqueta: conDx ? 'Detox ' + h.nivel + ' · ' + (h.puntaje_global || 0) + ' pts' : (((h.objetivos || {})._servicios || []).join(', ') || 'Valoración'),
-        bg: '#EDE9FE', fg: '#5B21B6', tituloResumen: 'Motivo de consulta', resumen: h.motivo || '', notas: '', ejercicios: '', imagenes: [],
+        bg: '#EDE9FE', fg: '#5B21B6', tituloResumen: 'Motivo de consulta', resumen: h.motivo || '',
+        notas: [(h.cie10 || []).map(function (c) { return c.codigo + ' ' + c.descripcion; }).join(' · '), h.diagnostico_fisio || ''].filter(Boolean).join('\n'), tituloNotas: 'Diagnóstico', ejercicios: '', imagenes: [],
         enlace: 'HistoriaClinica.dc.html?p=' + h.paciente_id, textoEnlace: 'Abrir historia clínica', orden: h.created_at || fecha });
     });
     if (s.filtro === 'todo' || s.filtro === 'consentimientos') s.consentimientos.forEach(function (c) {
       var fecha = F.local(c.firmado_en);
       lista.push({ fecha: fecha, tipo: 'consentimiento', titulo: 'Consentimiento firmado', etiqueta: (c.servicios && c.servicios[0]) || 'Consentimiento',
-        bg: '#D1FAE5', fg: '#065F46', tituloResumen: 'Firma', resumen: 'Firmó ' + c.firmante_nombre + (c.firmante_relacion === 'acudiente' ? ' (responsable)' : ''), notas: '', ejercicios: '', imagenes: [],
+        bg: '#D1FAE5', fg: '#065F46', tituloResumen: 'Firma', tituloNotas: '', resumen: 'Firmó ' + c.firmante_nombre + (c.firmante_relacion === 'acudiente' ? ' (responsable)' : ''), notas: '', ejercicios: '', imagenes: [],
         enlace: 'Consentimiento.dc.html?p=' + c.paciente_id, textoEnlace: 'Ver o imprimir', orden: c.firmado_en || fecha });
     });
     lista.sort(function (a, b) { return a.fecha < b.fecha ? 1 : a.fecha > b.fecha ? -1 : (a.orden < b.orden ? 1 : -1); });
@@ -2941,10 +3047,40 @@ class Component extends DCLogic {
       });
     };
   }
+  // Catálogo CIE-10 (se descarga solo la primera vez que se busca)
+  var cie = null;
+  function norm(t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+  APP.cie10 = {
+    cargar: function () {
+      if (!cie) cie = fetch('cie10.json').then(function (r) { if (!r.ok) throw new Error('No se pudo cargar el catálogo CIE-10.'); return r.json(); })
+        .then(function (l) { return l.map(function (x) { return { codigo: x[0], descripcion: x[1], b: norm(x[0] + ' ' + x[1] + ' ' + (x[2] || '')) }; }); })
+        .catch(function (e) { cie = null; throw e; });
+      return cie;
+    },
+    buscar: function (lista, q, max) {
+      var t = norm(q).replace(/\./g, '').split(/\s+/).filter(Boolean);
+      if (!t.length) return [];
+      var cod = t.length === 1 && /^[a-z]\d/.test(t[0]) ? t[0] : null;
+      var PRIO = { M: 0, S: 1, G: 2, R: 3, T: 4, Z: 5, Q: 6, I: 7 };
+      var r = lista.filter(function (x) {
+        if (cod && norm(x.codigo).indexOf(cod) === 0) return true;
+        return t.every(function (w) { return x.b.indexOf(w) !== -1; });
+      });
+      if (!cod) {
+        var d0 = t[0];
+        r = r.map(function (x) {
+          var desc = x.b.slice(x.codigo.length + 1), cap = PRIO[x.codigo.charAt(0).toUpperCase()];
+          return { x: x, p: (cap === undefined ? 9 : cap) * 10 + (desc.indexOf(d0) === 0 ? 0 : 1) + (x.codigo.length === 3 ? 0.5 : 0) };
+        }).sort(function (a, b) { return a.p - b.p || (a.x.codigo < b.x.codigo ? -1 : 1); }).map(function (o) { return o.x; });
+      }
+      return r.slice(0, max || 40);
+    }
+  };
   APP.db = DB;
   APP.mensajeError = function (e) {
     var m = (e && e.message) || String(e);
     if (/duplicate key|unique/i.test(m)) return 'Ya hay una cita en ese día y hora.';
+    if (/column|schema cache/i.test(m) && /examenes|cie10|diagnostico_fisio|objetivos_fisio/i.test(m)) return 'Falta ejecutar el script 003_fisioterapia.sql en Supabase.';
     if (/foreign key/i.test(m)) return 'Este paciente tiene un consentimiento firmado. Ese documento debe conservarse, así que el paciente no se puede eliminar; puedes marcarlo como dado de alta.';
     if (/fetch|network/i.test(m)) return 'Sin conexión con la base de datos. Revisa internet.';
     return m;
