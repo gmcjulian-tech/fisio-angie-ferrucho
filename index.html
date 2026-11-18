@@ -2041,13 +2041,27 @@ class Component extends DCLogic {
 </div>
 <a href="Terapias.dc.html" style="align-self: flex-start; font-size: 13px; font-weight: 700">Editar lista de terapias</a>
 </fieldset>
-<template data-sc="if" value="{{faltaConsent}}" hint-placeholder-val="{{ false }}">
-<div role="alert" style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 14px 16px; border-radius: 14px; background: #FFF7ED; border: 1px solid #FED7AA; color: #7C2D12">
-<span style="flex: 1 1 260px; font-size: 15px; font-weight: 700">{{falta.texto}}</span>
-<a href="Consentimiento.dc.html?p={{pidActual}}&amp;t={{falta.ta}}" style="min-height: 44px; display: inline-flex; align-items: center; padding: 0 16px; border-radius: 999px; background: #EA580C; color: #FFFFFF; text-decoration: none; font-weight: 800; font-size: 14px">{{falta.la}}</a>
-<template data-sc="if" value="{{falta.hayB}}" hint-placeholder-val="{{ false }}"><a href="Consentimiento.dc.html?p={{pidActual}}&amp;t={{falta.tb}}" style="min-height: 44px; display: inline-flex; align-items: center; padding: 0 16px; border-radius: 999px; background: #FFFFFF; border: 1.5px solid #EA580C; color: #9A3412; text-decoration: none; font-weight: 800; font-size: 14px">{{falta.lb}}</a></template>
+<template data-sc="if" value="{{hayRequisitos}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 8px; padding-top: 4px">
+<span style="font-size: 14px; font-weight: 800">Autorizaciones requeridas</span>
+<template data-sc="if" value="{{sinPacienteReq}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; font-size: 14px; color: #475569">Elige un paciente registrado para revisar sus autorizaciones.</p></template>
+<template data-sc="if" value="{{conPacienteReq}}" hint-placeholder-val="{{ true }}">
+<template data-sc="for" list="{{requisitos}}" as="r" hint-placeholder-count="2">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: {{r.bg}}; border: 1px solid {{r.borde}}">
+<div style="flex: 1 1 240px; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 15px; font-weight: 800">{{r.nombre}}</span>
+<span style="font-size: 13px; color: #475569">{{r.detalle}}</span>
+</div>
+<span style="font-size: 13px; font-weight: 800; color: {{r.fg}}">{{r.estado}}</span>
+<template data-sc="if" value="{{r.falta}}" hint-placeholder-val="{{ true }}">
+<template data-sc="for" list="{{r.botones}}" as="b" hint-placeholder-count="1"><button type="button" onClick="{{b.ir}}" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 0; background: #EA580C; color: #FFFFFF; font-family: inherit; font-weight: 800; font-size: 14px; cursor: pointer">{{b.texto}}</button></template>
+</template>
 </div>
 </template>
+</template>
+</div>
+</template>
+
 </section>
 
 <section aria-labelledby="t-s2" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 20px; padding: 22px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px">
@@ -2165,6 +2179,10 @@ class Component extends DCLogic {
   alMostrar(params) {
     var self = this;
     params = params || {};
+    if (params.reanudar && (this.state.pacienteId || this.state.pacQuery)) {
+      APP.db.listar('consentimientos').then(function (c) { self.setState({ consentimientos: c }); }).catch(function () {});
+      return;
+    }
     this.setState(this.vacio());
     setTimeout(function () {
       var lz = self.lienzo();
@@ -2232,6 +2250,7 @@ class Component extends DCLogic {
     var self = this, s = this.state, lz = this.lienzo();
     if (!s.pacienteId && !s.pacQuery.trim()) { this.aviso('Elige o escribe el paciente.', true); return; }
     if (!s.servicio) { this.aviso('Selecciona al menos una terapia aplicada.', true); return; }
+    if (s.pacienteId && this._faltantes && this._faltantes.length && !window.confirm('Faltan autorizaciones firmadas: ' + this._faltantes.join(', ') + '.\n\n¿Guardar la sesión de todas formas?')) return;
     this.setState({ ocupado: true }); this.aviso('Guardando…');
     var pacienteId;
     var paso = s.pacienteId ? Promise.resolve({ id: s.pacienteId }) : APP.db.pacientePorNombre(s.pacQuery);
@@ -2303,24 +2322,33 @@ class Component extends DCLogic {
     var firmados = s.consentimientos.filter(function (c) { return c.paciente_id === s.pacienteId; })
       .reduce(function (acc, c) { return acc.concat(c.servicios || []); }, []);
     var tiene = function (re) { return firmados.some(function (x) { return re.test(x); }); };
-    var falta = null;
     var lista = s.servicio ? s.servicio.split(', ') : [];
-    if (s.pacienteId && lista.length) {
-      if (lista.some(function (x) { return /sueroterapia/i.test(x); }) && !tiene(/sueroterapia/i))
-        falta = { texto: 'Este paciente no tiene firmado el consentimiento de sueroterapia.', a: ['iv', 'Firmar intravenosa'], b: ['neb', 'Firmar nebulizada'] };
-      else {
-        var agujas = lista.filter(function (x) { return /punci|electropunci|neural/i.test(x); });
-        var otras = lista.filter(function (x) { return !/sueroterapia|punci|electropunci|neural|^valoraci/i.test(x); });
-        if (agujas.length && !tiene(/agujas/i)) falta = { texto: 'Para ' + agujas.join(', ').toLowerCase() + ' falta el consentimiento de fisioterapia con la autorización de técnicas con agujas.', a: ['fisio', 'Firmar consentimiento'] };
-        else if (otras.length && !tiene(/^fisioterapia$/i)) falta = { texto: 'Este paciente no tiene firmado el consentimiento de fisioterapia.', a: ['fisio', 'Firmar consentimiento'] };
-      }
-    }
-    var faltaConsent = !!falta;
+    var fechaDe = function (re) {
+      var c = s.consentimientos.filter(function (c) { return c.paciente_id === s.pacienteId && (c.servicios || []).some(function (x) { return re.test(x); }); })[0];
+      return c ? new Date(c.firmado_en || Date.now()).toLocaleDateString('es-CO') : null;
+    };
+    var req = [];
+    if (lista.some(function (x) { return /sueroterapia/i.test(x); }))
+      req.push({ nombre: 'Sueroterapia', detalle: 'Intravenosa o nebulizada, según el procedimiento', fecha: fechaDe(/sueroterapia/i), botones: [['iv', 'Firmar intravenosa'], ['neb', 'Firmar nebulizada']] });
+    var agujas = lista.filter(function (x) { return /punci|electropunci|neural/i.test(x); });
+    var otras = lista.filter(function (x) { return !/sueroterapia|punci|electropunci|neural|^valoraci/i.test(x); });
+    if (agujas.length) req.push({ nombre: 'Fisioterapia con técnicas con agujas', detalle: 'Por ' + agujas.join(', ').toLowerCase() + ': el paciente debe marcar la casilla de agujas', fecha: fechaDe(/agujas/i), botones: [['fisio', 'Firmar ahora']] });
+    else if (otras.length) req.push({ nombre: 'Fisioterapia', detalle: 'Por ' + otras.join(', ').toLowerCase(), fecha: fechaDe(/^fisioterapia/i), botones: [['fisio', 'Firmar ahora']] });
+    this._faltantes = req.filter(function (r) { return !r.fecha; }).map(function (r) { return r.nombre; });
     var puede = APP.u.puedeCompartirArchivos();
     var set = function (k) { return function (e) { var o = { guardada: false }; o[k] = e.target.value; self.setState(o); }; };
     return {
-      faltaConsent: faltaConsent, pidActual: s.pacienteId || '',
-      falta: falta ? { texto: falta.texto, ta: falta.a[0], la: falta.a[1], hayB: !!falta.b, tb: falta.b ? falta.b[0] : '', lb: falta.b ? falta.b[1] : '' } : {},
+      pidActual: s.pacienteId || '',
+      hayRequisitos: req.length > 0,
+      sinPacienteReq: req.length > 0 && !s.pacienteId,
+      conPacienteReq: req.length > 0 && !!s.pacienteId,
+      requisitos: req.map(function (r) {
+        return { nombre: r.nombre, detalle: r.detalle, ok: !!r.fecha, falta: !r.fecha, estado: r.fecha ? '✓ Firmado el ' + r.fecha : 'Pendiente de firma',
+          bg: r.fecha ? '#ECFDF5' : '#FFF7ED', borde: r.fecha ? '#A7F3D0' : '#FED7AA', fg: r.fecha ? '#065F46' : '#9A3412',
+          botones: r.botones.map(function (b) {
+            return { texto: b[1], ir: function () { location.hash = '#Consentimiento?p=' + s.pacienteId + '&t=' + b[0] + '&volver=sesion' + (b[0] === 'fisio' && agujas.length ? '&agujas=1' : ''); } };
+          }) };
+      }),
       titulo: s.sesionId ? 'Sesión del ' + APP.f.corta(s.fecha) : 'Registrar sesión',
       subtitulo: s.cargando ? 'Cargando…' : (p.nombre ? p.nombre : 'Elige el paciente para empezar') + (s.cita && s.cita.hora != null ? ' · cita de las ' + APP.f.hora(s.cita.hora) : ''),
       pacQuery: s.pacQuery, pacFijo: s.pacFijo,
@@ -2423,7 +2451,8 @@ class Component extends DCLogic {
 <main style="flex: 1 1 560px; min-width: 0; padding: 28px 36px 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px; max-width: 980px">
 
 <header style="display: flex; flex-direction: column; gap: 4px">
-<a href="Pacientes.dc.html" style="font-size: 14px; font-weight: 700; text-decoration: none">← Pacientes</a>
+<template data-sc="if" value="{{volver}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{irSesion}}" style="align-self: flex-start; padding: 0; min-height: 32px; border: 0; background: none; color: #1D4ED8; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer">← Volver a la sesión</button></template>
+<template data-sc="if" value="{{noVolver}}" hint-placeholder-val="{{ true }}"><a href="Pacientes.dc.html" style="font-size: 14px; font-weight: 700; text-decoration: none">← Pacientes</a></template>
 <h1 style="margin: 0; font-size: 30px; font-weight: 800">Consentimiento informado</h1>
 <span style="font-size: 15px; color: #475569">{{subtitulo}}</span>
 </header>
@@ -2479,6 +2508,7 @@ class Component extends DCLogic {
 <div style="display: flex; flex-direction: column; gap: 6px"><label for="c-doc" style="font-size: 14px; font-weight: 700">Documento</label><div style="display: flex; gap: 8px"><label for="c-tipodoc" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Tipo de documento</label><select id="c-tipodoc" value="{{tipoDoc}}" onChange="{{setTipoDoc}}" style="min-height: 48px; padding: 0 10px; border: 1.5px solid #CBD5E1; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A; background: #FFFFFF"><template data-sc="for" list="{{tiposDoc}}" as="t" hint-placeholder-count="5"><option value="{{t.v}}">{{t.v}}</option></template></select><input id="c-doc" type="text" value="{{documento}}" onChange="{{setDocumento}}" style="flex: 1; min-width: 0; min-height: 48px; padding: 0 14px; border: 1.5px solid #CBD5E1; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A"></div></div>
 </div>
 <label style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #EFF6FF; font-size: 15px; line-height: 1.45; cursor: pointer"><input type="checkbox" checked="{{acepta}}" onChange="{{toggleAcepta}}" style="width: 22px; height: 22px; margin-top: 1px; flex: none; accent-color: #1D4ED8">Leí el texto anterior, recibí información clara y suficiente, resolví mis dudas y autorizo el procedimiento de forma libre y voluntaria.</label>
+<template data-sc="if" value="{{pideAgujas}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 10px 14px; border-radius: 12px; background: #FFF7ED; color: #9A3412; font-size: 14px; font-weight: 700">La sesión incluye técnicas con agujas: para autorizarlas, el paciente debe marcar también la casilla de agujas.</p></template>
 <template data-sc="if" value="{{hayAgujas}}" hint-placeholder-val="{{ false }}"><label style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #FFF7ED; font-size: 15px; line-height: 1.45; cursor: pointer"><input type="checkbox" checked="{{agujas}}" onChange="{{toggleAgujas}}" style="width: 22px; height: 22px; margin-top: 1px; flex: none; accent-color: #EA580C">Además, acepto que, si es necesario y después de explicarme el procedimiento, puedan proponerse técnicas con agujas (punción seca, electropunción o terapia neural). <span style="color: #9A3412; font-weight: 700">Opcional</span></label></template>
 </section>
 
@@ -2567,6 +2597,8 @@ class Component extends DCLogic {
     var self = this, pid = params && params.p;
     var inicial = this.vacio();
     if (params && params.t && PLANTILLAS.some(function (x) { return x.id === params.t; })) inicial.tipo = params.t;
+    inicial.volver = params && params.volver === 'sesion';
+    inicial.pideAgujas = !!(params && params.agujas);
     this.setState(inicial);
     setTimeout(function () { ['firmaP', 'firmaA'].forEach(function (k) { var l = self.lz(k); if (l) { l.reiniciar(); l.grosor = 5; } }); }, 0);
     if (!pid) { this.aviso('Abre el consentimiento desde la tarjeta del paciente.', true); return; }
@@ -2625,8 +2657,13 @@ class Component extends DCLogic {
     }).then(function (c) {
       lp.reiniciar();
       self.setState({ ocupado: false, acepta: false, firmados: [c].concat(self.state.firmados) });
-      self.aviso('Consentimiento firmado y guardado.');
-      self.imprimir(c);
+      if (self.state.volver) {
+        self.aviso('Consentimiento firmado. Volviendo a la sesión…');
+        setTimeout(function () { location.hash = '#Sesion?reanudar=1'; }, 1500);
+      } else {
+        self.aviso('Consentimiento firmado y guardado.');
+        self.imprimir(c);
+      }
     }).catch(function (e) { self.setState({ ocupado: false }); self.aviso('No se pudo guardar: ' + APP.mensajeError(e), true); });
   }
   imprimir(c) {
@@ -2646,6 +2683,8 @@ class Component extends DCLogic {
     var lp = this.lz('firmaP'), la = this.lz('firmaA');
     function firmadoDe(nombre) { return s.firmados.find(function (c) { return (c.servicios || []).indexOf(nombre) >= 0; }); }
     return {
+      volver: !!s.volver, noVolver: !s.volver, irSesion: function () { location.hash = '#Sesion?reanudar=1'; },
+      pideAgujas: !!s.pideAgujas && s.tipo === 'fisio',
       subtitulo: s.paciente ? s.paciente.nombre + (s.paciente.cc ? ' · CC ' + s.paciente.cc : '') : (s.cargando ? 'Cargando…' : ''),
       hayFirmados: s.firmados.length > 0,
       firmados: s.firmados.map(function (c) {
@@ -3653,7 +3692,8 @@ class Component extends DCLogic {
     var cajas = [].map.call(root.querySelectorAll('[data-scroll-id]'), function (x) { return [x.getAttribute('data-scroll-id'), x.scrollLeft, x.scrollTop]; });
     var vals;
     try { vals = ins.comp.renderVals(); } catch (e) { console.error(e); return; }
-    root.querySelectorAll('[data-keep]').forEach(function (n) { guardados[actual + ':' + n.getAttribute('data-keep')] = n; });
+    var previa = root.getAttribute('data-pantalla') || actual;
+    root.querySelectorAll('[data-keep]').forEach(function (n) { guardados[previa + ':' + n.getAttribute('data-keep')] = n; });
     var frag = document.createDocumentFragment();
     var hijos = ins.tpl.content.childNodes;
     for (var i = 0; i < hijos.length; i++) render(hijos[i], vals, frag);
@@ -3662,6 +3702,7 @@ class Component extends DCLogic {
       if (viejo && viejo !== n) n.replaceWith(viejo);
     });
     root.replaceChildren(frag);
+    root.setAttribute('data-pantalla', actual);
     root.querySelectorAll('canvas[data-lienzo]').forEach(iniciarLienzo);
     cajas.forEach(function (c) { var x = root.querySelector('[data-scroll-id="' + c[0] + '"]'); if (x) { x.scrollLeft = c[1]; x.scrollTop = c[2]; } });
     if (id) {
