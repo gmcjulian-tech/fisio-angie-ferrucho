@@ -49,6 +49,10 @@ body.demo .menu{height:calc(100vh - 38px)}
 .txt-corto{display:none}
 .solo-instalable{display:none !important}
 body.puede-instalar .solo-instalable{display:flex !important}
+.solo-admin{display:none !important}
+body.es-admin .solo-admin{display:flex !important}
+body.es-admin .solo-clinico{display:none !important}
+.marca-admin{display:none}body.es-admin .marca-admin{display:block}body.es-admin .marca-fisio{display:none}
 .aviso-instalar{position:fixed;left:12px;right:12px;bottom:84px;z-index:45;display:none;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:#1E3A8A;color:#fff;font-family:Nunito,system-ui,sans-serif;box-shadow:0 10px 28px rgba(15,42,74,.3)}
 .aviso-instalar svg{flex:none}
 .aviso-instalar p{margin:0;flex:1;font-size:14px;font-weight:700;line-height:1.35}
@@ -68,6 +72,7 @@ body.puede-instalar .solo-instalable{display:flex !important}
   body.puede-instalar.mostrar-aviso .aviso-instalar{display:flex}
   .menu{position:fixed;left:0;right:0;bottom:0;top:auto;height:auto;flex-direction:row;align-items:stretch;padding:4px 4px calc(4px + env(safe-area-inset-bottom));gap:0;border-right:0;border-top:1px solid #E2E8F0;z-index:40;box-shadow:0 -6px 18px rgba(15,42,74,.07)}
   .menu-marca{display:none}
+  .menu-link.no-movil{display:none}
   .menu-links{flex-direction:row;flex:1;gap:0}
   .menu-link{flex:1;flex-direction:column;justify-content:center;gap:2px;min-height:56px;padding:4px 2px;font-size:11px;text-align:center}
   .menu-link .ic{width:30px;height:30px}
@@ -133,7 +138,7 @@ class Component extends DCLogic {
 <script type="text/x-template" id="tpl-Main" data-title="Inicio – Angie Ferrucho Fisioterapia">
 <div style="font-family: Nunito, system-ui, sans-serif; color: #0F2A4A; background: #F3F8FF; min-height: 100vh; display: flex; flex-wrap: wrap; align-items: stretch">
 
-<nav aria-label="Menú principal" class="menu"><div class="menu-marca"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E3A8A"></rect><g fill="#93C5FD"><circle cx="154" cy="168" r="11"></circle><circle cx="188" cy="140" r="14"></circle><circle cx="228" cy="120" r="16"></circle></g><g fill="#F9A8D4"><circle cx="272" cy="110" r="16"></circle><circle cx="316" cy="110" r="14"></circle><circle cx="356" cy="118" r="11"></circle></g><circle cx="300" cy="196" r="34" fill="#fff"></circle><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M286 244 C 250 300, 236 336, 226 404" stroke-width="34"></path><path d="M276 268 C 316 256, 352 226, 384 182" stroke-width="28"></path><path d="M270 282 C 232 286, 196 276, 160 258" stroke-width="28"></path><path d="M240 340 C 276 356, 304 384, 318 420" stroke-width="30"></path></g></svg><div><b>Angie Ferrucho</b><small>FISIOTERAPEUTA</small></div></div><div class="menu-links"><a class="menu-link" href="Main.dc.html" aria-current="page"><span class="ic" style="background: #DBEAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"></path><path d="M9 21v-6h6v6"></path></svg></span><span class="largo">Inicio</span><span class="corto">Inicio</span></a><a class="menu-link" href="Agenda.dc.html"><span class="ic" style="background: #FFEDD5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span><span class="largo">Agenda</span><span class="corto">Agenda</span></a><a class="menu-link" href="Pacientes.dc.html"><span class="ic" style="background: #D1FAE5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"></path></svg></span><span class="largo">Pacientes</span><span class="corto">Pacientes</span></a><a class="menu-link" href="HistoriaClinica.dc.html"><span class="ic" style="background: #EDE9FE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></svg></span><span class="largo">Historia clínica</span><span class="corto">Historia</span></a><a class="menu-link" href="CodigosCIE.dc.html"><span class="ic" style="background: #CFFAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"></path><path d="M4 17a3 3 0 0 1 3-3h11M8 8h6"></path></svg></span><span class="largo">Códigos CIE-10</span><span class="corto">CIE-10</span></a></div><div class="menu-cuenta"><button type="button" data-action="instalar" class="solo-instalable"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg><span class="largo">Instalar app</span><span class="corto">Instalar</span></button><button type="button" data-action="clave"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="largo">Cambiar contraseña</span><span class="corto">Clave</span></button><button type="button" data-action="salir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg><span class="largo">Salir</span><span class="corto">Salir</span></button></div></nav>
+<nav aria-label="Menú principal" class="menu"><div class="menu-marca"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E3A8A"></rect><g fill="#93C5FD"><circle cx="154" cy="168" r="11"></circle><circle cx="188" cy="140" r="14"></circle><circle cx="228" cy="120" r="16"></circle></g><g fill="#F9A8D4"><circle cx="272" cy="110" r="16"></circle><circle cx="316" cy="110" r="14"></circle><circle cx="356" cy="118" r="11"></circle></g><circle cx="300" cy="196" r="34" fill="#fff"></circle><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M286 244 C 250 300, 236 336, 226 404" stroke-width="34"></path><path d="M276 268 C 316 256, 352 226, 384 182" stroke-width="28"></path><path d="M270 282 C 232 286, 196 276, 160 258" stroke-width="28"></path><path d="M240 340 C 276 356, 304 384, 318 420" stroke-width="30"></path></g></svg><div class="marca-fisio"><b>Angie Ferrucho</b><small>FISIOTERAPEUTA</small></div><div class="marca-admin"><b>Panel del software</b><small>ADMINISTRACIÓN</small></div></div><div class="menu-links"><a class="menu-link solo-clinico" href="Main.dc.html" aria-current="page"><span class="ic" style="background: #DBEAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"></path><path d="M9 21v-6h6v6"></path></svg></span><span class="largo">Inicio</span><span class="corto">Inicio</span></a><a class="menu-link solo-clinico" href="Agenda.dc.html"><span class="ic" style="background: #FFEDD5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span><span class="largo">Agenda</span><span class="corto">Agenda</span></a><a class="menu-link solo-clinico" href="Pacientes.dc.html"><span class="ic" style="background: #D1FAE5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"></path></svg></span><span class="largo">Pacientes</span><span class="corto">Pacientes</span></a><a class="menu-link solo-clinico" href="HistoriaClinica.dc.html"><span class="ic" style="background: #EDE9FE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></svg></span><span class="largo">Historia clínica</span><span class="corto">Historia</span></a><a class="menu-link solo-clinico" href="CodigosCIE.dc.html"><span class="ic" style="background: #CFFAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"></path><path d="M4 17a3 3 0 0 1 3-3h11M8 8h6"></path></svg></span><span class="largo">Códigos CIE-10</span><span class="corto">CIE-10</span></a><a class="menu-link solo-clinico no-movil" href="MiPlan.dc.html"><span class="ic" style="background: #FCE7F3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#BE185D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"></rect><path d="M3 10h18M7 15h4"></path></svg></span><span class="largo">Mi plan</span><span class="corto">Plan</span></a><a class="menu-link solo-admin" href="Administracion.dc.html"><span class="ic" style="background: #E2E8F0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg></span><span class="largo">Administración</span><span class="corto">Admin</span></a></div><div class="menu-cuenta"><button type="button" data-action="instalar" class="solo-instalable"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg><span class="largo">Instalar app</span><span class="corto">Instalar</span></button><button type="button" data-action="clave"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="largo">Cambiar contraseña</span><span class="corto">Clave</span></button><button type="button" data-action="salir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg><span class="largo">Salir</span><span class="corto">Salir</span></button></div></nav>
 
 <main style="flex: 999 1 560px; min-width: 0; padding: 36px 44px 48px; box-sizing: border-box; display: flex; flex-direction: column; gap: 30px; max-width: 1180px">
 
@@ -164,6 +169,14 @@ class Component extends DCLogic {
 
 </div>
 </section>
+
+<template data-sc="if" value="{{hayPlan}}" hint-placeholder-val="{{ false }}">
+<a href="MiPlan.dc.html" style="display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-radius: 20px; background: #FFFFFF; border: 1px solid #FBCFE8; color: #0F2A4A; text-decoration: none">
+<span style="width: 44px; height: 44px; flex: none; border-radius: 14px; background: #FCE7F3; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BE185D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"></rect><path d="M3 10h18M7 15h4"></path></svg></span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><b style="font-size: 15px">{{planTitulo}}</b><span style="font-size: 13.5px; color: #475569">{{planDetalle}}</span></span>
+<span style="font-size: 14px; font-weight: 800; color: #BE185D; white-space: nowrap">Ver →</span>
+</a>
+</template>
 
 <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start">
 <section aria-labelledby="proximas" style="flex: 3 1 440px; min-width: 0; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 20px; padding: 24px; box-sizing: border-box; display: flex; flex-direction: column; gap: 14px">
@@ -201,10 +214,17 @@ var TIPOS = {
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { cargando: true, error: '', citas: [], pacientes: [], sesiones: [], semana: [], historias: [] };
+    this.state = { cargando: true, error: '', citas: [], pacientes: [], sesiones: [], semana: [], historias: [], plan: null };
   }
   alMostrar() {
     var self = this, f = APP.f, hoy = f.hoy(), lun = f.lunes(hoy);
+    Promise.all([APP.db.rpc('mi_uso', { desde: hoy.slice(0, 8) + '01', hasta: hoy }), APP.cobro.tarifas()]).then(function (r) {
+      var u = (r[0] || [])[0];
+      if (!u) return;
+      var fin = f.iso(new Date(+hoy.slice(0, 4), +hoy.slice(5, 7), 0)), c = APP.cobro.cobro(u, r[1], fin);
+      self.setState({ plan: { titulo: 'Mi plan: ' + APP.cobro.cop(c.valor) + (c.porUso ? ' acumulado este mes' : ' este mes'),
+        detalle: APP.cobro.nombrePlan(u.plan) + ' · ' + u.pacientes_atendidos + ' pacientes y ' + u.sesiones + ' sesiones en ' + f.mes(hoy) } });
+    }).catch(function () {});
     this.setState({ cargando: true, error: '' });
     Promise.all([
       APP.db.listar('citas', { eq: [['fecha', hoy]], order: ['hora'] }),
@@ -257,7 +277,8 @@ class Component extends DCLogic {
       }),
       sinCitas: s.citas.length === 0,
       textoSinCitas: s.cargando ? 'Cargando…' : 'No hay citas para hoy.',
-      avisos: avisos, sinAvisos: avisos.length === 0 && !s.cargando
+      avisos: avisos, sinAvisos: avisos.length === 0 && !s.cargando,
+      hayPlan: !!s.plan, planTitulo: s.plan ? s.plan.titulo : '', planDetalle: s.plan ? s.plan.detalle : ''
     };
   }
 }
@@ -265,7 +286,7 @@ class Component extends DCLogic {
 <script type="text/x-template" id="tpl-Agenda" data-title="Agenda semanal – Angie Ferrucho Fisioterapia">
 <div style="font-family: Nunito, system-ui, sans-serif; color: #0F2A4A; background: #F3F8FF; min-height: 100vh; display: flex; flex-wrap: wrap; align-items: stretch">
 
-<nav aria-label="Menú principal" class="menu"><div class="menu-marca"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E3A8A"></rect><g fill="#93C5FD"><circle cx="154" cy="168" r="11"></circle><circle cx="188" cy="140" r="14"></circle><circle cx="228" cy="120" r="16"></circle></g><g fill="#F9A8D4"><circle cx="272" cy="110" r="16"></circle><circle cx="316" cy="110" r="14"></circle><circle cx="356" cy="118" r="11"></circle></g><circle cx="300" cy="196" r="34" fill="#fff"></circle><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M286 244 C 250 300, 236 336, 226 404" stroke-width="34"></path><path d="M276 268 C 316 256, 352 226, 384 182" stroke-width="28"></path><path d="M270 282 C 232 286, 196 276, 160 258" stroke-width="28"></path><path d="M240 340 C 276 356, 304 384, 318 420" stroke-width="30"></path></g></svg><div><b>Angie Ferrucho</b><small>FISIOTERAPEUTA</small></div></div><div class="menu-links"><a class="menu-link" href="Main.dc.html"><span class="ic" style="background: #DBEAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"></path><path d="M9 21v-6h6v6"></path></svg></span><span class="largo">Inicio</span><span class="corto">Inicio</span></a><a class="menu-link" href="Agenda.dc.html" aria-current="page"><span class="ic" style="background: #FFEDD5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span><span class="largo">Agenda</span><span class="corto">Agenda</span></a><a class="menu-link" href="Pacientes.dc.html"><span class="ic" style="background: #D1FAE5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"></path></svg></span><span class="largo">Pacientes</span><span class="corto">Pacientes</span></a><a class="menu-link" href="HistoriaClinica.dc.html"><span class="ic" style="background: #EDE9FE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></svg></span><span class="largo">Historia clínica</span><span class="corto">Historia</span></a><a class="menu-link" href="CodigosCIE.dc.html"><span class="ic" style="background: #CFFAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"></path><path d="M4 17a3 3 0 0 1 3-3h11M8 8h6"></path></svg></span><span class="largo">Códigos CIE-10</span><span class="corto">CIE-10</span></a></div><div class="menu-cuenta"><button type="button" data-action="instalar" class="solo-instalable"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg><span class="largo">Instalar app</span><span class="corto">Instalar</span></button><button type="button" data-action="clave"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="largo">Cambiar contraseña</span><span class="corto">Clave</span></button><button type="button" data-action="salir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg><span class="largo">Salir</span><span class="corto">Salir</span></button></div></nav>
+<nav aria-label="Menú principal" class="menu"><div class="menu-marca"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E3A8A"></rect><g fill="#93C5FD"><circle cx="154" cy="168" r="11"></circle><circle cx="188" cy="140" r="14"></circle><circle cx="228" cy="120" r="16"></circle></g><g fill="#F9A8D4"><circle cx="272" cy="110" r="16"></circle><circle cx="316" cy="110" r="14"></circle><circle cx="356" cy="118" r="11"></circle></g><circle cx="300" cy="196" r="34" fill="#fff"></circle><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M286 244 C 250 300, 236 336, 226 404" stroke-width="34"></path><path d="M276 268 C 316 256, 352 226, 384 182" stroke-width="28"></path><path d="M270 282 C 232 286, 196 276, 160 258" stroke-width="28"></path><path d="M240 340 C 276 356, 304 384, 318 420" stroke-width="30"></path></g></svg><div class="marca-fisio"><b>Angie Ferrucho</b><small>FISIOTERAPEUTA</small></div><div class="marca-admin"><b>Panel del software</b><small>ADMINISTRACIÓN</small></div></div><div class="menu-links"><a class="menu-link solo-clinico" href="Main.dc.html"><span class="ic" style="background: #DBEAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"></path><path d="M9 21v-6h6v6"></path></svg></span><span class="largo">Inicio</span><span class="corto">Inicio</span></a><a class="menu-link solo-clinico" href="Agenda.dc.html" aria-current="page"><span class="ic" style="background: #FFEDD5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span><span class="largo">Agenda</span><span class="corto">Agenda</span></a><a class="menu-link solo-clinico" href="Pacientes.dc.html"><span class="ic" style="background: #D1FAE5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"></path></svg></span><span class="largo">Pacientes</span><span class="corto">Pacientes</span></a><a class="menu-link solo-clinico" href="HistoriaClinica.dc.html"><span class="ic" style="background: #EDE9FE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></svg></span><span class="largo">Historia clínica</span><span class="corto">Historia</span></a><a class="menu-link solo-clinico" href="CodigosCIE.dc.html"><span class="ic" style="background: #CFFAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"></path><path d="M4 17a3 3 0 0 1 3-3h11M8 8h6"></path></svg></span><span class="largo">Códigos CIE-10</span><span class="corto">CIE-10</span></a><a class="menu-link solo-clinico no-movil" href="MiPlan.dc.html"><span class="ic" style="background: #FCE7F3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#BE185D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"></rect><path d="M3 10h18M7 15h4"></path></svg></span><span class="largo">Mi plan</span><span class="corto">Plan</span></a><a class="menu-link solo-admin" href="Administracion.dc.html"><span class="ic" style="background: #E2E8F0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg></span><span class="largo">Administración</span><span class="corto">Admin</span></a></div><div class="menu-cuenta"><button type="button" data-action="instalar" class="solo-instalable"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg><span class="largo">Instalar app</span><span class="corto">Instalar</span></button><button type="button" data-action="clave"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="largo">Cambiar contraseña</span><span class="corto">Clave</span></button><button type="button" data-action="salir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg><span class="largo">Salir</span><span class="corto">Salir</span></button></div></nav>
 
 <main style="flex: 999 1 560px; min-width: 0; padding: 32px 40px 48px; box-sizing: border-box; display: flex; flex-direction: column; gap: 22px">
 
@@ -706,7 +727,7 @@ class Component extends DCLogic {
 <script type="text/x-template" id="tpl-Pacientes" data-title="Pacientes y seguimiento – Angie Ferrucho Fisioterapia">
 <div style="font-family: Nunito, system-ui, sans-serif; color: #0F2A4A; background: #F3F8FF; min-height: 100vh; display: flex; flex-wrap: wrap; align-items: stretch">
 
-<nav aria-label="Menú principal" class="menu"><div class="menu-marca"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E3A8A"></rect><g fill="#93C5FD"><circle cx="154" cy="168" r="11"></circle><circle cx="188" cy="140" r="14"></circle><circle cx="228" cy="120" r="16"></circle></g><g fill="#F9A8D4"><circle cx="272" cy="110" r="16"></circle><circle cx="316" cy="110" r="14"></circle><circle cx="356" cy="118" r="11"></circle></g><circle cx="300" cy="196" r="34" fill="#fff"></circle><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M286 244 C 250 300, 236 336, 226 404" stroke-width="34"></path><path d="M276 268 C 316 256, 352 226, 384 182" stroke-width="28"></path><path d="M270 282 C 232 286, 196 276, 160 258" stroke-width="28"></path><path d="M240 340 C 276 356, 304 384, 318 420" stroke-width="30"></path></g></svg><div><b>Angie Ferrucho</b><small>FISIOTERAPEUTA</small></div></div><div class="menu-links"><a class="menu-link" href="Main.dc.html"><span class="ic" style="background: #DBEAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"></path><path d="M9 21v-6h6v6"></path></svg></span><span class="largo">Inicio</span><span class="corto">Inicio</span></a><a class="menu-link" href="Agenda.dc.html"><span class="ic" style="background: #FFEDD5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span><span class="largo">Agenda</span><span class="corto">Agenda</span></a><a class="menu-link" href="Pacientes.dc.html" aria-current="page"><span class="ic" style="background: #D1FAE5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"></path></svg></span><span class="largo">Pacientes</span><span class="corto">Pacientes</span></a><a class="menu-link" href="HistoriaClinica.dc.html"><span class="ic" style="background: #EDE9FE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></svg></span><span class="largo">Historia clínica</span><span class="corto">Historia</span></a><a class="menu-link" href="CodigosCIE.dc.html"><span class="ic" style="background: #CFFAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"></path><path d="M4 17a3 3 0 0 1 3-3h11M8 8h6"></path></svg></span><span class="largo">Códigos CIE-10</span><span class="corto">CIE-10</span></a></div><div class="menu-cuenta"><button type="button" data-action="instalar" class="solo-instalable"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg><span class="largo">Instalar app</span><span class="corto">Instalar</span></button><button type="button" data-action="clave"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="largo">Cambiar contraseña</span><span class="corto">Clave</span></button><button type="button" data-action="salir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg><span class="largo">Salir</span><span class="corto">Salir</span></button></div></nav>
+<nav aria-label="Menú principal" class="menu"><div class="menu-marca"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E3A8A"></rect><g fill="#93C5FD"><circle cx="154" cy="168" r="11"></circle><circle cx="188" cy="140" r="14"></circle><circle cx="228" cy="120" r="16"></circle></g><g fill="#F9A8D4"><circle cx="272" cy="110" r="16"></circle><circle cx="316" cy="110" r="14"></circle><circle cx="356" cy="118" r="11"></circle></g><circle cx="300" cy="196" r="34" fill="#fff"></circle><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M286 244 C 250 300, 236 336, 226 404" stroke-width="34"></path><path d="M276 268 C 316 256, 352 226, 384 182" stroke-width="28"></path><path d="M270 282 C 232 286, 196 276, 160 258" stroke-width="28"></path><path d="M240 340 C 276 356, 304 384, 318 420" stroke-width="30"></path></g></svg><div class="marca-fisio"><b>Angie Ferrucho</b><small>FISIOTERAPEUTA</small></div><div class="marca-admin"><b>Panel del software</b><small>ADMINISTRACIÓN</small></div></div><div class="menu-links"><a class="menu-link solo-clinico" href="Main.dc.html"><span class="ic" style="background: #DBEAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"></path><path d="M9 21v-6h6v6"></path></svg></span><span class="largo">Inicio</span><span class="corto">Inicio</span></a><a class="menu-link solo-clinico" href="Agenda.dc.html"><span class="ic" style="background: #FFEDD5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span><span class="largo">Agenda</span><span class="corto">Agenda</span></a><a class="menu-link solo-clinico" href="Pacientes.dc.html" aria-current="page"><span class="ic" style="background: #D1FAE5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"></path></svg></span><span class="largo">Pacientes</span><span class="corto">Pacientes</span></a><a class="menu-link solo-clinico" href="HistoriaClinica.dc.html"><span class="ic" style="background: #EDE9FE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></svg></span><span class="largo">Historia clínica</span><span class="corto">Historia</span></a><a class="menu-link solo-clinico" href="CodigosCIE.dc.html"><span class="ic" style="background: #CFFAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"></path><path d="M4 17a3 3 0 0 1 3-3h11M8 8h6"></path></svg></span><span class="largo">Códigos CIE-10</span><span class="corto">CIE-10</span></a><a class="menu-link solo-clinico no-movil" href="MiPlan.dc.html"><span class="ic" style="background: #FCE7F3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#BE185D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"></rect><path d="M3 10h18M7 15h4"></path></svg></span><span class="largo">Mi plan</span><span class="corto">Plan</span></a><a class="menu-link solo-admin" href="Administracion.dc.html"><span class="ic" style="background: #E2E8F0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg></span><span class="largo">Administración</span><span class="corto">Admin</span></a></div><div class="menu-cuenta"><button type="button" data-action="instalar" class="solo-instalable"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg><span class="largo">Instalar app</span><span class="corto">Instalar</span></button><button type="button" data-action="clave"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="largo">Cambiar contraseña</span><span class="corto">Clave</span></button><button type="button" data-action="salir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg><span class="largo">Salir</span><span class="corto">Salir</span></button></div></nav>
 
 <main style="flex: 999 1 560px; min-width: 0; padding: 32px 40px 48px; box-sizing: border-box; display: flex; flex-direction: column; gap: 22px">
 <header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px">
@@ -926,7 +947,7 @@ class Component extends DCLogic {
 <script type="text/x-template" id="tpl-Terapias" data-title="Servicios y terapias – Angie Ferrucho Fisioterapia">
 <div style="font-family: Nunito, system-ui, sans-serif; color: #0F2A4A; background: #F3F8FF; min-height: 100vh; display: flex; flex-wrap: wrap; align-items: stretch">
 
-<nav aria-label="Menú principal" class="menu"><div class="menu-marca"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E3A8A"></rect><g fill="#93C5FD"><circle cx="154" cy="168" r="11"></circle><circle cx="188" cy="140" r="14"></circle><circle cx="228" cy="120" r="16"></circle></g><g fill="#F9A8D4"><circle cx="272" cy="110" r="16"></circle><circle cx="316" cy="110" r="14"></circle><circle cx="356" cy="118" r="11"></circle></g><circle cx="300" cy="196" r="34" fill="#fff"></circle><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M286 244 C 250 300, 236 336, 226 404" stroke-width="34"></path><path d="M276 268 C 316 256, 352 226, 384 182" stroke-width="28"></path><path d="M270 282 C 232 286, 196 276, 160 258" stroke-width="28"></path><path d="M240 340 C 276 356, 304 384, 318 420" stroke-width="30"></path></g></svg><div><b>Angie Ferrucho</b><small>FISIOTERAPEUTA</small></div></div><div class="menu-links"><a class="menu-link" href="Main.dc.html"><span class="ic" style="background: #DBEAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"></path><path d="M9 21v-6h6v6"></path></svg></span><span class="largo">Inicio</span><span class="corto">Inicio</span></a><a class="menu-link" href="Agenda.dc.html"><span class="ic" style="background: #FFEDD5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span><span class="largo">Agenda</span><span class="corto">Agenda</span></a><a class="menu-link" href="Pacientes.dc.html"><span class="ic" style="background: #D1FAE5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"></path></svg></span><span class="largo">Pacientes</span><span class="corto">Pacientes</span></a><a class="menu-link" href="HistoriaClinica.dc.html"><span class="ic" style="background: #EDE9FE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></svg></span><span class="largo">Historia clínica</span><span class="corto">Historia</span></a><a class="menu-link" href="CodigosCIE.dc.html"><span class="ic" style="background: #CFFAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"></path><path d="M4 17a3 3 0 0 1 3-3h11M8 8h6"></path></svg></span><span class="largo">Códigos CIE-10</span><span class="corto">CIE-10</span></a></div><div class="menu-cuenta"><button type="button" data-action="instalar" class="solo-instalable"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg><span class="largo">Instalar app</span><span class="corto">Instalar</span></button><button type="button" data-action="clave"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="largo">Cambiar contraseña</span><span class="corto">Clave</span></button><button type="button" data-action="salir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg><span class="largo">Salir</span><span class="corto">Salir</span></button></div></nav>
+<nav aria-label="Menú principal" class="menu"><div class="menu-marca"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E3A8A"></rect><g fill="#93C5FD"><circle cx="154" cy="168" r="11"></circle><circle cx="188" cy="140" r="14"></circle><circle cx="228" cy="120" r="16"></circle></g><g fill="#F9A8D4"><circle cx="272" cy="110" r="16"></circle><circle cx="316" cy="110" r="14"></circle><circle cx="356" cy="118" r="11"></circle></g><circle cx="300" cy="196" r="34" fill="#fff"></circle><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M286 244 C 250 300, 236 336, 226 404" stroke-width="34"></path><path d="M276 268 C 316 256, 352 226, 384 182" stroke-width="28"></path><path d="M270 282 C 232 286, 196 276, 160 258" stroke-width="28"></path><path d="M240 340 C 276 356, 304 384, 318 420" stroke-width="30"></path></g></svg><div class="marca-fisio"><b>Angie Ferrucho</b><small>FISIOTERAPEUTA</small></div><div class="marca-admin"><b>Panel del software</b><small>ADMINISTRACIÓN</small></div></div><div class="menu-links"><a class="menu-link solo-clinico" href="Main.dc.html"><span class="ic" style="background: #DBEAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"></path><path d="M9 21v-6h6v6"></path></svg></span><span class="largo">Inicio</span><span class="corto">Inicio</span></a><a class="menu-link solo-clinico" href="Agenda.dc.html"><span class="ic" style="background: #FFEDD5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span><span class="largo">Agenda</span><span class="corto">Agenda</span></a><a class="menu-link solo-clinico" href="Pacientes.dc.html"><span class="ic" style="background: #D1FAE5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"></path></svg></span><span class="largo">Pacientes</span><span class="corto">Pacientes</span></a><a class="menu-link solo-clinico" href="HistoriaClinica.dc.html"><span class="ic" style="background: #EDE9FE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></svg></span><span class="largo">Historia clínica</span><span class="corto">Historia</span></a><a class="menu-link solo-clinico" href="CodigosCIE.dc.html"><span class="ic" style="background: #CFFAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"></path><path d="M4 17a3 3 0 0 1 3-3h11M8 8h6"></path></svg></span><span class="largo">Códigos CIE-10</span><span class="corto">CIE-10</span></a><a class="menu-link solo-clinico no-movil" href="MiPlan.dc.html"><span class="ic" style="background: #FCE7F3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#BE185D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"></rect><path d="M3 10h18M7 15h4"></path></svg></span><span class="largo">Mi plan</span><span class="corto">Plan</span></a><a class="menu-link solo-admin" href="Administracion.dc.html"><span class="ic" style="background: #E2E8F0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg></span><span class="largo">Administración</span><span class="corto">Admin</span></a></div><div class="menu-cuenta"><button type="button" data-action="instalar" class="solo-instalable"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg><span class="largo">Instalar app</span><span class="corto">Instalar</span></button><button type="button" data-action="clave"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="largo">Cambiar contraseña</span><span class="corto">Clave</span></button><button type="button" data-action="salir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg><span class="largo">Salir</span><span class="corto">Salir</span></button></div></nav>
 
 <main style="flex: 999 1 560px; min-width: 0; padding: 32px 40px 48px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
 <header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px">
@@ -1095,7 +1116,7 @@ class Component extends DCLogic {
 <script type="text/x-template" id="tpl-HistoriaClinica" data-title="Historia clínica – Angie Ferrucho Fisioterapia">
 <div style="font-family: Nunito, system-ui, sans-serif; color: #0F2A4A; background: #F3F8FF; min-height: 100vh; display: flex; flex-wrap: wrap; align-items: stretch">
 
-<nav aria-label="Menú principal" class="menu"><div class="menu-marca"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E3A8A"></rect><g fill="#93C5FD"><circle cx="154" cy="168" r="11"></circle><circle cx="188" cy="140" r="14"></circle><circle cx="228" cy="120" r="16"></circle></g><g fill="#F9A8D4"><circle cx="272" cy="110" r="16"></circle><circle cx="316" cy="110" r="14"></circle><circle cx="356" cy="118" r="11"></circle></g><circle cx="300" cy="196" r="34" fill="#fff"></circle><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M286 244 C 250 300, 236 336, 226 404" stroke-width="34"></path><path d="M276 268 C 316 256, 352 226, 384 182" stroke-width="28"></path><path d="M270 282 C 232 286, 196 276, 160 258" stroke-width="28"></path><path d="M240 340 C 276 356, 304 384, 318 420" stroke-width="30"></path></g></svg><div><b>Angie Ferrucho</b><small>FISIOTERAPEUTA</small></div></div><div class="menu-links"><a class="menu-link" href="Main.dc.html"><span class="ic" style="background: #DBEAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"></path><path d="M9 21v-6h6v6"></path></svg></span><span class="largo">Inicio</span><span class="corto">Inicio</span></a><a class="menu-link" href="Agenda.dc.html"><span class="ic" style="background: #FFEDD5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span><span class="largo">Agenda</span><span class="corto">Agenda</span></a><a class="menu-link" href="Pacientes.dc.html"><span class="ic" style="background: #D1FAE5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"></path></svg></span><span class="largo">Pacientes</span><span class="corto">Pacientes</span></a><a class="menu-link" href="HistoriaClinica.dc.html" aria-current="page"><span class="ic" style="background: #EDE9FE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></svg></span><span class="largo">Historia clínica</span><span class="corto">Historia</span></a><a class="menu-link" href="CodigosCIE.dc.html"><span class="ic" style="background: #CFFAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"></path><path d="M4 17a3 3 0 0 1 3-3h11M8 8h6"></path></svg></span><span class="largo">Códigos CIE-10</span><span class="corto">CIE-10</span></a></div><div class="menu-cuenta"><button type="button" data-action="instalar" class="solo-instalable"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg><span class="largo">Instalar app</span><span class="corto">Instalar</span></button><button type="button" data-action="clave"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="largo">Cambiar contraseña</span><span class="corto">Clave</span></button><button type="button" data-action="salir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg><span class="largo">Salir</span><span class="corto">Salir</span></button></div></nav>
+<nav aria-label="Menú principal" class="menu"><div class="menu-marca"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E3A8A"></rect><g fill="#93C5FD"><circle cx="154" cy="168" r="11"></circle><circle cx="188" cy="140" r="14"></circle><circle cx="228" cy="120" r="16"></circle></g><g fill="#F9A8D4"><circle cx="272" cy="110" r="16"></circle><circle cx="316" cy="110" r="14"></circle><circle cx="356" cy="118" r="11"></circle></g><circle cx="300" cy="196" r="34" fill="#fff"></circle><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M286 244 C 250 300, 236 336, 226 404" stroke-width="34"></path><path d="M276 268 C 316 256, 352 226, 384 182" stroke-width="28"></path><path d="M270 282 C 232 286, 196 276, 160 258" stroke-width="28"></path><path d="M240 340 C 276 356, 304 384, 318 420" stroke-width="30"></path></g></svg><div class="marca-fisio"><b>Angie Ferrucho</b><small>FISIOTERAPEUTA</small></div><div class="marca-admin"><b>Panel del software</b><small>ADMINISTRACIÓN</small></div></div><div class="menu-links"><a class="menu-link solo-clinico" href="Main.dc.html"><span class="ic" style="background: #DBEAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"></path><path d="M9 21v-6h6v6"></path></svg></span><span class="largo">Inicio</span><span class="corto">Inicio</span></a><a class="menu-link solo-clinico" href="Agenda.dc.html"><span class="ic" style="background: #FFEDD5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span><span class="largo">Agenda</span><span class="corto">Agenda</span></a><a class="menu-link solo-clinico" href="Pacientes.dc.html"><span class="ic" style="background: #D1FAE5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"></path></svg></span><span class="largo">Pacientes</span><span class="corto">Pacientes</span></a><a class="menu-link solo-clinico" href="HistoriaClinica.dc.html" aria-current="page"><span class="ic" style="background: #EDE9FE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></svg></span><span class="largo">Historia clínica</span><span class="corto">Historia</span></a><a class="menu-link solo-clinico" href="CodigosCIE.dc.html"><span class="ic" style="background: #CFFAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"></path><path d="M4 17a3 3 0 0 1 3-3h11M8 8h6"></path></svg></span><span class="largo">Códigos CIE-10</span><span class="corto">CIE-10</span></a><a class="menu-link solo-clinico no-movil" href="MiPlan.dc.html"><span class="ic" style="background: #FCE7F3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#BE185D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"></rect><path d="M3 10h18M7 15h4"></path></svg></span><span class="largo">Mi plan</span><span class="corto">Plan</span></a><a class="menu-link solo-admin" href="Administracion.dc.html"><span class="ic" style="background: #E2E8F0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg></span><span class="largo">Administración</span><span class="corto">Admin</span></a></div><div class="menu-cuenta"><button type="button" data-action="instalar" class="solo-instalable"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg><span class="largo">Instalar app</span><span class="corto">Instalar</span></button><button type="button" data-action="clave"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="largo">Cambiar contraseña</span><span class="corto">Clave</span></button><button type="button" data-action="salir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg><span class="largo">Salir</span><span class="corto">Salir</span></button></div></nav>
 
 <main style="flex: 999 1 560px; min-width: 0; padding: 32px 40px 48px; box-sizing: border-box; display: flex; flex-direction: column; gap: 22px">
 <header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px">
@@ -2005,7 +2026,7 @@ class Component extends DCLogic {
 </script>
 <script type="text/x-template" id="tpl-Sesion" data-title="Sesión – Angie Ferrucho Fisioterapia">
 <div style="font-family: Nunito, system-ui, sans-serif; color: #0F2A4A; background: #F5F8FC; min-height: 100vh; display: flex; align-items: stretch">
-<nav aria-label="Menú principal" class="menu"><div class="menu-marca"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E3A8A"></rect><g fill="#93C5FD"><circle cx="154" cy="168" r="11"></circle><circle cx="188" cy="140" r="14"></circle><circle cx="228" cy="120" r="16"></circle></g><g fill="#F9A8D4"><circle cx="272" cy="110" r="16"></circle><circle cx="316" cy="110" r="14"></circle><circle cx="356" cy="118" r="11"></circle></g><circle cx="300" cy="196" r="34" fill="#fff"></circle><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M286 244 C 250 300, 236 336, 226 404" stroke-width="34"></path><path d="M276 268 C 316 256, 352 226, 384 182" stroke-width="28"></path><path d="M270 282 C 232 286, 196 276, 160 258" stroke-width="28"></path><path d="M240 340 C 276 356, 304 384, 318 420" stroke-width="30"></path></g></svg><div><b>Angie Ferrucho</b><small>FISIOTERAPEUTA</small></div></div><div class="menu-links"><a class="menu-link" href="Main.dc.html"><span class="ic" style="background: #DBEAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"></path><path d="M9 21v-6h6v6"></path></svg></span><span class="largo">Inicio</span><span class="corto">Inicio</span></a><a class="menu-link" href="Agenda.dc.html"><span class="ic" style="background: #FFEDD5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span><span class="largo">Agenda</span><span class="corto">Agenda</span></a><a class="menu-link" href="Pacientes.dc.html" aria-current="page"><span class="ic" style="background: #D1FAE5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"></path></svg></span><span class="largo">Pacientes</span><span class="corto">Pacientes</span></a><a class="menu-link" href="HistoriaClinica.dc.html"><span class="ic" style="background: #EDE9FE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></svg></span><span class="largo">Historia clínica</span><span class="corto">Historia</span></a><a class="menu-link" href="CodigosCIE.dc.html"><span class="ic" style="background: #CFFAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"></path><path d="M4 17a3 3 0 0 1 3-3h11M8 8h6"></path></svg></span><span class="largo">Códigos CIE-10</span><span class="corto">CIE-10</span></a></div><div class="menu-cuenta"><button type="button" data-action="instalar" class="solo-instalable"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg><span class="largo">Instalar app</span><span class="corto">Instalar</span></button><button type="button" data-action="clave"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="largo">Cambiar contraseña</span><span class="corto">Clave</span></button><button type="button" data-action="salir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg><span class="largo">Salir</span><span class="corto">Salir</span></button></div></nav>
+<nav aria-label="Menú principal" class="menu"><div class="menu-marca"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E3A8A"></rect><g fill="#93C5FD"><circle cx="154" cy="168" r="11"></circle><circle cx="188" cy="140" r="14"></circle><circle cx="228" cy="120" r="16"></circle></g><g fill="#F9A8D4"><circle cx="272" cy="110" r="16"></circle><circle cx="316" cy="110" r="14"></circle><circle cx="356" cy="118" r="11"></circle></g><circle cx="300" cy="196" r="34" fill="#fff"></circle><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M286 244 C 250 300, 236 336, 226 404" stroke-width="34"></path><path d="M276 268 C 316 256, 352 226, 384 182" stroke-width="28"></path><path d="M270 282 C 232 286, 196 276, 160 258" stroke-width="28"></path><path d="M240 340 C 276 356, 304 384, 318 420" stroke-width="30"></path></g></svg><div class="marca-fisio"><b>Angie Ferrucho</b><small>FISIOTERAPEUTA</small></div><div class="marca-admin"><b>Panel del software</b><small>ADMINISTRACIÓN</small></div></div><div class="menu-links"><a class="menu-link solo-clinico" href="Main.dc.html"><span class="ic" style="background: #DBEAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"></path><path d="M9 21v-6h6v6"></path></svg></span><span class="largo">Inicio</span><span class="corto">Inicio</span></a><a class="menu-link solo-clinico" href="Agenda.dc.html"><span class="ic" style="background: #FFEDD5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span><span class="largo">Agenda</span><span class="corto">Agenda</span></a><a class="menu-link solo-clinico" href="Pacientes.dc.html" aria-current="page"><span class="ic" style="background: #D1FAE5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"></path></svg></span><span class="largo">Pacientes</span><span class="corto">Pacientes</span></a><a class="menu-link solo-clinico" href="HistoriaClinica.dc.html"><span class="ic" style="background: #EDE9FE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></svg></span><span class="largo">Historia clínica</span><span class="corto">Historia</span></a><a class="menu-link solo-clinico" href="CodigosCIE.dc.html"><span class="ic" style="background: #CFFAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"></path><path d="M4 17a3 3 0 0 1 3-3h11M8 8h6"></path></svg></span><span class="largo">Códigos CIE-10</span><span class="corto">CIE-10</span></a><a class="menu-link solo-clinico no-movil" href="MiPlan.dc.html"><span class="ic" style="background: #FCE7F3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#BE185D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"></rect><path d="M3 10h18M7 15h4"></path></svg></span><span class="largo">Mi plan</span><span class="corto">Plan</span></a><a class="menu-link solo-admin" href="Administracion.dc.html"><span class="ic" style="background: #E2E8F0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg></span><span class="largo">Administración</span><span class="corto">Admin</span></a></div><div class="menu-cuenta"><button type="button" data-action="instalar" class="solo-instalable"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg><span class="largo">Instalar app</span><span class="corto">Instalar</span></button><button type="button" data-action="clave"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="largo">Cambiar contraseña</span><span class="corto">Clave</span></button><button type="button" data-action="salir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg><span class="largo">Salir</span><span class="corto">Salir</span></button></div></nav>
 <main style="flex: 1 1 560px; min-width: 0; padding: 28px 36px 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px; max-width: 1100px">
 
 <header style="display: flex; flex-direction: column; gap: 4px">
@@ -2447,7 +2468,7 @@ class Component extends DCLogic {
 </script>
 <script type="text/x-template" id="tpl-Consentimiento" data-title="Consentimiento informado – Angie Ferrucho Fisioterapia">
 <div style="font-family: Nunito, system-ui, sans-serif; color: #0F2A4A; background: #F5F8FC; min-height: 100vh; display: flex; align-items: stretch">
-<nav aria-label="Menú principal" class="menu"><div class="menu-marca"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E3A8A"></rect><g fill="#93C5FD"><circle cx="154" cy="168" r="11"></circle><circle cx="188" cy="140" r="14"></circle><circle cx="228" cy="120" r="16"></circle></g><g fill="#F9A8D4"><circle cx="272" cy="110" r="16"></circle><circle cx="316" cy="110" r="14"></circle><circle cx="356" cy="118" r="11"></circle></g><circle cx="300" cy="196" r="34" fill="#fff"></circle><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M286 244 C 250 300, 236 336, 226 404" stroke-width="34"></path><path d="M276 268 C 316 256, 352 226, 384 182" stroke-width="28"></path><path d="M270 282 C 232 286, 196 276, 160 258" stroke-width="28"></path><path d="M240 340 C 276 356, 304 384, 318 420" stroke-width="30"></path></g></svg><div><b>Angie Ferrucho</b><small>FISIOTERAPEUTA</small></div></div><div class="menu-links"><a class="menu-link" href="Main.dc.html"><span class="ic" style="background: #DBEAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"></path><path d="M9 21v-6h6v6"></path></svg></span><span class="largo">Inicio</span><span class="corto">Inicio</span></a><a class="menu-link" href="Agenda.dc.html"><span class="ic" style="background: #FFEDD5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span><span class="largo">Agenda</span><span class="corto">Agenda</span></a><a class="menu-link" href="Pacientes.dc.html" aria-current="page"><span class="ic" style="background: #D1FAE5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"></path></svg></span><span class="largo">Pacientes</span><span class="corto">Pacientes</span></a><a class="menu-link" href="HistoriaClinica.dc.html"><span class="ic" style="background: #EDE9FE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></svg></span><span class="largo">Historia clínica</span><span class="corto">Historia</span></a><a class="menu-link" href="CodigosCIE.dc.html"><span class="ic" style="background: #CFFAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"></path><path d="M4 17a3 3 0 0 1 3-3h11M8 8h6"></path></svg></span><span class="largo">Códigos CIE-10</span><span class="corto">CIE-10</span></a></div><div class="menu-cuenta"><button type="button" data-action="instalar" class="solo-instalable"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg><span class="largo">Instalar app</span><span class="corto">Instalar</span></button><button type="button" data-action="clave"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="largo">Cambiar contraseña</span><span class="corto">Clave</span></button><button type="button" data-action="salir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg><span class="largo">Salir</span><span class="corto">Salir</span></button></div></nav>
+<nav aria-label="Menú principal" class="menu"><div class="menu-marca"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E3A8A"></rect><g fill="#93C5FD"><circle cx="154" cy="168" r="11"></circle><circle cx="188" cy="140" r="14"></circle><circle cx="228" cy="120" r="16"></circle></g><g fill="#F9A8D4"><circle cx="272" cy="110" r="16"></circle><circle cx="316" cy="110" r="14"></circle><circle cx="356" cy="118" r="11"></circle></g><circle cx="300" cy="196" r="34" fill="#fff"></circle><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M286 244 C 250 300, 236 336, 226 404" stroke-width="34"></path><path d="M276 268 C 316 256, 352 226, 384 182" stroke-width="28"></path><path d="M270 282 C 232 286, 196 276, 160 258" stroke-width="28"></path><path d="M240 340 C 276 356, 304 384, 318 420" stroke-width="30"></path></g></svg><div class="marca-fisio"><b>Angie Ferrucho</b><small>FISIOTERAPEUTA</small></div><div class="marca-admin"><b>Panel del software</b><small>ADMINISTRACIÓN</small></div></div><div class="menu-links"><a class="menu-link solo-clinico" href="Main.dc.html"><span class="ic" style="background: #DBEAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"></path><path d="M9 21v-6h6v6"></path></svg></span><span class="largo">Inicio</span><span class="corto">Inicio</span></a><a class="menu-link solo-clinico" href="Agenda.dc.html"><span class="ic" style="background: #FFEDD5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span><span class="largo">Agenda</span><span class="corto">Agenda</span></a><a class="menu-link solo-clinico" href="Pacientes.dc.html" aria-current="page"><span class="ic" style="background: #D1FAE5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"></path></svg></span><span class="largo">Pacientes</span><span class="corto">Pacientes</span></a><a class="menu-link solo-clinico" href="HistoriaClinica.dc.html"><span class="ic" style="background: #EDE9FE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></svg></span><span class="largo">Historia clínica</span><span class="corto">Historia</span></a><a class="menu-link solo-clinico" href="CodigosCIE.dc.html"><span class="ic" style="background: #CFFAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"></path><path d="M4 17a3 3 0 0 1 3-3h11M8 8h6"></path></svg></span><span class="largo">Códigos CIE-10</span><span class="corto">CIE-10</span></a><a class="menu-link solo-clinico no-movil" href="MiPlan.dc.html"><span class="ic" style="background: #FCE7F3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#BE185D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"></rect><path d="M3 10h18M7 15h4"></path></svg></span><span class="largo">Mi plan</span><span class="corto">Plan</span></a><a class="menu-link solo-admin" href="Administracion.dc.html"><span class="ic" style="background: #E2E8F0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg></span><span class="largo">Administración</span><span class="corto">Admin</span></a></div><div class="menu-cuenta"><button type="button" data-action="instalar" class="solo-instalable"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg><span class="largo">Instalar app</span><span class="corto">Instalar</span></button><button type="button" data-action="clave"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="largo">Cambiar contraseña</span><span class="corto">Clave</span></button><button type="button" data-action="salir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg><span class="largo">Salir</span><span class="corto">Salir</span></button></div></nav>
 <main style="flex: 1 1 560px; min-width: 0; padding: 28px 36px 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px; max-width: 980px">
 
 <header style="display: flex; flex-direction: column; gap: 4px">
@@ -2738,7 +2759,7 @@ class Component extends DCLogic {
 </script>
 <script type="text/x-template" id="tpl-Evolucion" data-title="Evolución – Angie Ferrucho Fisioterapia">
 <div style="font-family: Nunito, system-ui, sans-serif; color: #0F2A4A; background: #F5F8FC; min-height: 100vh; display: flex; align-items: stretch">
-<nav aria-label="Menú principal" class="menu"><div class="menu-marca"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E3A8A"></rect><g fill="#93C5FD"><circle cx="154" cy="168" r="11"></circle><circle cx="188" cy="140" r="14"></circle><circle cx="228" cy="120" r="16"></circle></g><g fill="#F9A8D4"><circle cx="272" cy="110" r="16"></circle><circle cx="316" cy="110" r="14"></circle><circle cx="356" cy="118" r="11"></circle></g><circle cx="300" cy="196" r="34" fill="#fff"></circle><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M286 244 C 250 300, 236 336, 226 404" stroke-width="34"></path><path d="M276 268 C 316 256, 352 226, 384 182" stroke-width="28"></path><path d="M270 282 C 232 286, 196 276, 160 258" stroke-width="28"></path><path d="M240 340 C 276 356, 304 384, 318 420" stroke-width="30"></path></g></svg><div><b>Angie Ferrucho</b><small>FISIOTERAPEUTA</small></div></div><div class="menu-links"><a class="menu-link" href="Main.dc.html"><span class="ic" style="background: #DBEAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"></path><path d="M9 21v-6h6v6"></path></svg></span><span class="largo">Inicio</span><span class="corto">Inicio</span></a><a class="menu-link" href="Agenda.dc.html"><span class="ic" style="background: #FFEDD5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span><span class="largo">Agenda</span><span class="corto">Agenda</span></a><a class="menu-link" href="Pacientes.dc.html" aria-current="page"><span class="ic" style="background: #D1FAE5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"></path></svg></span><span class="largo">Pacientes</span><span class="corto">Pacientes</span></a><a class="menu-link" href="HistoriaClinica.dc.html"><span class="ic" style="background: #EDE9FE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></svg></span><span class="largo">Historia clínica</span><span class="corto">Historia</span></a><a class="menu-link" href="CodigosCIE.dc.html"><span class="ic" style="background: #CFFAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"></path><path d="M4 17a3 3 0 0 1 3-3h11M8 8h6"></path></svg></span><span class="largo">Códigos CIE-10</span><span class="corto">CIE-10</span></a></div><div class="menu-cuenta"><button type="button" data-action="instalar" class="solo-instalable"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg><span class="largo">Instalar app</span><span class="corto">Instalar</span></button><button type="button" data-action="clave"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="largo">Cambiar contraseña</span><span class="corto">Clave</span></button><button type="button" data-action="salir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg><span class="largo">Salir</span><span class="corto">Salir</span></button></div></nav>
+<nav aria-label="Menú principal" class="menu"><div class="menu-marca"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E3A8A"></rect><g fill="#93C5FD"><circle cx="154" cy="168" r="11"></circle><circle cx="188" cy="140" r="14"></circle><circle cx="228" cy="120" r="16"></circle></g><g fill="#F9A8D4"><circle cx="272" cy="110" r="16"></circle><circle cx="316" cy="110" r="14"></circle><circle cx="356" cy="118" r="11"></circle></g><circle cx="300" cy="196" r="34" fill="#fff"></circle><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M286 244 C 250 300, 236 336, 226 404" stroke-width="34"></path><path d="M276 268 C 316 256, 352 226, 384 182" stroke-width="28"></path><path d="M270 282 C 232 286, 196 276, 160 258" stroke-width="28"></path><path d="M240 340 C 276 356, 304 384, 318 420" stroke-width="30"></path></g></svg><div class="marca-fisio"><b>Angie Ferrucho</b><small>FISIOTERAPEUTA</small></div><div class="marca-admin"><b>Panel del software</b><small>ADMINISTRACIÓN</small></div></div><div class="menu-links"><a class="menu-link solo-clinico" href="Main.dc.html"><span class="ic" style="background: #DBEAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"></path><path d="M9 21v-6h6v6"></path></svg></span><span class="largo">Inicio</span><span class="corto">Inicio</span></a><a class="menu-link solo-clinico" href="Agenda.dc.html"><span class="ic" style="background: #FFEDD5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span><span class="largo">Agenda</span><span class="corto">Agenda</span></a><a class="menu-link solo-clinico" href="Pacientes.dc.html" aria-current="page"><span class="ic" style="background: #D1FAE5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"></path></svg></span><span class="largo">Pacientes</span><span class="corto">Pacientes</span></a><a class="menu-link solo-clinico" href="HistoriaClinica.dc.html"><span class="ic" style="background: #EDE9FE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></svg></span><span class="largo">Historia clínica</span><span class="corto">Historia</span></a><a class="menu-link solo-clinico" href="CodigosCIE.dc.html"><span class="ic" style="background: #CFFAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"></path><path d="M4 17a3 3 0 0 1 3-3h11M8 8h6"></path></svg></span><span class="largo">Códigos CIE-10</span><span class="corto">CIE-10</span></a><a class="menu-link solo-clinico no-movil" href="MiPlan.dc.html"><span class="ic" style="background: #FCE7F3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#BE185D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"></rect><path d="M3 10h18M7 15h4"></path></svg></span><span class="largo">Mi plan</span><span class="corto">Plan</span></a><a class="menu-link solo-admin" href="Administracion.dc.html"><span class="ic" style="background: #E2E8F0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg></span><span class="largo">Administración</span><span class="corto">Admin</span></a></div><div class="menu-cuenta"><button type="button" data-action="instalar" class="solo-instalable"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg><span class="largo">Instalar app</span><span class="corto">Instalar</span></button><button type="button" data-action="clave"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="largo">Cambiar contraseña</span><span class="corto">Clave</span></button><button type="button" data-action="salir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg><span class="largo">Salir</span><span class="corto">Salir</span></button></div></nav>
 <main style="flex: 1 1 560px; min-width: 0; padding: 28px 36px 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px; max-width: 980px">
 
 <header style="display: flex; flex-direction: column; gap: 4px">
@@ -2962,7 +2983,7 @@ class Component extends DCLogic {
 </script>
 <script type="text/x-template" id="tpl-CodigosCIE" data-title="Códigos CIE-10 – Angie Ferrucho Fisioterapia">
 <div style="font-family: Nunito, system-ui, sans-serif; color: #0F2A4A; background: #F5F8FC; min-height: 100vh; display: flex; align-items: stretch">
-<nav aria-label="Menú principal" class="menu"><div class="menu-marca"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E3A8A"></rect><g fill="#93C5FD"><circle cx="154" cy="168" r="11"></circle><circle cx="188" cy="140" r="14"></circle><circle cx="228" cy="120" r="16"></circle></g><g fill="#F9A8D4"><circle cx="272" cy="110" r="16"></circle><circle cx="316" cy="110" r="14"></circle><circle cx="356" cy="118" r="11"></circle></g><circle cx="300" cy="196" r="34" fill="#fff"></circle><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M286 244 C 250 300, 236 336, 226 404" stroke-width="34"></path><path d="M276 268 C 316 256, 352 226, 384 182" stroke-width="28"></path><path d="M270 282 C 232 286, 196 276, 160 258" stroke-width="28"></path><path d="M240 340 C 276 356, 304 384, 318 420" stroke-width="30"></path></g></svg><div><b>Angie Ferrucho</b><small>FISIOTERAPEUTA</small></div></div><div class="menu-links"><a class="menu-link" href="Main.dc.html"><span class="ic" style="background: #DBEAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"></path><path d="M9 21v-6h6v6"></path></svg></span><span class="largo">Inicio</span><span class="corto">Inicio</span></a><a class="menu-link" href="Agenda.dc.html"><span class="ic" style="background: #FFEDD5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span><span class="largo">Agenda</span><span class="corto">Agenda</span></a><a class="menu-link" href="Pacientes.dc.html"><span class="ic" style="background: #D1FAE5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"></path></svg></span><span class="largo">Pacientes</span><span class="corto">Pacientes</span></a><a class="menu-link" href="HistoriaClinica.dc.html"><span class="ic" style="background: #EDE9FE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></svg></span><span class="largo">Historia clínica</span><span class="corto">Historia</span></a><a class="menu-link" href="CodigosCIE.dc.html" aria-current="page"><span class="ic" style="background: #CFFAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"></path><path d="M4 17a3 3 0 0 1 3-3h11M8 8h6"></path></svg></span><span class="largo">Códigos CIE-10</span><span class="corto">CIE-10</span></a></div><div class="menu-cuenta"><button type="button" data-action="instalar" class="solo-instalable"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg><span class="largo">Instalar app</span><span class="corto">Instalar</span></button><button type="button" data-action="clave"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="largo">Cambiar contraseña</span><span class="corto">Clave</span></button><button type="button" data-action="salir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg><span class="largo">Salir</span><span class="corto">Salir</span></button></div></nav>
+<nav aria-label="Menú principal" class="menu"><div class="menu-marca"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E3A8A"></rect><g fill="#93C5FD"><circle cx="154" cy="168" r="11"></circle><circle cx="188" cy="140" r="14"></circle><circle cx="228" cy="120" r="16"></circle></g><g fill="#F9A8D4"><circle cx="272" cy="110" r="16"></circle><circle cx="316" cy="110" r="14"></circle><circle cx="356" cy="118" r="11"></circle></g><circle cx="300" cy="196" r="34" fill="#fff"></circle><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M286 244 C 250 300, 236 336, 226 404" stroke-width="34"></path><path d="M276 268 C 316 256, 352 226, 384 182" stroke-width="28"></path><path d="M270 282 C 232 286, 196 276, 160 258" stroke-width="28"></path><path d="M240 340 C 276 356, 304 384, 318 420" stroke-width="30"></path></g></svg><div class="marca-fisio"><b>Angie Ferrucho</b><small>FISIOTERAPEUTA</small></div><div class="marca-admin"><b>Panel del software</b><small>ADMINISTRACIÓN</small></div></div><div class="menu-links"><a class="menu-link solo-clinico" href="Main.dc.html"><span class="ic" style="background: #DBEAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"></path><path d="M9 21v-6h6v6"></path></svg></span><span class="largo">Inicio</span><span class="corto">Inicio</span></a><a class="menu-link solo-clinico" href="Agenda.dc.html"><span class="ic" style="background: #FFEDD5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span><span class="largo">Agenda</span><span class="corto">Agenda</span></a><a class="menu-link solo-clinico" href="Pacientes.dc.html"><span class="ic" style="background: #D1FAE5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"></path></svg></span><span class="largo">Pacientes</span><span class="corto">Pacientes</span></a><a class="menu-link solo-clinico" href="HistoriaClinica.dc.html"><span class="ic" style="background: #EDE9FE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></svg></span><span class="largo">Historia clínica</span><span class="corto">Historia</span></a><a class="menu-link solo-clinico" href="CodigosCIE.dc.html" aria-current="page"><span class="ic" style="background: #CFFAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"></path><path d="M4 17a3 3 0 0 1 3-3h11M8 8h6"></path></svg></span><span class="largo">Códigos CIE-10</span><span class="corto">CIE-10</span></a><a class="menu-link solo-clinico no-movil" href="MiPlan.dc.html"><span class="ic" style="background: #FCE7F3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#BE185D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"></rect><path d="M3 10h18M7 15h4"></path></svg></span><span class="largo">Mi plan</span><span class="corto">Plan</span></a><a class="menu-link solo-admin" href="Administracion.dc.html"><span class="ic" style="background: #E2E8F0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg></span><span class="largo">Administración</span><span class="corto">Admin</span></a></div><div class="menu-cuenta"><button type="button" data-action="instalar" class="solo-instalable"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg><span class="largo">Instalar app</span><span class="corto">Instalar</span></button><button type="button" data-action="clave"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="largo">Cambiar contraseña</span><span class="corto">Clave</span></button><button type="button" data-action="salir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg><span class="largo">Salir</span><span class="corto">Salir</span></button></div></nav>
 <main style="flex: 1 1 560px; min-width: 0; padding: 28px 36px 40px; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px; max-width: 1000px">
 
 <header style="display: flex; flex-direction: column; gap: 4px">
@@ -3107,6 +3128,577 @@ class Component extends DCLogic {
   }
 }
 </script>
+<script type="text/x-template" id="tpl-MiPlan" data-title="Mi plan – Angie Ferrucho Fisioterapia">
+<div style="font-family: Nunito, system-ui, sans-serif; color: #0F2A4A; background: #F5F8FC; min-height: 100vh; display: flex; align-items: stretch">
+<nav aria-label="Menú principal" class="menu"><div class="menu-marca"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E3A8A"></rect><g fill="#93C5FD"><circle cx="154" cy="168" r="11"></circle><circle cx="188" cy="140" r="14"></circle><circle cx="228" cy="120" r="16"></circle></g><g fill="#F9A8D4"><circle cx="272" cy="110" r="16"></circle><circle cx="316" cy="110" r="14"></circle><circle cx="356" cy="118" r="11"></circle></g><circle cx="300" cy="196" r="34" fill="#fff"></circle><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M286 244 C 250 300, 236 336, 226 404" stroke-width="34"></path><path d="M276 268 C 316 256, 352 226, 384 182" stroke-width="28"></path><path d="M270 282 C 232 286, 196 276, 160 258" stroke-width="28"></path><path d="M240 340 C 276 356, 304 384, 318 420" stroke-width="30"></path></g></svg><div class="marca-fisio"><b>Angie Ferrucho</b><small>FISIOTERAPEUTA</small></div><div class="marca-admin"><b>Panel del software</b><small>ADMINISTRACIÓN</small></div></div><div class="menu-links"><a class="menu-link solo-clinico" href="Main.dc.html"><span class="ic" style="background: #DBEAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"></path><path d="M9 21v-6h6v6"></path></svg></span><span class="largo">Inicio</span><span class="corto">Inicio</span></a><a class="menu-link solo-clinico" href="Agenda.dc.html"><span class="ic" style="background: #FFEDD5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span><span class="largo">Agenda</span><span class="corto">Agenda</span></a><a class="menu-link solo-clinico" href="Pacientes.dc.html"><span class="ic" style="background: #D1FAE5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"></path></svg></span><span class="largo">Pacientes</span><span class="corto">Pacientes</span></a><a class="menu-link solo-clinico" href="HistoriaClinica.dc.html"><span class="ic" style="background: #EDE9FE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></svg></span><span class="largo">Historia clínica</span><span class="corto">Historia</span></a><a class="menu-link solo-clinico" href="CodigosCIE.dc.html"><span class="ic" style="background: #CFFAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"></path><path d="M4 17a3 3 0 0 1 3-3h11M8 8h6"></path></svg></span><span class="largo">Códigos CIE-10</span><span class="corto">CIE-10</span></a><a class="menu-link solo-clinico no-movil" href="MiPlan.dc.html" aria-current="page"><span class="ic" style="background: #FCE7F3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#BE185D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"></rect><path d="M3 10h18M7 15h4"></path></svg></span><span class="largo">Mi plan</span><span class="corto">Plan</span></a><a class="menu-link solo-admin" href="Administracion.dc.html"><span class="ic" style="background: #E2E8F0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg></span><span class="largo">Administración</span><span class="corto">Admin</span></a></div><div class="menu-cuenta"><button type="button" data-action="instalar" class="solo-instalable"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg><span class="largo">Instalar app</span><span class="corto">Instalar</span></button><button type="button" data-action="clave"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="largo">Cambiar contraseña</span><span class="corto">Clave</span></button><button type="button" data-action="salir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg><span class="largo">Salir</span><span class="corto">Salir</span></button></div></nav>
+<main style="flex: 1 1 560px; min-width: 0; padding: 28px 36px 40px; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px; max-width: 960px">
+
+<header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<h1 style="margin: 0; font-size: 30px; font-weight: 800">Mi plan</h1>
+<span style="font-size: 15px; color: #475569">Lo que llevas usado y lo que pagas por el software cada mes.</span>
+</div>
+<button type="button" onClick="{{imprimir}}" disabled="{{cargando}}" style="min-height: 46px; padding: 0 18px; border-radius: 999px; border: 1.5px solid #C8D9EF; background: #FFFFFF; color: #0F2A4A; font-family: inherit; font-weight: 800; font-size: 14px; cursor: pointer">Imprimir reporte</button>
+</header>
+
+<div style="display: flex; align-items: center; gap: 10px">
+<button type="button" onClick="{{anterior}}" aria-label="Mes anterior" style="width: 46px; height: 46px; border-radius: 14px; border: 1.5px solid #C8D9EF; background: #FFFFFF; color: #0F2A4A; font-size: 20px; font-weight: 800; cursor: pointer">‹</button>
+<div style="display: flex; flex-direction: column; min-width: 170px"><b style="font-size: 20px">{{titulo}}</b><span style="font-size: 13px; color: #64748B">{{periodo}}</span></div>
+<button type="button" onClick="{{siguiente}}" disabled="{{sinSiguiente}}" aria-label="Mes siguiente" style="width: 46px; height: 46px; border-radius: 14px; border: 1.5px solid #C8D9EF; background: #FFFFFF; color: #0F2A4A; font-size: 20px; font-weight: 800; cursor: pointer">›</button>
+<template data-sc="if" value="{{cargando}}" hint-placeholder-val="{{ false }}"><span role="status" style="font-size: 14px; color: #64748B">Cargando…</span></template>
+</div>
+
+<template data-sc="if" value="{{hayError}}" hint-placeholder-val="{{ false }}"><p role="alert" style="margin: 0; padding: 14px 16px; border-radius: 14px; background: #FDECEC; color: #9B1C1C; font-size: 15px; font-weight: 700">{{error}}</p></template>
+
+<template data-sc="if" value="{{hayDatos}}" hint-placeholder-val="{{ true }}">
+<section aria-label="Valor del mes" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 22px; padding: 22px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+<span style="font-size: 16px; font-weight: 800">{{plan}}</span>
+<span style="padding: 4px 10px; border-radius: 999px; background: {{estBg}}; color: {{estFg}}; font-size: 12px; font-weight: 800">{{estado}}</span>
+</div>
+<span style="font-size: 14px; font-weight: 700; color: #475569">{{etiquetaValor}}</span>
+<b style="font-size: 40px; font-weight: 800; line-height: 1.05">{{valor}} <span style="font-size: 16px; font-weight: 700; color: #64748B">COP</span></b>
+<span style="font-size: 14px; color: #475569">{{detalle}}</span>
+<template data-sc="if" value="{{hayProy}}" hint-placeholder-val="{{ false }}"><span style="font-size: 14px; font-weight: 700; color: #0F2A4A">{{proy}}</span></template>
+<span style="font-size: 13.5px; color: #64748B">{{pago}}</span>
+</section>
+
+<template data-sc="if" value="{{hayAviso}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 12px 14px; border-radius: 14px; background: #FFF7ED; color: #9A3412; font-size: 14.5px; font-weight: 700">{{aviso}}</p></template>
+
+<section aria-labelledby="t-uso" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 22px; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<h2 id="t-uso" style="margin: 0; font-size: 18px; font-weight: 800">Tu uso del mes</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px">
+<template data-sc="for" list="{{usos}}" as="x" hint-placeholder-count="6">
+<div style="background: #F8FAFC; border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px"><b style="font-size: 22px; font-weight: 800">{{x.v}}</b><span style="font-size: 12.5px; color: #64748B">{{x.t}}</span></div>
+</template>
+</div>
+<template data-sc="if" value="{{hayLimite}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 13.5px; font-weight: 700; color: #475569">{{limiteTxt}}</span>
+<div style="height: 10px; border-radius: 99px; background: #E6EEF8; overflow: hidden"><div style="height: 10px; border-radius: 99px; background: {{limiteColor}}; width: {{limitePct}}"></div></div>
+</div>
+</template>
+<p style="margin: 0; font-size: 12.5px; color: #64748B">Un paciente atendido es el que tiene al menos una sesión registrada en el mes.</p>
+</section>
+
+<section aria-labelledby="t-mod" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 22px; padding: 22px; display: flex; flex-direction: column; gap: 12px">
+<h2 id="t-mod" style="margin: 0; font-size: 18px; font-weight: 800">Cuánto pagarías en cada plan con este uso</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px">
+<template data-sc="for" list="{{opciones}}" as="o" hint-placeholder-count="4">
+<div style="border: 1.5px solid {{o.borde}}; background: {{o.bg}}; border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 13px; font-weight: 800; color: #334155">{{o.label}}</span><b style="font-size: 20px">{{o.v}}</b><span style="font-size: 12.5px; color: #64748B">{{o.nota}}</span>
+</div>
+</template>
+</div>
+<p style="margin: 0; font-size: 12.5px; color: #64748B">Puedes cambiar de plan cuando quieras; el nuevo valor aplica desde el mes siguiente.</p>
+</section>
+
+<section aria-labelledby="t-hist" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 22px; padding: 22px; display: flex; flex-direction: column; gap: 8px">
+<h2 id="t-hist" style="margin: 0; font-size: 18px; font-weight: 800">Sesiones de los últimos 6 meses</h2>
+<div role="img" aria-label="Sesiones registradas por mes" style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; align-items: end; height: 100px; border-bottom: 1px solid #E2E8F0">
+<template data-sc="for" list="{{meses}}" as="b" hint-placeholder-count="6">
+<div title="{{b.titulo}}" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 3px; height: 100%">
+<span style="font-size: 12px; font-weight: {{b.peso}}; color: #334155">{{b.n}}</span>
+<div style="width: 60%; max-width: 34px; height: {{b.alto}}; background: {{b.color}}; border-radius: 4px 4px 0 0"></div>
+</div>
+</template>
+</div>
+<div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px">
+<template data-sc="for" list="{{meses}}" as="b" hint-placeholder-count="6"><span style="text-align: center; font-size: 12px; color: #64748B; font-weight: {{b.peso}}">{{b.mes}}</span></template>
+</div>
+</section>
+</template>
+</main>
+</div>
+</script>
+<script type="text/x-component" id="js-MiPlan">
+var MESES_C = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+
+function finMes(m) { var p = m.split('-'); return APP.f.iso(new Date(+p[0], +p[1], 0)); }
+function mesTexto(m) { return APP.f.cap(APP.f.mes(m + '-01')) + ' ' + m.slice(0, 4); }
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { mes: APP.f.hoy().slice(0, 7), cargando: true, error: '', yo: null, historial: [], T: Object.assign({}, APP.cobro.TARIFAS_BASE) };
+  }
+  alMostrar() { this.cargar(); }
+  rango() {
+    var m = this.state.mes, hoy = APP.f.hoy(), fin = finMes(m);
+    return { desde: m + '-01', hasta: fin > hoy ? hoy : fin, finMes: fin, enCurso: fin >= hoy };
+  }
+  cargar() {
+    var self = this, r = this.rango();
+    var d6 = APP.f.deIso(r.desde); d6.setMonth(d6.getMonth() - 5);
+    this.setState({ cargando: true, error: '' });
+    Promise.all([
+      APP.db.rpc('mi_uso', { desde: r.desde, hasta: r.hasta }),
+      APP.db.rpc('mi_mensual', { desde: APP.f.iso(d6) }),
+      APP.cobro.tarifas()
+    ]).then(function (x) {
+      self.setState({ cargando: false, yo: (x[0] || [])[0] || null, historial: x[1] || [], T: x[2] });
+    }).catch(function (e) { self.setState({ cargando: false, error: APP.mensajeError(e) }); });
+  }
+  cambiarMes(n) {
+    var p = this.state.mes.split('-'), m = APP.f.iso(new Date(+p[0], +p[1] - 1 + n, 1)).slice(0, 7);
+    if (m > APP.f.hoy().slice(0, 7)) return;
+    this.setState({ mes: m }); this.cargar();
+  }
+  calculo() {
+    var s = this.state, u = s.yo, T = s.T, r = this.rango(), C = APP.cobro;
+    if (!u) return null;
+    var c = C.cobro(u, T, r.finMes), proy = null;
+    if (c.porUso && r.enCurso && c.valor > 0) {
+      var dia = +r.hasta.slice(8, 10), dias = +r.finMes.slice(8, 10);
+      proy = Math.min(T.tope, Math.round(c.valor * dias / dia / 500) * 500);
+    }
+    return { u: u, c: c, proy: proy, m: C.modalidades(u, T) };
+  }
+  imprimir() {
+    var k = this.calculo(); if (!k) return;
+    var s = this.state, r = this.rango(), T = s.T, C = APP.cobro, esc = APP.u.esc, u = k.u;
+    var fila = function (a, b) { return '<tr><th style="width:55%">' + esc(a) + '</th><td>' + esc(String(b)) + '</td></tr>'; };
+    var cuerpo = '<div class="grid"><p><span class="k">Profesional:</span> ' + esc(u.nombre || u.email) + '</p><p><span class="k">Plan:</span> ' + esc(C.nombrePlan(u.plan)) + '</p>'
+      + '<p><span class="k">Periodo:</span> ' + esc(APP.f.corta(r.desde) + ' al ' + APP.f.corta(r.hasta) + ' de ' + r.desde.slice(0, 4)) + '</p><p><span class="k">Cuenta:</span> ' + esc(u.email) + '</p></div>'
+      + '<h2>Uso registrado</h2><table>' + fila('Pacientes atendidos (con al menos una sesión)', u.pacientes_atendidos) + fila('Sesiones registradas', u.sesiones)
+      + fila('Pacientes nuevos', u.pacientes_nuevos) + fila('Citas agendadas', u.citas) + fila('Historias clínicas creadas', u.historias)
+      + fila('Consentimientos firmados', u.consentimientos) + '</table>'
+      + '<h2>Valor del servicio</h2><table>' + fila('Cálculo', k.c.detalle) + '<tr><th>' + (k.c.porUso && r.enCurso ? 'Acumulado hasta hoy' : 'Total del mes') + '</th><td><b>' + esc(C.cop(k.c.valor)) + ' COP</b></td></tr>'
+      + (k.proy !== null ? fila('Proyección al cierre del mes', C.cop(k.proy) + ' COP') : '') + '</table>'
+      + '<p class="nota">Tarifas vigentes: Plan Inicio ' + esc(C.cop(T.inicio)) + ', Plan Profesional ' + esc(C.cop(T.profesional)) + ', por sesión ' + esc(C.cop(T.por_sesion)) + ', por paciente ' + esc(C.cop(T.por_paciente)) + ' (tope ' + esc(C.cop(T.tope)) + ').</p>';
+    APP.u.imprimir('Mi plan · ' + mesTexto(s.mes), cuerpo);
+  }
+  renderVals() {
+    var self = this, s = this.state, r = this.rango(), T = s.T, C = APP.cobro, k = this.calculo();
+    var u = k && k.u;
+    var vals = {
+      titulo: mesTexto(s.mes),
+      periodo: r.enCurso ? 'Del ' + APP.f.corta(r.desde) + ' a hoy, ' + APP.f.corta(r.hasta) : 'Del ' + APP.f.corta(r.desde) + ' al ' + APP.f.corta(r.hasta),
+      anterior: function () { self.cambiarMes(-1); }, siguiente: function () { self.cambiarMes(1); },
+      sinSiguiente: s.mes >= APP.f.hoy().slice(0, 7),
+      cargando: s.cargando, hayError: !!s.error, error: s.error,
+      hayDatos: !!k, imprimir: function () { self.imprimir(); }
+    };
+    if (!k) return Object.assign(vals, { plan: '', estado: '', valor: '', etiquetaValor: '', detalle: '', hayProy: false, proy: '', pago: '', hayAviso: false, aviso: '',
+      usos: [], hayLimite: false, limiteTxt: '', limitePct: '0%', limiteColor: '#2563EB', opciones: [], meses: [] });
+    var c = k.c, activa = u.estado === 'activa';
+    var pago;
+    if (!activa || u.plan === 'cortesia' || u.plan === 'prueba') pago = 'Este mes no tienes valor a pagar.';
+    else if (c.porUso) pago = 'Se paga a mes vencido: hasta el 5 de ' + APP.f.mes(APP.f.sumar(r.finMes, 1)) + ', según el reporte de uso.';
+    else pago = 'Se paga por mes anticipado, dentro de los primeros 5 días de cada mes.';
+    var aviso = '';
+    if (c.vencida) aviso = c.detalle + '. Escríbenos para activar tu plan.';
+    else if (u.plan === 'prueba' && c.finPrueba) {
+      var quedan = Math.round((APP.f.deIso(c.finPrueba) - APP.f.deIso(APP.f.hoy())) / 864e5);
+      if (quedan >= 0 && quedan <= 7) aviso = 'Tu prueba gratis termina en ' + quedan + (quedan === 1 ? ' día' : ' días') + '. Revisa abajo qué plan te conviene según tu uso.';
+    } else if (c.excede) aviso = 'Este mes superaste el límite del Plan Inicio (' + u.pacientes_atendidos + ' de ' + T.limite_inicio + ' pacientes atendidos). Si se repite el próximo mes, te propondremos el Plan Profesional.';
+    if (u.estado === 'suspendida') aviso = 'Tu cuenta está suspendida. Comunícate con soporte para reactivarla.';
+    var ops = [
+      { k: 'inicio', label: 'Plan Inicio', v: k.m.inicio, nota: 'hasta ' + T.limite_inicio + ' pacientes', ok: u.pacientes_atendidos <= T.limite_inicio },
+      { k: 'profesional', label: 'Plan Profesional', v: k.m.profesional, nota: 'pacientes ilimitados', ok: true },
+      { k: 'por_sesion', label: 'Pago por sesión', v: k.m.por_sesion, nota: u.sesiones + ' × ' + C.cop(T.por_sesion), ok: true },
+      { k: 'por_paciente', label: 'Pago por paciente', v: k.m.por_paciente, nota: u.pacientes_atendidos + ' × ' + C.cop(T.por_paciente), ok: true }
+    ];
+    var validas = ops.filter(function (o) { return o.ok; });
+    var menor = validas.reduce(function (a, o) { return o.v < a.v ? o : a; }, validas[0]);
+    var max = Math.max.apply(null, s.historial.map(function (h) { return +h.sesiones; }).concat([1]));
+    var meses = [], d = APP.f.deIso(r.desde); d.setMonth(d.getMonth() - 5);
+    for (var i = 0; i < 6; i++) {
+      var mm = APP.f.iso(d).slice(0, 7), h = s.historial.find(function (x) { return String(x.mes).slice(0, 7) === mm; }) || { sesiones: 0, pacientes_atendidos: 0 };
+      var vm = C.cobro(Object.assign({}, u, { sesiones: +h.sesiones, pacientes_atendidos: +h.pacientes_atendidos }), T, finMes(mm)).valor;
+      meses.push({ mes: MESES_C[d.getMonth()], n: +h.sesiones, alto: Math.max(2, Math.round(+h.sesiones / max * 64)) + 'px',
+        color: mm === s.mes ? '#BE185D' : '#F9A8D4', peso: mm === s.mes ? '800' : '600', titulo: h.sesiones + ' sesiones · ' + h.pacientes_atendidos + ' pacientes · ' + C.cop(vm) });
+      d.setMonth(d.getMonth() + 1);
+    }
+    var limitePct = Math.min(100, Math.round(u.pacientes_atendidos / Math.max(1, T.limite_inicio) * 100));
+    return Object.assign(vals, {
+      plan: C.nombrePlan(u.plan), estado: APP.f.cap(u.estado),
+      estBg: activa ? '#D1FAE5' : '#FEE2E2', estFg: activa ? '#065F46' : '#991B1B',
+      etiquetaValor: c.porUso && r.enCurso ? 'Llevas acumulado este mes' : r.enCurso ? 'Valor de este mes' : 'Total del mes',
+      valor: C.cop(c.valor), detalle: c.detalle,
+      hayProy: k.proy !== null, proy: k.proy !== null ? 'Si sigues a este ritmo, cerrarías el mes en ' + C.cop(k.proy) + '.' : '',
+      pago: pago, hayAviso: !!aviso, aviso: aviso,
+      usos: [
+        { t: 'Pacientes atendidos', v: u.pacientes_atendidos }, { t: 'Sesiones registradas', v: u.sesiones },
+        { t: 'Pacientes nuevos', v: u.pacientes_nuevos }, { t: 'Citas agendadas', v: u.citas },
+        { t: 'Historias clínicas', v: u.historias }, { t: 'Consentimientos', v: u.consentimientos }
+      ],
+      hayLimite: u.plan === 'inicio', limiteTxt: u.pacientes_atendidos + ' de ' + T.limite_inicio + ' pacientes del Plan Inicio',
+      limitePct: limitePct + '%', limiteColor: limitePct >= 100 ? '#DC2626' : limitePct >= 80 ? '#F59E0B' : '#2563EB',
+      opciones: ops.map(function (o) {
+        var on = o.k === u.plan;
+        return { label: o.label + (on ? ' · tu plan' : ''), v: C.cop(o.v), nota: o.nota + (o.k === menor.k ? ' · la más económica' : '') + (o.ok ? '' : ' · superas el límite'),
+          bg: on ? '#FDF2F8' : '#FFFFFF', borde: on ? '#BE185D' : '#E2E8F0' };
+      }),
+      meses: meses
+    });
+  }
+}
+</script>
+<script type="text/x-template" id="tpl-Administracion" data-title="Administración – uso de la aplicación">
+<div style="font-family: Nunito, system-ui, sans-serif; color: #0F2A4A; background: #F5F8FC; min-height: 100vh; display: flex; align-items: stretch">
+<nav aria-label="Menú principal" class="menu"><div class="menu-marca"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E3A8A"></rect><g fill="#93C5FD"><circle cx="154" cy="168" r="11"></circle><circle cx="188" cy="140" r="14"></circle><circle cx="228" cy="120" r="16"></circle></g><g fill="#F9A8D4"><circle cx="272" cy="110" r="16"></circle><circle cx="316" cy="110" r="14"></circle><circle cx="356" cy="118" r="11"></circle></g><circle cx="300" cy="196" r="34" fill="#fff"></circle><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M286 244 C 250 300, 236 336, 226 404" stroke-width="34"></path><path d="M276 268 C 316 256, 352 226, 384 182" stroke-width="28"></path><path d="M270 282 C 232 286, 196 276, 160 258" stroke-width="28"></path><path d="M240 340 C 276 356, 304 384, 318 420" stroke-width="30"></path></g></svg><div class="marca-fisio"><b>Angie Ferrucho</b><small>FISIOTERAPEUTA</small></div><div class="marca-admin"><b>Panel del software</b><small>ADMINISTRACIÓN</small></div></div><div class="menu-links"><a class="menu-link solo-clinico" href="Main.dc.html"><span class="ic" style="background: #DBEAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"></path><path d="M9 21v-6h6v6"></path></svg></span><span class="largo">Inicio</span><span class="corto">Inicio</span></a><a class="menu-link solo-clinico" href="Agenda.dc.html"><span class="ic" style="background: #FFEDD5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span><span class="largo">Agenda</span><span class="corto">Agenda</span></a><a class="menu-link solo-clinico" href="Pacientes.dc.html"><span class="ic" style="background: #D1FAE5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"></path></svg></span><span class="largo">Pacientes</span><span class="corto">Pacientes</span></a><a class="menu-link solo-clinico" href="HistoriaClinica.dc.html"><span class="ic" style="background: #EDE9FE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></svg></span><span class="largo">Historia clínica</span><span class="corto">Historia</span></a><a class="menu-link solo-clinico" href="CodigosCIE.dc.html"><span class="ic" style="background: #CFFAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"></path><path d="M4 17a3 3 0 0 1 3-3h11M8 8h6"></path></svg></span><span class="largo">Códigos CIE-10</span><span class="corto">CIE-10</span></a><a class="menu-link solo-clinico no-movil" href="MiPlan.dc.html"><span class="ic" style="background: #FCE7F3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#BE185D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"></rect><path d="M3 10h18M7 15h4"></path></svg></span><span class="largo">Mi plan</span><span class="corto">Plan</span></a><a class="menu-link solo-admin" href="Administracion.dc.html" aria-current="page"><span class="ic" style="background: #E2E8F0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg></span><span class="largo">Administración</span><span class="corto">Admin</span></a></div><div class="menu-cuenta"><button type="button" data-action="instalar" class="solo-instalable"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg><span class="largo">Instalar app</span><span class="corto">Instalar</span></button><button type="button" data-action="clave"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="largo">Cambiar contraseña</span><span class="corto">Clave</span></button><button type="button" data-action="salir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg><span class="largo">Salir</span><span class="corto">Salir</span></button></div></nav>
+<main style="flex: 1 1 560px; min-width: 0; padding: 28px 36px 40px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px; max-width: 1180px">
+
+<header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 14px">
+<div style="display: flex; flex-direction: column; gap: 4px; max-width: 640px">
+<h1 style="margin: 0; font-size: 30px; font-weight: 800">Administración</h1>
+<span style="font-size: 15px; color: #475569">Uso de la aplicación por profesional. Solo se muestran cantidades: los nombres y datos clínicos de los pacientes no son visibles aquí.</span>
+</div>
+<div style="display: flex; gap: 8px; flex-wrap: wrap">
+<button type="button" onClick="{{abrirTarifas}}" style="min-height: 46px; padding: 0 18px; border-radius: 999px; border: 1.5px solid #C8D9EF; background: #FFFFFF; color: #0F2A4A; font-family: inherit; font-weight: 800; font-size: 14px; cursor: pointer">Tarifas</button>
+<button type="button" onClick="{{exportar}}" style="min-height: 46px; padding: 0 18px; border-radius: 999px; border: 0; background: #1D4ED8; color: #FFFFFF; font-family: inherit; font-weight: 800; font-size: 14px; cursor: pointer">Exportar CSV</button>
+</div>
+</header>
+
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+<button type="button" onClick="{{anterior}}" aria-label="Mes anterior" style="width: 46px; height: 46px; border-radius: 14px; border: 1.5px solid #C8D9EF; background: #FFFFFF; color: #0F2A4A; font-size: 20px; font-weight: 800; cursor: pointer">‹</button>
+<div style="display: flex; flex-direction: column; min-width: 170px"><b style="font-size: 20px">{{titulo}}</b><span style="font-size: 13px; color: #64748B">{{periodo}}</span></div>
+<button type="button" onClick="{{siguiente}}" disabled="{{sinSiguiente}}" aria-label="Mes siguiente" style="width: 46px; height: 46px; border-radius: 14px; border: 1.5px solid #C8D9EF; background: #FFFFFF; color: #0F2A4A; font-size: 20px; font-weight: 800; cursor: pointer">›</button>
+<template data-sc="if" value="{{cargando}}" hint-placeholder-val="{{ false }}"><span role="status" style="font-size: 14px; color: #64748B">Cargando…</span></template>
+</div>
+
+<template data-sc="if" value="{{hayError}}" hint-placeholder-val="{{ false }}"><p role="alert" style="margin: 0; padding: 14px 16px; border-radius: 14px; background: #FDECEC; color: #9B1C1C; font-size: 15px; font-weight: 700">{{error}}</p></template>
+
+<section aria-label="Resumen del mes" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px">
+<template data-sc="for" list="{{tiles}}" as="t" hint-placeholder-count="5">
+<div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 18px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px">
+<span style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 800; color: #475569"><span style="width: 10px; height: 10px; border-radius: 4px; background: {{t.c}}"></span>{{t.t}}</span>
+<b style="font-size: 26px; font-weight: 800; color: #0F2A4A">{{t.v}}</b>
+<span style="font-size: 12.5px; color: #64748B">{{t.d}}</span>
+</div>
+</template>
+</section>
+
+<p style="margin: 0; font-size: 13px; color: #64748B">Tarifas vigentes: {{tarifasTxt}}</p>
+
+<section aria-label="Profesionales" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px">
+<template data-sc="for" list="{{tarjetas}}" as="p" hint-placeholder-count="2">
+<article style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 22px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 12px">
+<span style="width: 48px; height: 48px; flex: none; border-radius: 16px; background: #E2E8F0; color: #334155; display: flex; align-items: center; justify-content: center; font-weight: 800">{{p.ini}}</span>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px">
+<h2 style="margin: 0; font-size: 18px; font-weight: 800; overflow-wrap: anywhere">{{p.nombre}}</h2>
+<span style="font-size: 13px; color: #64748B; overflow-wrap: anywhere">{{p.email}}</span>
+</div>
+<span style="padding: 5px 10px; border-radius: 999px; background: {{p.estBg}}; color: {{p.estFg}}; font-size: 12px; font-weight: 800">{{p.estado}}</span>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px">
+<template data-sc="for" list="{{p.stats}}" as="x" hint-placeholder-count="8">
+<div style="background: #F8FAFC; border-radius: 12px; padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<b style="font-size: 17px; font-weight: 800; overflow-wrap: anywhere">{{x.v}}</b><span style="font-size: 11.5px; color: #64748B; line-height: 1.2">{{x.t}}</span>
+</div>
+</template>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 13px; font-weight: 800; color: #475569">Sesiones por mes</span>
+<div role="img" aria-label="Sesiones registradas en los últimos seis meses" style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; align-items: end; height: 96px; border-bottom: 1px solid #E2E8F0">
+<template data-sc="for" list="{{p.barras}}" as="b" hint-placeholder-count="6">
+<div title="{{b.titulo}}" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 3px; height: 100%">
+<span style="font-size: 12px; font-weight: {{b.peso}}; color: #334155">{{b.n}}</span>
+<div style="width: 60%; max-width: 30px; height: {{b.alto}}; background: {{b.color}}; border-radius: 4px 4px 0 0"></div>
+</div>
+</template>
+</div>
+<div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px">
+<template data-sc="for" list="{{p.barras}}" as="b" hint-placeholder-count="6"><span style="text-align: center; font-size: 11.5px; color: #64748B; font-weight: {{b.peso}}">{{b.mes}}</span></template>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 13px; font-weight: 800; color: #475569">Valor de cada modalidad con este uso</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px">
+<template data-sc="for" list="{{p.opciones}}" as="o" hint-placeholder-count="4">
+<div style="border: 1.5px solid {{o.borde}}; background: {{o.bg}}; border-radius: 12px; padding: 8px 10px; display: flex; flex-direction: column; gap: 1px">
+<span style="font-size: 12px; color: #475569; font-weight: {{o.peso}}">{{o.label}}</span><b style="font-size: 15px">{{o.v}}</b>
+</div>
+</template>
+</div>
+</div>
+
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #F1F5F9">
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 12.5px; font-weight: 800; color: #475569">{{p.plan}} · cobro del mes</span><span style="font-size: 12.5px; color: #64748B">{{p.detalle}}</span></div>
+<b style="font-size: 22px; font-weight: 800; white-space: nowrap">{{p.cobro}}</b>
+</div>
+<template data-sc="if" value="{{p.hayAlerta}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 10px 12px; border-radius: 12px; background: #FFF7ED; color: #9A3412; font-size: 13.5px; font-weight: 700">{{p.alerta}}</p></template>
+<span style="font-size: 12.5px; color: #64748B">{{p.ingreso}}</span>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+<button type="button" onClick="{{p.editar}}" style="min-height: 46px; border-radius: 999px; border: 1.5px solid #C8D9EF; background: #FFFFFF; color: #0F2A4A; font-family: inherit; font-weight: 800; font-size: 14px; cursor: pointer">Plan y datos</button>
+<button type="button" onClick="{{p.reporte}}" style="min-height: 46px; border-radius: 999px; border: 0; background: #0F2A4A; color: #FFFFFF; font-family: inherit; font-weight: 800; font-size: 14px; cursor: pointer">Reporte de uso</button>
+</div>
+</article>
+</template>
+</section>
+<template data-sc="if" value="{{vacio}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 24px; border-radius: 18px; background: #FFFFFF; border: 1px dashed #C8D9EF; text-align: center; color: #475569">Aún no hay cuentas. Crea cada profesional en Supabase › Authentication › Add user; aparecerá aquí con 30 días de prueba.</p></template>
+
+<p style="margin: 0; font-size: 12.5px; color: #64748B">"Pacientes atendidos" cuenta a los pacientes con al menos una sesión registrada en el mes. Las nuevas cuentas se crean en Supabase › Authentication › Add user y empiezan en prueba gratis.</p>
+</main>
+
+<template data-sc="if" value="{{hayEditar}}" hint-placeholder-val="{{ false }}">
+<div style="position: fixed; inset: 0; background: rgba(15, 42, 74, 0.45); display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; z-index: 50">
+<form onSubmit="{{guardarE}}" aria-labelledby="t-editar" style="width: 560px; max-width: 100%; max-height: 100%; overflow-y: auto; background: #FFFFFF; border-radius: 24px; padding: 26px; box-sizing: border-box; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 12px">
+<div style="flex: 1; display: flex; flex-direction: column"><h2 id="t-editar" style="margin: 0; font-size: 22px; font-weight: 800">Plan y datos</h2><span style="font-size: 13px; color: #64748B; overflow-wrap: anywhere">{{fe.email}}</span></div>
+<button type="button" onClick="{{cerrarE}}" aria-label="Cerrar" style="width: 44px; height: 44px; border-radius: 12px; border: 0; background: #F3F8FF; color: #0F2A4A; font-size: 20px; cursor: pointer">×</button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 6px"><label for="e-nombre" style="font-size: 14px; font-weight: 700">Nombre de la profesional</label><input id="e-nombre" type="text" value="{{fe.nombre}}" onChange="{{setE.nombre}}" style="min-height: 48px; padding: 0 14px; border: 1.5px solid #C8D9EF; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A"></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="e-plan" style="font-size: 14px; font-weight: 700">Plan</label>
+<select id="e-plan" value="{{fe.plan}}" onChange="{{setE.plan}}" style="min-height: 48px; padding: 0 12px; border: 1.5px solid #C8D9EF; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A; background: #FFFFFF"><template data-sc="for" list="{{planes}}" as="o" hint-placeholder-count="6"><option value="{{o.k}}">{{o.label}}</option></template></select></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="e-estado" style="font-size: 14px; font-weight: 700">Estado</label>
+<select id="e-estado" value="{{fe.estado}}" onChange="{{setE.estado}}" style="min-height: 48px; padding: 0 12px; border: 1.5px solid #C8D9EF; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A; background: #FFFFFF"><template data-sc="for" list="{{estados}}" as="o" hint-placeholder-count="3"><option value="{{o.k}}">{{o.label}}</option></template></select></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="e-inicio" style="font-size: 14px; font-weight: 700">Inicio del servicio</label><input id="e-inicio" type="date" value="{{fe.inicio}}" onChange="{{setE.inicio}}" style="min-height: 48px; padding: 0 12px; border: 1.5px solid #C8D9EF; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A"></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="e-prueba" style="font-size: 14px; font-weight: 700">Fin de la prueba gratis</label><input id="e-prueba" type="date" value="{{fe.fin_prueba}}" onChange="{{setE.fin_prueba}}" style="min-height: 48px; padding: 0 12px; border: 1.5px solid #C8D9EF; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A"></div>
+<label style="grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 15px; font-weight: 700; cursor: pointer"><input type="checkbox" checked="{{fe.anual}}" onChange="{{toggleAnual}}" style="width: 20px; height: 20px; accent-color: #1D4ED8">Pago anual (12 meses por el precio de 10)</label>
+<div style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 6px"><label for="e-notas" style="font-size: 14px; font-weight: 700">Notas (pagos, acuerdos, referidos)</label><textarea id="e-notas" rows="3" value="{{fe.notas}}" onChange="{{setE.notas}}" style="padding: 10px 14px; border: 1.5px solid #C8D9EF; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A; resize: vertical"></textarea></div>
+</div>
+<template data-sc="if" value="{{hayAviso}}" hint-placeholder-val="{{ false }}"><p role="alert" style="margin: 0; padding: 12px 14px; border-radius: 12px; background: #FDECEC; color: #9B1C1C; font-size: 14px; font-weight: 700">{{aviso}}</p></template>
+<div style="display: flex; gap: 10px; justify-content: flex-end">
+<button type="button" onClick="{{cerrarE}}" style="min-height: 48px; padding: 0 20px; border-radius: 999px; border: 1.5px solid #C8D9EF; background: #FFFFFF; color: #0F2A4A; font-family: inherit; font-weight: 700; font-size: 15px; cursor: pointer">Cancelar</button>
+<button type="submit" disabled="{{ocupado}}" style="min-height: 48px; padding: 0 24px; border-radius: 999px; border: 0; background: #1D4ED8; color: #FFFFFF; font-family: inherit; font-weight: 800; font-size: 15px; cursor: pointer">Guardar</button>
+</div>
+</form>
+</div>
+</template>
+
+<template data-sc="if" value="{{verTarifas}}" hint-placeholder-val="{{ false }}">
+<div style="position: fixed; inset: 0; background: rgba(15, 42, 74, 0.45); display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; z-index: 50">
+<form onSubmit="{{guardarTarifas}}" aria-labelledby="t-tarifas" style="width: 520px; max-width: 100%; max-height: 100%; overflow-y: auto; background: #FFFFFF; border-radius: 24px; padding: 26px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; gap: 12px">
+<h2 id="t-tarifas" style="flex: 1; margin: 0; font-size: 22px; font-weight: 800">Tarifas</h2>
+<button type="button" onClick="{{cerrarTarifas}}" aria-label="Cerrar" style="width: 44px; height: 44px; border-radius: 12px; border: 0; background: #F3F8FF; color: #0F2A4A; font-size: 20px; cursor: pointer">×</button>
+</div>
+<span style="font-size: 14px; color: #475569">Se usan para calcular el cobro de cada profesional, en este panel y en su sección "Mi plan".</span>
+<template data-sc="for" list="{{camposTarifa}}" as="c" hint-placeholder-count="7">
+<div style="display: flex; flex-direction: column; gap: 5px"><label for="{{c.id}}" style="font-size: 14px; font-weight: 700">{{c.label}}</label><input id="{{c.id}}" type="text" inputmode="numeric" value="{{c.valor}}" onChange="{{c.cambiar}}" style="min-height: 46px; padding: 0 14px; border: 1.5px solid #C8D9EF; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A"></div>
+</template>
+<template data-sc="if" value="{{hayAviso}}" hint-placeholder-val="{{ false }}"><p role="alert" style="margin: 0; padding: 12px 14px; border-radius: 12px; background: #FDECEC; color: #9B1C1C; font-size: 14px; font-weight: 700">{{aviso}}</p></template>
+<div style="display: flex; gap: 10px; justify-content: flex-end">
+<button type="button" onClick="{{cerrarTarifas}}" style="min-height: 48px; padding: 0 20px; border-radius: 999px; border: 1.5px solid #C8D9EF; background: #FFFFFF; color: #0F2A4A; font-family: inherit; font-weight: 700; font-size: 15px; cursor: pointer">Cancelar</button>
+<button type="submit" disabled="{{ocupado}}" style="min-height: 48px; padding: 0 24px; border-radius: 999px; border: 0; background: #1D4ED8; color: #FFFFFF; font-family: inherit; font-weight: 800; font-size: 15px; cursor: pointer">Guardar tarifas</button>
+</div>
+</form>
+</div>
+</template>
+
+<template data-sc="if" value="{{hayToast}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%); background: #0F2A4A; color: #FFFFFF; padding: 12px 20px; border-radius: 999px; font-size: 15px; font-weight: 700; z-index: 60">{{toast}}</div>
+</template>
+</div>
+</script>
+<script type="text/x-component" id="js-Administracion">
+var PLANES = APP.cobro.PLANES, TARIFAS_BASE = APP.cobro.TARIFAS_BASE, cop = APP.cobro.cop, nombrePlan = APP.cobro.nombrePlan;
+var modalidades = APP.cobro.modalidades, cobro = APP.cobro.cobro;
+var ESTADOS = [{ k: 'activa', label: 'Activa' }, { k: 'suspendida', label: 'Suspendida' }, { k: 'cancelada', label: 'Cancelada' }];
+var CAMPOS_TARIFA = [
+  { k: 'inicio', label: 'Plan Inicio (COP/mes)' }, { k: 'limite_inicio', label: 'Límite de pacientes atendidos del Plan Inicio' },
+  { k: 'profesional', label: 'Plan Profesional (COP/mes)' }, { k: 'por_sesion', label: 'Valor por sesión registrada (COP)' },
+  { k: 'por_paciente', label: 'Valor por paciente atendido (COP)' }, { k: 'tope', label: 'Tope mensual del pago por uso (COP)' },
+  { k: 'prueba_dias', label: 'Días de prueba gratis' }
+];
+var MESES_C = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+
+function mb(b) { b = +b || 0; return (b >= 1073741824 ? (b / 1073741824).toFixed(2) + ' GB' : (b / 1048576).toFixed(b < 10485760 ? 1 : 0) + ' MB').replace('.', ','); }
+function finMes(m) { var p = m.split('-'); return APP.f.iso(new Date(+p[0], +p[1], 0)); }
+function mesTexto(m) { return APP.f.cap(APP.f.mes(m + '-01')) + ' ' + m.slice(0, 4); }
+function fecha(t) { return t ? APP.f.corta(APP.f.local(t)) + ' ' + String(APP.f.local(t)).slice(0, 4) : '—'; }
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    var h = APP.f.hoy();
+    this.state = { mes: h.slice(0, 7), cargando: true, error: '', usuarios: [], mensual: [], capacidad: null,
+      T: Object.assign({}, TARIFAS_BASE), editar: null, aviso: '', ocupado: false, verTarifas: false, tarifasForm: null, toast: '' };
+  }
+  alMostrar() {
+    var self = this;
+    APP.cobro.tarifas().then(function (t) { self.setState({ T: t }); });
+    this.cargar();
+  }
+  rango() {
+    var m = this.state.mes, hoy = APP.f.hoy(), fin = finMes(m);
+    return { desde: m + '-01', hasta: fin > hoy ? hoy : fin, finMes: fin };
+  }
+  cargar() {
+    var self = this, r = this.rango();
+    var m6 = APP.f.deIso(r.desde); m6.setMonth(m6.getMonth() - 5);
+    this.setState({ cargando: true, error: '' });
+    Promise.all([
+      APP.db.rpc('admin_uso', { desde: r.desde, hasta: r.hasta }),
+      APP.db.rpc('admin_mensual', { desde: APP.f.iso(m6) }),
+      APP.db.rpc('admin_capacidad').catch(function () { return []; })
+    ]).then(function (x) {
+      self.setState({ cargando: false, usuarios: x[0] || [], mensual: x[1] || [], capacidad: (x[2] || [])[0] || null });
+    }).catch(function (e) { self.setState({ cargando: false, error: APP.mensajeError(e) }); });
+  }
+  cambiarMes(n) {
+    var p = this.state.mes.split('-'), d = new Date(+p[0], +p[1] - 1 + n, 1), m = APP.f.iso(d).slice(0, 7);
+    if (m > APP.f.hoy().slice(0, 7)) return;
+    this.setState({ mes: m }); this.cargar();
+  }
+  toastMsg(t) { var self = this; this.setState({ toast: t }); clearTimeout(this._t); this._t = setTimeout(function () { self.setState({ toast: '' }); }, 2400); }
+  componentWillUnmount() { clearTimeout(this._t); }
+
+  abrirEditar(u) {
+    this.setState({ aviso: '', editar: { user_id: u.user_id, email: u.email, nombre: u.nombre || '', plan: u.plan, estado: u.estado,
+      inicio: u.inicio || APP.f.local(u.creado), fin_prueba: u.fin_prueba || '', anual: !!u.anual, notas: u.notas || '' } });
+  }
+  setE(k, v) { var e = Object.assign({}, this.state.editar); e[k] = v; this.setState({ editar: e, aviso: '' }); }
+  guardarE(ev) {
+    if (ev && ev.preventDefault) ev.preventDefault();
+    var self = this, e = this.state.editar;
+    this.setState({ ocupado: true });
+    APP.db.rpc('admin_guardar_suscripcion', { p_user: e.user_id, p_nombre: e.nombre, p_plan: e.plan, p_estado: e.estado,
+      p_inicio: e.inicio || null, p_fin_prueba: e.fin_prueba || null, p_anual: !!e.anual, p_notas: e.notas })
+      .then(function () { self.setState({ ocupado: false, editar: null }); self.toastMsg('Plan guardado'); self.cargar(); })
+      .catch(function (err) { self.setState({ ocupado: false, aviso: APP.mensajeError(err) }); });
+  }
+  guardarTarifas(ev) {
+    if (ev && ev.preventDefault) ev.preventDefault();
+    var self = this, f = this.state.tarifasForm, T = {};
+    for (var i = 0; i < CAMPOS_TARIFA.length; i++) {
+      var k = CAMPOS_TARIFA[i].k, n = parseInt(String(f[k]).replace(/\D/g, ''), 10);
+      if (!(n >= 0)) { this.setState({ aviso: 'Revisa el valor de "' + CAMPOS_TARIFA[i].label + '".' }); return; }
+      T[k] = n;
+    }
+    this.setState({ ocupado: true });
+    APP.db.rpc('admin_guardar_tarifas', { p_valor: T }).then(function () {
+      self.setState({ ocupado: false, T: T, verTarifas: false, tarifasForm: null, aviso: '' }); self.toastMsg('Tarifas guardadas');
+    }).catch(function (err) { self.setState({ ocupado: false, aviso: APP.mensajeError(err) }); });
+  }
+
+  filas() {
+    var s = this.state, T = s.T, r = this.rango();
+    return s.usuarios.map(function (u) { return { u: u, c: cobro(u, T, r.finMes), m: modalidades(u, T) }; });
+  }
+  csv() {
+    var s = this.state, r = this.rango();
+    var cab = ['Profesional', 'Correo', 'Plan', 'Estado', 'Pacientes registrados', 'Pacientes atendidos', 'Pacientes nuevos', 'Sesiones', 'Citas', 'Historias', 'Consentimientos', 'Archivos', 'Almacenamiento (MB)', 'Último ingreso', 'Cobro estimado (COP)'];
+    var q = function (v) { v = v === null || v === undefined ? '' : String(v); return /[;"\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+    var lineas = [cab.join(';')].concat(this.filas().map(function (f) {
+      var u = f.u;
+      return [u.nombre || '', u.email, nombrePlan(u.plan), u.estado, u.pacientes, u.pacientes_atendidos, u.pacientes_nuevos, u.sesiones, u.citas, u.historias,
+        u.consentimientos, u.archivos, ((+u.almacenamiento || 0) / 1048576).toFixed(1), u.ultimo_ingreso ? APP.f.local(u.ultimo_ingreso) : '', Math.round(f.c.valor)].map(q).join(';');
+    }));
+    var blob = new Blob(['﻿' + lineas.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'uso-' + s.mes + '.csv';
+    document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
+  reporte(f) {
+    var s = this.state, T = s.T, u = f.u, r = this.rango(), esc = APP.u.esc;
+    var fila = function (k, v) { return '<tr><th style="width:55%">' + esc(k) + '</th><td>' + esc(String(v)) + '</td></tr>'; };
+    var hist = this.tendencia(u.user_id).map(function (b) { return '<td style="text-align:center">' + b.n + '</td>'; }).join('');
+    var meses = this.tendencia(u.user_id).map(function (b) { return '<th style="text-align:center">' + esc(b.mes) + '</th>'; }).join('');
+    var cuerpo = '<div class="grid"><p><span class="k">Profesional:</span> ' + esc(u.nombre || u.email) + '</p><p><span class="k">Cuenta:</span> ' + esc(u.email) + '</p>'
+      + '<p><span class="k">Periodo:</span> ' + esc(APP.f.corta(r.desde) + ' al ' + APP.f.corta(r.hasta) + ' de ' + r.desde.slice(0, 4)) + '</p><p><span class="k">Plan:</span> ' + esc(nombrePlan(u.plan)) + '</p></div>'
+      + '<h2>Uso registrado en el periodo</h2><table>'
+      + fila('Pacientes atendidos (con al menos una sesión)', u.pacientes_atendidos) + fila('Sesiones registradas', u.sesiones)
+      + fila('Pacientes nuevos', u.pacientes_nuevos) + fila('Citas agendadas', u.citas) + fila('Historias clínicas creadas', u.historias)
+      + fila('Consentimientos firmados', u.consentimientos) + fila('Pacientes registrados en total', u.pacientes)
+      + fila('Archivos y fotos guardados (total)', u.archivos + ' · ' + mb(u.almacenamiento)) + '</table>'
+      + '<h2>Sesiones por mes</h2><table><tr>' + meses + '</tr><tr>' + hist + '</tr></table>'
+      + '<h2>Valor del servicio</h2><table>' + fila('Modalidad contratada', nombrePlan(u.plan)) + fila('Cálculo', f.c.detalle)
+      + '<tr><th>Total del periodo</th><td><b>' + esc(cop(f.c.valor)) + ' COP</b></td></tr></table>'
+      + '<h2>Referencia de otras modalidades para este uso</h2><table>'
+      + fila('Plan Inicio (hasta ' + T.limite_inicio + ' pacientes atendidos)', cop(f.m.inicio)) + fila('Plan Profesional', cop(f.m.profesional))
+      + fila('Pago por sesión (' + cop(T.por_sesion) + ', tope ' + cop(T.tope) + ')', cop(f.m.por_sesion))
+      + fila('Pago por paciente atendido (' + cop(T.por_paciente) + ', tope ' + cop(T.tope) + ')', cop(f.m.por_paciente)) + '</table>'
+      + '<p class="nota">Este reporte contiene solo cantidades de uso. No incluye nombres, documentos ni información clínica de los pacientes.</p>';
+    APP.u.imprimir('Reporte de uso · ' + mesTexto(s.mes), cuerpo, 'Software de gestión para fisioterapia · Reporte para facturación');
+  }
+  tendencia(id) {
+    var s = this.state, r = this.rango(), out = [], d = APP.f.deIso(r.desde);
+    d.setMonth(d.getMonth() - 5);
+    for (var i = 0; i < 6; i++) {
+      var m = APP.f.iso(d).slice(0, 7);
+      var x = s.mensual.find(function (y) { return y.user_id === id && String(y.mes).slice(0, 7) === m; });
+      out.push({ mes: MESES_C[d.getMonth()], n: x ? +x.sesiones : 0, actual: m === s.mes });
+      d.setMonth(d.getMonth() + 1);
+    }
+    return out;
+  }
+
+  renderVals() {
+    var self = this, s = this.state, T = s.T, r = this.rango();
+    var filas = this.filas();
+    var activas = filas.filter(function (f) { return f.u.estado === 'activa'; });
+    var sum = function (k) { return filas.reduce(function (a, f) { return a + (+f.u[k] || 0); }, 0); };
+    var ingreso = filas.reduce(function (a, f) { return a + f.c.valor; }, 0);
+    var alm = s.capacidad ? +s.capacidad.almacenamiento : sum('almacenamiento');
+    var tiles = [
+      { t: 'Profesionales activas', v: String(activas.length), d: filas.length + ' cuentas en total', c: '#1D4ED8', bg: '#DBEAFE' },
+      { t: 'Pacientes atendidos', v: String(sum('pacientes_atendidos')), d: sum('pacientes') + ' registrados en total', c: '#047857', bg: '#D1FAE5' },
+      { t: 'Sesiones del mes', v: String(sum('sesiones')), d: sum('citas') + ' citas agendadas', c: '#6D28D9', bg: '#EDE9FE' },
+      { t: 'Ingreso estimado', v: cop(ingreso), d: 'COP según el plan de cada una', c: '#C2410C', bg: '#FFEDD5' },
+      { t: 'Almacenamiento', v: mb(alm), d: 'de 1 GB del plan gratuito' + (s.capacidad ? ' · base de datos ' + mb(s.capacidad.base_datos) + ' de 500 MB' : ''), c: '#0E7490', bg: '#CFFAFE' }
+    ];
+    var tarjetas = filas.map(function (f) {
+      var u = f.u, ten = self.tendencia(u.user_id), max = Math.max.apply(null, ten.map(function (b) { return b.n; }).concat([1]));
+      var opciones = [
+        { k: 'inicio', label: 'Inicio', v: f.m.inicio }, { k: 'profesional', label: 'Profesional', v: f.m.profesional },
+        { k: 'por_sesion', label: 'Por sesión', v: f.m.por_sesion }, { k: 'por_paciente', label: 'Por paciente', v: f.m.por_paciente }
+      ];
+      var validas = opciones.filter(function (o) { return o.k !== 'inicio' || u.pacientes_atendidos <= T.limite_inicio; });
+      var menor = validas.reduce(function (a, o) { return o.v < a.v ? o : a; }, validas[0]);
+      var nombre = u.nombre || u.email.split('@')[0];
+      var alerta = f.c.vencida ? f.c.detalle : f.c.excede ? 'Superó el límite del Plan Inicio (' + u.pacientes_atendidos + ' de ' + T.limite_inicio + ' pacientes): propón el Plan Profesional.' : '';
+      return {
+        nombre: nombre, email: u.email, ini: nombre.slice(0, 2).toUpperCase(),
+        plan: nombrePlan(u.plan), estado: APP.f.cap(u.estado),
+        estBg: u.estado === 'activa' ? '#D1FAE5' : '#FEE2E2', estFg: u.estado === 'activa' ? '#065F46' : '#991B1B',
+        stats: [
+          { t: 'Pacientes atendidos', v: u.pacientes_atendidos }, { t: 'Sesiones', v: u.sesiones },
+          { t: 'Pacientes nuevos', v: u.pacientes_nuevos }, { t: 'Citas', v: u.citas },
+          { t: 'Historias', v: u.historias }, { t: 'Consentimientos', v: u.consentimientos },
+          { t: 'Pacientes totales', v: u.pacientes }, { t: 'Archivos y fotos', v: u.archivos }
+        ],
+        barras: ten.map(function (b) {
+          return { mes: b.mes, n: b.n, alto: Math.max(2, Math.round(b.n / max * 64)) + 'px', color: b.actual ? '#1D4ED8' : '#93C5FD',
+            peso: b.actual ? '800' : '600', titulo: b.n + ' sesiones en ' + b.mes };
+        }),
+        opciones: opciones.map(function (o) {
+          var on = o.k === u.plan;
+          return { label: o.label + (o.k === menor.k ? ' · la más económica' : ''), v: cop(o.v), bg: on ? '#EFF6FF' : '#FFFFFF', borde: on ? '#1D4ED8' : '#E2E8F0', peso: on ? '800' : '600' };
+        }),
+        cobro: cop(f.c.valor), detalle: f.c.detalle,
+        hayAlerta: !!alerta, alerta: alerta,
+        ingreso: 'Almacenamiento: ' + mb(u.almacenamiento) + ' · Último ingreso: ' + fecha(u.ultimo_ingreso) + ' · Cuenta creada: ' + fecha(u.creado),
+        editar: function () { self.abrirEditar(u); },
+        reporte: function () { self.reporte(f); }
+      };
+    });
+    var e = s.editar || {}, setE = {};
+    ['nombre', 'plan', 'estado', 'inicio', 'fin_prueba', 'notas'].forEach(function (k) { setE[k] = function (ev) { self.setE(k, ev.target.value); }; });
+    var tf = s.tarifasForm || {};
+    return {
+      titulo: mesTexto(s.mes), periodo: 'Del ' + APP.f.corta(r.desde) + ' al ' + APP.f.corta(r.hasta),
+      anterior: function () { self.cambiarMes(-1); }, siguiente: function () { self.cambiarMes(1); },
+      sinSiguiente: s.mes >= APP.f.hoy().slice(0, 7),
+      tiles: tiles, tarjetas: tarjetas, cargando: s.cargando,
+      vacio: !s.cargando && !s.error && !filas.length,
+      hayError: !!s.error, error: s.error,
+      exportar: function () { self.csv(); },
+      tarifasTxt: 'Inicio ' + cop(T.inicio) + ' (hasta ' + T.limite_inicio + ' pacientes) · Profesional ' + cop(T.profesional) + ' · Por sesión ' + cop(T.por_sesion) + ' · Por paciente ' + cop(T.por_paciente) + ' · Tope ' + cop(T.tope),
+      abrirTarifas: function () { var f0 = {}; CAMPOS_TARIFA.forEach(function (c) { f0[c.k] = String(T[c.k]); }); self.setState({ verTarifas: true, tarifasForm: f0, aviso: '' }); },
+      verTarifas: s.verTarifas,
+      camposTarifa: CAMPOS_TARIFA.map(function (c) {
+        return { id: 't-' + c.k, label: c.label, valor: tf[c.k] || '', cambiar: function (ev) { var n = Object.assign({}, self.state.tarifasForm); n[c.k] = ev.target.value; self.setState({ tarifasForm: n, aviso: '' }); } };
+      }),
+      guardarTarifas: function (ev) { self.guardarTarifas(ev); },
+      cerrarTarifas: function () { self.setState({ verTarifas: false, tarifasForm: null, aviso: '' }); },
+      hayEditar: !!s.editar, fe: e, setE: setE,
+      planes: PLANES, estados: ESTADOS,
+      toggleAnual: function () { self.setE('anual', !self.state.editar.anual); },
+      guardarE: function (ev) { self.guardarE(ev); },
+      cerrarE: function () { self.setState({ editar: null }); },
+      hayAviso: !!s.aviso, aviso: s.aviso, ocupado: s.ocupado,
+      hayToast: !!s.toast, toast: s.toast
+    };
+  }
+}
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <script>
@@ -3196,6 +3788,7 @@ class Component extends DCLogic {
               .then(function (x) { if (x.error) throw new Error(x.error.message); return ruta; });
           });
         },
+        rpc: function (fn, args) { return Promise.resolve().then(function () { return sb.rpc(fn, args || {}); }).then(ok); },
         url: function (ruta, segundos) {
           return sb.storage.from('evidencias').createSignedUrl(ruta, segundos || 3600)
             .then(function (x) { if (x.error) throw new Error(x.error.message); return x.data.signedUrl; });
@@ -3295,7 +3888,64 @@ class Component extends DCLogic {
           r.readAsDataURL(blob);
         });
       },
-      url: function (ruta) { return Promise.resolve((datos.archivos || {})[ruta] || ''); }
+      url: function (ruta) { return Promise.resolve((datos.archivos || {})[ruta] || ''); },
+      rpc: function (fn, a) { try { return Promise.resolve(adminDemo(fn, a || {})); } catch (e) { return Promise.reject(e); } }
+    };
+    // Panel de administración en demostración: la cuenta demo más dos profesionales ficticias.
+    var adminDemo = function (fn, a) {
+      var hoy = iso(new Date()), entre = function (f) { f = String(f || '').slice(0, 10); return f >= a.desde && f <= a.hasta; };
+      datos.suscripciones = datos.suscripciones || {};
+      var fict = [
+        { user_id: 'demo-2', email: 'fisio.ejemplo1@correo.co', creado: APP.f.sumar(hoy, -120), base: 34, pac: 22 },
+        { user_id: 'demo-3', email: 'fisio.ejemplo2@correo.co', creado: APP.f.sumar(hoy, -12), base: 5, pac: 4 }
+      ];
+      if (fn === 'admin_guardar_suscripcion') {
+        datos.suscripciones[a.p_user] = { nombre: a.p_nombre, plan: a.p_plan, estado: a.p_estado, inicio: a.p_inicio, fin_prueba: a.p_fin_prueba, anual: a.p_anual, notas: a.p_notas };
+        guardar(); return null;
+      }
+      if (fn === 'es_admin') { try { return localStorage.getItem('fisio-demo-admin') === '1'; } catch (e) { return false; } }
+      if (fn === 'admin_guardar_tarifas') { datos.tarifas_cobro = [{ id: 1, valor: a.p_valor }]; guardar(); return null; }
+      if (fn === 'mi_uso') return adminDemo('admin_uso', a).filter(function (x) { return x.user_id === 'demo'; }).map(function (x) { return Object.assign({}, x, { notas: null }); });
+      if (fn === 'mi_mensual') return adminDemo('admin_mensual', a).filter(function (x) { return x.user_id === 'demo'; });
+      if (fn === 'admin_capacidad') return [{ base_datos: 14 * 1048576, almacenamiento: 96 * 1048576 }];
+      var sus = function (id, def) { return Object.assign({ nombre: null, plan: def, estado: 'activa', inicio: null, fin_prueba: null, anual: false, notas: null }, datos.suscripciones[id] || {}); };
+      if (fn === 'admin_mensual') {
+        var r = [], m0 = deIso(a.desde);
+        for (var d = new Date(m0.getFullYear(), m0.getMonth(), 1); iso(d) <= hoy; d.setMonth(d.getMonth() + 1)) {
+          var mes = iso(d), fin = iso(new Date(d.getFullYear(), d.getMonth() + 1, 0));
+          var ses = datos.sesiones.filter(function (x) { return x.fecha >= mes && x.fecha <= fin; });
+          r.push({ user_id: 'demo', mes: mes, sesiones: ses.length, pacientes_atendidos: new Set(ses.map(function (x) { return x.paciente_id; })).size });
+          fict.forEach(function (f, i) {
+            if (mes < f.creado.slice(0, 7) + '-01') return;
+            var n = Math.max(0, Math.round(f.base * (0.75 + 0.1 * ((d.getMonth() + i) % 4))));
+            r.push({ user_id: f.user_id, mes: mes, sesiones: n, pacientes_atendidos: Math.round(n / 2.6) });
+          });
+        }
+        return r;
+      }
+      if (fn === 'admin_uso') {
+        var ses = datos.sesiones.filter(function (x) { return entre(x.fecha); });
+        var propia = Object.assign({
+          user_id: 'demo', email: 'cuenta-demo@correo.co', creado: datos.pacientes.length ? APP.f.sumar(hoy, -60) : hoy, ultimo_ingreso: new Date().toISOString(),
+          pacientes: datos.pacientes.length, pacientes_atendidos: new Set(ses.map(function (x) { return x.paciente_id; })).size,
+          pacientes_nuevos: datos.pacientes.filter(function (p) { return entre(p.created_at || hoy); }).length,
+          sesiones: ses.length, sesiones_total: datos.sesiones.length,
+          citas: datos.citas.filter(function (c) { return entre(c.fecha); }).length,
+          historias: datos.historias.filter(function (h) { return entre(h.created_at); }).length,
+          consentimientos: (datos.consentimientos || []).filter(function (c) { return entre(c.firmado_en || c.created_at); }).length,
+          archivos: Object.keys(datos.archivos || {}).length, almacenamiento: JSON.stringify(datos.archivos || {}).length, ultima_actividad: new Date().toISOString()
+        }, sus('demo', 'inicio'));
+        var dias = (deIso(a.hasta) - deIso(a.desde)) / 864e5 + 1, f30 = Math.min(1, dias / 30);
+        return [propia].concat(fict.map(function (f, i) {
+          if (a.hasta < f.creado) return null;
+          var s = Math.round(f.base * f30 * (1 + 0.08 * (deIso(a.desde).getMonth() % 3)));
+          return Object.assign({ user_id: f.user_id, email: f.email, creado: f.creado + 'T12:00:00Z', ultimo_ingreso: APP.f.sumar(hoy, -i) + 'T15:00:00Z',
+            pacientes: f.pac, pacientes_atendidos: Math.round(s / 2.6), pacientes_nuevos: Math.round(s / 10), sesiones: s, sesiones_total: s * (i ? 1 : 4),
+            citas: s + 2, historias: Math.round(s / 10), consentimientos: Math.round(s / 8), archivos: s * 2, almacenamiento: s * 2 * 380000,
+            ultima_actividad: APP.f.sumar(hoy, -i) + 'T15:00:00Z' }, sus(f.user_id, i ? 'prueba' : 'inicio'), { fin_prueba: (datos.suscripciones[f.user_id] || {}).fin_prueba || APP.f.sumar(f.creado, 30) });
+        }).filter(Boolean));
+      }
+      throw new Error('Función no disponible en demostración: ' + fn);
     };
   }
 
@@ -3308,6 +3958,7 @@ class Component extends DCLogic {
           .then(function () { return DB.listar('servicios', { order: ['orden'] }); });
       });
     };
+    DB.esAdmin = function () { return Promise.resolve().then(function () { return DB.rpc('es_admin'); }).then(function (r) { return r === true; }).catch(function () { return false; }); };
     DB.ajuste = function (clave) {
       return DB.listar('ajustes', { eq: [['clave', clave]] }).then(function (l) { return l[0] ? l[0].valor : null; });
     };
@@ -3362,6 +4013,8 @@ class Component extends DCLogic {
     if (/duplicate key|unique/i.test(m)) return 'Ya hay una cita en ese día y hora.';
     if (/column|schema cache/i.test(m) && /examenes|cie10|diagnostico_fisio|objetivos_fisio/i.test(m)) return 'Falta ejecutar el script 003_fisioterapia.sql en Supabase.';
     if (/foreign key/i.test(m)) return 'Este paciente tiene un consentimiento firmado. Ese documento debe conservarse, así que el paciente no se puede eliminar; puedes marcarlo como dado de alta.';
+    if (/No autorizado/i.test(m)) return 'Tu cuenta no tiene permisos de administración.';
+    if (/function .*does not exist|Could not find the function/i.test(m)) return 'Falta ejecutar el script 004_administracion.sql en Supabase.';
     if (/fetch|network/i.test(m)) return 'Sin conexión con la base de datos. Revisa internet.';
     return m;
   };
@@ -3372,6 +4025,43 @@ class Component extends DCLogic {
 /* Utilidades compartidas: mensajes, impresión, imágenes y huellas. */
 (function () {
   var APP = window.APP;
+
+  // ---------- Planes y cobro mensual (lo usan Administración y Mi plan) ----------
+  var PLANES = [
+    { k: 'prueba', label: 'Prueba gratis' }, { k: 'inicio', label: 'Plan Inicio' }, { k: 'profesional', label: 'Plan Profesional' },
+    { k: 'por_sesion', label: 'Pago por sesión' }, { k: 'por_paciente', label: 'Pago por paciente' }, { k: 'cortesia', label: 'Cortesía (sin cobro)' }
+  ];
+  var TARIFAS_BASE = { inicio: 45000, limite_inicio: 30, profesional: 79000, por_sesion: 2000, por_paciente: 3500, tope: 79000, prueba_dias: 30 };
+  function cop(n) { return '$' + Math.round(n || 0).toLocaleString('es-CO'); }
+  function nombrePlan(k) { var p = PLANES.find(function (x) { return x.k === k; }); return p ? p.label : k; }
+  function modalidades(u, T) {
+    var pac = +u.pacientes_atendidos || 0, ses = +u.sesiones || 0;
+    return { inicio: T.inicio, profesional: T.profesional,
+      por_sesion: Math.min(ses * T.por_sesion, T.tope), por_paciente: Math.min(pac * T.por_paciente, T.tope) };
+  }
+  // Valor del periodo según el plan asignado. hasta = último día del periodo (para saber si la prueba sigue vigente).
+  function cobro(u, T, hasta) {
+    var m = modalidades(u, T);
+    if (u.estado !== 'activa') return { valor: 0, detalle: 'Cuenta ' + u.estado + ': sin cobro' };
+    if (u.plan === 'cortesia') return { valor: 0, detalle: 'Cortesía: sin cobro' };
+    if (u.plan === 'prueba') {
+      var fin = u.fin_prueba || APP.f.sumar(APP.f.local(u.creado), T.prueba_dias);
+      return fin >= hasta ? { valor: 0, detalle: 'Prueba gratis hasta el ' + APP.f.corta(fin), finPrueba: fin }
+        : { valor: 0, detalle: 'La prueba terminó el ' + APP.f.corta(fin) + ': falta elegir un plan', vencida: true, finPrueba: fin };
+    }
+    var v = m[u.plan] || 0, det;
+    if (u.plan === 'por_sesion') det = u.sesiones + ' sesiones × ' + cop(T.por_sesion) + (v >= T.tope ? ' (tope)' : '');
+    else if (u.plan === 'por_paciente') det = u.pacientes_atendidos + ' pacientes × ' + cop(T.por_paciente) + (v >= T.tope ? ' (tope)' : '');
+    else det = nombrePlan(u.plan) + ' mensual';
+    if (u.anual && (u.plan === 'inicio' || u.plan === 'profesional')) { v = v * 10 / 12; det += ' · pago anual (12 meses por 10)'; }
+    return { valor: v, detalle: det, porUso: u.plan === 'por_sesion' || u.plan === 'por_paciente',
+      excede: u.plan === 'inicio' && u.pacientes_atendidos > T.limite_inicio };
+  }
+  function tarifas() {
+    return Promise.resolve().then(function () { return APP.db.listar('tarifas_cobro'); }).then(function (l) { return Object.assign({}, TARIFAS_BASE, (l[0] && l[0].valor) || {}); })
+      .catch(function () { return Object.assign({}, TARIFAS_BASE); });
+  }
+  APP.cobro = { PLANES: PLANES, TARIFAS_BASE: TARIFAS_BASE, cop: cop, nombrePlan: nombrePlan, modalidades: modalidades, cobro: cobro, tarifas: tarifas };
   var CONTACTO = 'Angie Ferrucho · Fisioterapeuta · WhatsApp 322 374 2435';
 
   var LOGO = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="56" height="56" aria-hidden="true">'
@@ -3474,7 +4164,7 @@ class Component extends DCLogic {
       });
     },
     // Abre un documento listo para imprimir o guardar como PDF.
-    imprimir: function (titulo, cuerpo) {
+    imprimir: function (titulo, cuerpo, subtitulo) {
       var html = '<!doctype html><html lang="es"><head><meta charset="utf-8"><title>' + esc(titulo) + '</title>'
         + '<meta name="viewport" content="width=device-width, initial-scale=1"><style>'
         + '@page{size:A4;margin:16mm 14mm}body{font-family:Nunito,Segoe UI,Arial,sans-serif;color:#0F2A4A;font-size:11pt;line-height:1.45;margin:0}'
@@ -3489,7 +4179,7 @@ class Component extends DCLogic {
         + '.btn{position:fixed;top:12px;right:12px;padding:10px 18px;border-radius:999px;border:0;background:#1D4ED8;color:#fff;font:inherit;font-weight:700;cursor:pointer}'
         + '@media print{.btn{display:none}}</style></head><body>'
         + '<button class="btn" onclick="window.print()">Imprimir / Guardar PDF</button>'
-        + '<div class="enc">' + LOGO + '<div><h1>' + esc(titulo) + '</h1><p>' + esc(CONTACTO) + '</p></div></div>'
+        + '<div class="enc">' + LOGO + '<div><h1>' + esc(titulo) + '</h1><p>' + esc(subtitulo || CONTACTO) + '</p></div></div>'
         + cuerpo + '</body></html>';
       var w = window.open('', '_blank');
       if (w) {
@@ -3511,7 +4201,8 @@ class Component extends DCLogic {
 /* Motor de pantallas: interpreta las plantillas (sc-for, sc-if, {{huecos}}) y los componentes. */
 (function () {
   var APP = window.APP;
-  var PANTALLAS = ['Main', 'Agenda', 'Pacientes', 'Terapias', 'HistoriaClinica', 'Sesion', 'Consentimiento', 'Evolucion', 'CodigosCIE'];
+  var PANTALLAS = ['Main', 'Agenda', 'Pacientes', 'Terapias', 'HistoriaClinica', 'Sesion', 'Consentimiento', 'Evolucion', 'CodigosCIE', 'MiPlan', 'Administracion'];
+  var esAdmin = false;   // las cuentas administradoras solo ven el panel de Administración
   var root = document.getElementById('app');
   var instancias = {};
   var actual = null;
@@ -3725,6 +4416,8 @@ class Component extends DCLogic {
     var h = location.hash.replace(/^#/, '');
     var partes = h.split('?');
     var nombre = conSesion ? (PANTALLAS.indexOf(partes[0]) >= 0 ? partes[0] : 'Main') : 'Login';
+    if (conSesion && esAdmin) nombre = 'Administracion';
+    else if (conSesion && nombre === 'Administracion') nombre = 'Main';
     actual = nombre;
     var nodo = document.getElementById('tpl-' + nombre);
     document.title = nodo.getAttribute('data-title') || document.title;
@@ -3735,8 +4428,14 @@ class Component extends DCLogic {
   }
 
   function comprobarSesion() {
-    return APP.db.usuario().then(function (u) { conSesion = !!u; ir(); })
-      .catch(function () { conSesion = false; ir(); });
+    return APP.db.usuario().then(function (u) {
+      conSesion = !!u;
+      return u ? APP.db.esAdmin() : false;
+    }).then(function (si) {
+      esAdmin = !!si;
+      document.body.classList.toggle('es-admin', esAdmin);
+      ir();
+    }).catch(function (e) { if (window.console) console.error(e); conSesion = false; esAdmin = false; document.body.classList.remove('es-admin'); ir(); });
   }
   APP.irA = function (hash) { if (location.hash === hash) ir(); else location.hash = hash; };
   APP.sesionIniciada = comprobarSesion;
