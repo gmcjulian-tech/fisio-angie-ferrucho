@@ -444,7 +444,7 @@ class Component extends DCLogic {
 <template data-sc="for" list="{{serviciosOpts}}" as="o" hint-placeholder-count="7"><option value="{{o.nombre}}">{{o.nombre}}</option></template>
 <option value="Valoración">Valoración</option>
 </select>
-<a href="Terapias.dc.html" style="align-self: flex-start; font-size: 13px; font-weight: 700">Editar lista de terapias</a>
+<a href="Terapias.dc.html" style="align-self: flex-start; font-size: 13px; font-weight: 700">Editar mis servicios</a>
 </div>
 
 <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 15px; cursor: pointer"><input type="checkbox" checked="{{form.rec}}" onChange="{{toggleRec}}" style="width: 20px; height: 20px; accent-color: #1D4ED8">Enviar recordatorio al paciente el día anterior</label>
@@ -959,14 +959,14 @@ class Component extends DCLogic {
 <script type="text/x-template" id="tpl-Terapias" data-title="Servicios y terapias – YoFisio">
 <div style="font-family: Nunito, system-ui, sans-serif; color: #0F2A4A; background: #F3F8FF; min-height: 100vh; display: flex; flex-wrap: wrap; align-items: stretch">
 
-<nav aria-label="Menú principal" class="menu"><div class="menu-marca"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E3A8A"></rect><g fill="#93C5FD"><circle cx="154" cy="168" r="11"></circle><circle cx="188" cy="140" r="14"></circle><circle cx="228" cy="120" r="16"></circle></g><g fill="#F9A8D4"><circle cx="272" cy="110" r="16"></circle><circle cx="316" cy="110" r="14"></circle><circle cx="356" cy="118" r="11"></circle></g><circle cx="300" cy="196" r="34" fill="#fff"></circle><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M286 244 C 250 300, 236 336, 226 404" stroke-width="34"></path><path d="M276 268 C 316 256, 352 226, 384 182" stroke-width="28"></path><path d="M270 282 C 232 286, 196 276, 160 258" stroke-width="28"></path><path d="M240 340 C 276 356, 304 384, 318 420" stroke-width="30"></path></g></svg><img data-perfil="foto" alt="" hidden><div class="marca-fisio"><b data-perfil="nombre"></b><small data-perfil="profesion">FISIOTERAPEUTA</small></div><div class="marca-admin"><b>YoFisio</b><small>ADMINISTRACIÓN</small></div></div><div class="menu-links"><a class="menu-link solo-clinico" href="Main.dc.html"><span class="ic" style="background: #DBEAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"></path><path d="M9 21v-6h6v6"></path></svg></span><span class="largo">Inicio</span><span class="corto">Inicio</span></a><a class="menu-link solo-clinico" href="Agenda.dc.html"><span class="ic" style="background: #FFEDD5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span><span class="largo">Agenda</span><span class="corto">Agenda</span></a><a class="menu-link solo-clinico" href="Pacientes.dc.html"><span class="ic" style="background: #D1FAE5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"></path></svg></span><span class="largo">Pacientes</span><span class="corto">Pacientes</span></a><a class="menu-link solo-clinico" href="HistoriaClinica.dc.html"><span class="ic" style="background: #EDE9FE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></svg></span><span class="largo">Historia clínica</span><span class="corto">Historia</span></a><a class="menu-link solo-clinico" href="CodigosCIE.dc.html"><span class="ic" style="background: #CFFAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"></path><path d="M4 17a3 3 0 0 1 3-3h11M8 8h6"></path></svg></span><span class="largo">Códigos CIE-10</span><span class="corto">CIE-10</span></a><a class="menu-link solo-admin" href="Administracion.dc.html"><span class="ic" style="background: #E2E8F0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg></span><span class="largo">Administración</span><span class="corto">Admin</span></a></div><div class="menu-cuenta"><button type="button" data-action="instalar" class="solo-instalable"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg><span class="largo">Instalar app</span><span class="corto">Instalar</span></button><a href="Perfil.dc.html" class="solo-clinico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#BE185D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path></svg><span class="largo">Mi perfil</span><span class="corto">Perfil</span></a><button type="button" data-action="clave" class="solo-admin"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="largo">Cambiar contraseña</span><span class="corto">Clave</span></button><button type="button" data-action="salir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg><span class="largo">Salir</span><span class="corto">Salir</span></button></div></nav>
+<nav aria-label="Menú principal" class="menu"><div class="menu-marca"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E3A8A"></rect><g fill="#93C5FD"><circle cx="154" cy="168" r="11"></circle><circle cx="188" cy="140" r="14"></circle><circle cx="228" cy="120" r="16"></circle></g><g fill="#F9A8D4"><circle cx="272" cy="110" r="16"></circle><circle cx="316" cy="110" r="14"></circle><circle cx="356" cy="118" r="11"></circle></g><circle cx="300" cy="196" r="34" fill="#fff"></circle><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M286 244 C 250 300, 236 336, 226 404" stroke-width="34"></path><path d="M276 268 C 316 256, 352 226, 384 182" stroke-width="28"></path><path d="M270 282 C 232 286, 196 276, 160 258" stroke-width="28"></path><path d="M240 340 C 276 356, 304 384, 318 420" stroke-width="30"></path></g></svg><img data-perfil="foto" alt="" hidden><div class="marca-fisio"><b data-perfil="nombre"></b><small data-perfil="profesion">FISIOTERAPEUTA</small></div><div class="marca-admin"><b>YoFisio</b><small>ADMINISTRACIÓN</small></div></div><div class="menu-links"><a class="menu-link solo-clinico" href="Main.dc.html"><span class="ic" style="background: #DBEAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"></path><path d="M9 21v-6h6v6"></path></svg></span><span class="largo">Inicio</span><span class="corto">Inicio</span></a><a class="menu-link solo-clinico" href="Agenda.dc.html"><span class="ic" style="background: #FFEDD5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span><span class="largo">Agenda</span><span class="corto">Agenda</span></a><a class="menu-link solo-clinico" href="Pacientes.dc.html"><span class="ic" style="background: #D1FAE5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21c0-4 3-6 7-6s7 2 7 6"></path><path d="M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"></path></svg></span><span class="largo">Pacientes</span><span class="corto">Pacientes</span></a><a class="menu-link solo-clinico" href="HistoriaClinica.dc.html"><span class="ic" style="background: #EDE9FE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></svg></span><span class="largo">Historia clínica</span><span class="corto">Historia</span></a><a class="menu-link solo-clinico" href="CodigosCIE.dc.html"><span class="ic" style="background: #CFFAFE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"></path><path d="M4 17a3 3 0 0 1 3-3h11M8 8h6"></path></svg></span><span class="largo">Códigos CIE-10</span><span class="corto">CIE-10</span></a><a class="menu-link solo-admin" href="Administracion.dc.html"><span class="ic" style="background: #E2E8F0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg></span><span class="largo">Administración</span><span class="corto">Admin</span></a></div><div class="menu-cuenta"><button type="button" data-action="instalar" class="solo-instalable"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg><span class="largo">Instalar app</span><span class="corto">Instalar</span></button><a href="Perfil.dc.html" class="solo-clinico" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#BE185D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path></svg><span class="largo">Mi perfil</span><span class="corto">Perfil</span></a><button type="button" data-action="clave" class="solo-admin"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="largo">Cambiar contraseña</span><span class="corto">Clave</span></button><button type="button" data-action="salir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg><span class="largo">Salir</span><span class="corto">Salir</span></button></div></nav>
 
 <main style="flex: 999 1 560px; min-width: 0; padding: 32px 40px 48px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
 <header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px">
 <div style="display: flex; flex-direction: column; gap: 4px">
 <button type="button" onClick="{{volver}}" style="align-self: flex-start; padding: 0; min-height: 32px; border: 0; background: none; color: #1D4ED8; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer">← Volver</button>
-<h1 style="margin: 0; font-size: 32px; font-weight: 800">Lista de terapias</h1>
-<span style="font-size: 15px; color: #4D6584">Las opciones que aparecen al agendar una cita y al registrar una sesión</span>
+<h1 style="margin: 0; font-size: 32px; font-weight: 800">Mis servicios</h1>
+<span style="font-size: 15px; color: #4D6584">Los servicios que ofreces. Aparecen al agendar, en la historia clínica y al registrar sesiones. Agrega los tuyos y elimina los que no haces.</span>
 </div>
 <button type="button" onClick="{{nuevo}}" style="display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 22px; border-radius: 999px; border: 0; background: #DB2777; color: #FFFFFF; font-family: inherit; font-weight: 800; font-size: 15px; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Agregar servicio</button>
 </header>
@@ -995,22 +995,15 @@ class Component extends DCLogic {
 <div style="display: flex; flex-direction: column; gap: 6px; font-size: 14px">
 <span style="display: flex; justify-content: space-between"><span>Duración por sesión</span><strong>{{s.duracion}}</strong></span>
 <span style="display: flex; justify-content: space-between"><span>Valor</span><strong>{{s.precio}}</strong></span>
+<span style="display: flex; justify-content: space-between; gap: 8px"><span>Consentimiento</span><strong style="text-align: right">{{s.consentimiento}}</strong></span>
+<template data-sc="if" value="{{s.hayDetox}}" hint-placeholder-val="{{ false }}"><span style="align-self: flex-start; padding: 4px 10px; border-radius: 999px; background: #EDE9FE; color: #5B21B6; font-size: 12px; font-weight: 800">Incluye cuestionario detox</span></template>
 </div>
 <button type="button" onClick="{{s.editar}}" style="margin-top: auto; min-height: 44px; border-radius: 999px; border: 0; background: {{s.bg}}; color: {{s.fg}}; font-family: inherit; font-weight: 800; font-size: 14px; cursor: pointer">Editar</button>
 </article>
 </template>
 </div>
 
-<section aria-labelledby="objetivos" style="background: #FFFFFF; border: 1px solid #DCE8F7; border-radius: 22px; padding: 22px; display: flex; flex-direction: column; gap: 12px">
-<h2 id="objetivos" style="margin: 0; font-size: 19px; font-weight: 800">Objetivos terapéuticos</h2>
-<p style="margin: 0; font-size: 14px; color: #4D6584">Se podrán marcar en la historia clínica de cada paciente.</p>
-<div style="display: flex; flex-wrap: wrap; gap: 10px">
-<span style="display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; background: #FDE7F1; color: #831843; font-size: 14px; font-weight: 800"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg>Alivio del dolor</span>
-<span style="display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; background: #FDE7F1; color: #831843; font-size: 14px; font-weight: 800"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg>Mejora de la movilidad</span>
-<span style="display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; background: #FDE7F1; color: #831843; font-size: 14px; font-weight: 800"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg>Prevención de lesiones</span>
-<span style="display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; background: #FDE7F1; color: #831843; font-size: 14px; font-weight: 800"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg>Calidad de vida</span>
-</div>
-</section>
+<template data-sc="if" value="{{vacio}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 24px; border-radius: 18px; background: #FFFFFF; border: 1px dashed #C8D9EF; text-align: center; color: #4D6584">No hay servicios en esta pestaña. Crea uno con el botón de arriba.</p></template>
 </main>
 <template data-sc="if" value="{{hayModal}}" hint-placeholder-val="{{ false }}">
 <div style="position: fixed; inset: 0; background: rgba(15, 42, 74, 0.45); display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; z-index: 10">
@@ -1026,6 +1019,8 @@ class Component extends DCLogic {
 <div style="display: flex; flex-direction: column; gap: 6px"><label for="sv-dur" style="font-size: 14px; font-weight: 700">Duración (min)</label><input id="sv-dur" type="number" min="0" value="{{m.duracion}}" onChange="{{set.duracion}}" style="min-height: 48px; padding: 0 14px; border: 1.5px solid #C8D9EF; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A"></div>
 <div style="display: flex; flex-direction: column; gap: 6px"><label for="sv-precio" style="font-size: 14px; font-weight: 700">Valor (COP)</label><input id="sv-precio" type="number" min="0" step="1000" value="{{m.precio}}" onChange="{{set.precio}}" style="min-height: 48px; padding: 0 14px; border: 1.5px solid #C8D9EF; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A"></div>
 </div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="sv-cons" style="font-size: 14px; font-weight: 700">Consentimiento que exige</label><select id="sv-cons" value="{{m.consentimiento}}" onChange="{{set.consentimiento}}" style="min-height: 48px; padding: 0 12px; border: 1.5px solid #C8D9EF; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A; background: #FFFFFF"><template data-sc="for" list="{{tiposConsentimiento}}" as="o" hint-placeholder-count="4"><option value="{{o.k}}">{{o.label}}</option></template></select><span style="font-size: 12.5px; color: #64748B">Al registrar una sesión con este servicio, la app revisa que el paciente tenga firmado ese consentimiento.</span></div>
+<label style="display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 15px; font-weight: 700; cursor: pointer"><input type="checkbox" checked="{{m.detox}}" onChange="{{toggleDetox}}" style="width: 20px; height: 20px; accent-color: #6D28D9">Agregar el cuestionario detox a la historia clínica</label>
 <template data-sc="if" value="{{hayAviso}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 12px 14px; border-radius: 12px; background: #FDECEC; color: #9B1C1C; font-size: 14px; font-weight: 700">{{aviso}}</p></template>
 <div style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap">
 <template data-sc="if" value="{{puedeBorrar}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{borrar}}" disabled="{{ocupado}}" style="margin-right: auto; min-height: 48px; padding: 0 18px; border-radius: 999px; border: 1.5px solid #F5B5B5; background: #FFFFFF; color: #9B1C1C; font-family: inherit; font-weight: 800; font-size: 14px; cursor: pointer">Eliminar</button></template>
@@ -1063,8 +1058,9 @@ class Component extends DCLogic {
   }
   abrir(x) {
     this.setState({ aviso: '', m: x
-      ? { id: x.id, nombre: x.nombre, categoria: x.categoria, descripcion: x.descripcion || '', duracion: x.duracion_min != null ? String(x.duracion_min) : '', precio: x.precio != null ? String(x.precio) : '' }
-      : { id: null, nombre: '', categoria: this.state.tab, descripcion: '', duracion: '', precio: '' } });
+      ? { id: x.id, nombre: x.nombre, categoria: x.categoria, descripcion: x.descripcion || '', duracion: x.duracion_min != null ? String(x.duracion_min) : '', precio: x.precio != null ? String(x.precio) : '',
+          consentimiento: APP.reglaServicio(x.nombre).consentimiento, detox: APP.reglaServicio(x.nombre).detox }
+      : { id: null, nombre: '', categoria: this.state.tab, descripcion: '', duracion: '', precio: '', consentimiento: 'general', detox: false } });
   }
   guardar(e) {
     if (e && e.preventDefault) e.preventDefault();
@@ -1072,7 +1068,9 @@ class Component extends DCLogic {
     if (!m.nombre.trim()) { this.setState({ aviso: 'Escribe el nombre.' }); return; }
     var dur = parseInt(m.duracion, 10), pre = parseFloat(m.precio);
     var fila = { nombre: m.nombre.trim(), categoria: m.categoria, descripcion: m.descripcion.trim() || null,
-      duracion_min: dur >= 0 ? dur : null, precio: pre >= 0 ? pre : null };
+      duracion_min: dur >= 0 ? dur : null, precio: pre >= 0 ? pre : null, consentimiento: m.consentimiento, detox: !!m.detox };
+    var repetido = this.state.lista.some(function (x) { return x.id !== m.id && x.nombre.trim().toLowerCase() === fila.nombre.toLowerCase(); });
+    if (repetido) { this.setState({ aviso: 'Ya tienes un servicio con ese nombre.' }); return; }
     if (!m.id) { fila.icono = 'iOtro'; fila.orden = this.state.lista.length + 1; }
     this.setState({ ocupado: true });
     (m.id ? APP.db.actualizar('servicios', m.id, fila) : APP.db.crear('servicios', fila)).then(function () {
@@ -1100,17 +1098,22 @@ class Component extends DCLogic {
         desc: x.descripcion || 'Sin descripción. Toca Editar para agregarla.',
         duracion: x.duracion_min != null ? x.duracion_min + ' min' : '—',
         precio: x.precio != null ? pesos(x.precio) : '—',
+        consentimiento: APP.CONSENTIMIENTOS[APP.reglaServicio(x.nombre).consentimiento],
+        hayDetox: APP.reglaServicio(x.nombre).detox,
         editar: function () { self.abrir(x); } };
       ICONOS.forEach(function (k) { o[k] = false; });
       o[ICONOS.indexOf(x.icono) >= 0 ? x.icono : 'iOtro'] = true;
       return o;
     });
     var set = {};
-    ['nombre', 'categoria', 'descripcion', 'duracion', 'precio'].forEach(function (k) {
+    ['nombre', 'categoria', 'descripcion', 'duracion', 'precio', 'consentimiento'].forEach(function (k) {
       set[k] = function (ev) { var m = Object.assign({}, self.state.m); m[k] = ev.target.value; self.setState({ m: m, aviso: '' }); };
     });
     return {
       tabs: tabs, items: items,
+      tiposConsentimiento: Object.keys(APP.CONSENTIMIENTOS).map(function (k) { return { k: k, label: APP.CONSENTIMIENTOS[k] }; }),
+      toggleDetox: function () { var m = Object.assign({}, self.state.m); m.detox = !m.detox; self.setState({ m: m }); },
+      vacio: !s.cargando && !items.length,
       hayModal: !!s.m, m: s.m || {}, set: set,
       tituloModal: s.m && s.m.id ? 'Editar ' + s.m.nombre : 'Nuevo servicio',
       puedeBorrar: !!(s.m && s.m.id), ocupado: s.ocupado,
@@ -1578,7 +1581,8 @@ var PRIORIDAD_SINTOMA = [
   { item: 'art-0', umbral: 3, texto: 'Registrar EVA en cada sesión para seguir la evolución del dolor.' },
   { item: 'met-5', umbral: 2, texto: 'Incluir acondicionamiento físico y control del peso en los objetivos.' }
 ];
-function esSuero(n) { return /sueroterapia/i.test(n || ''); }
+function esSuero(n) { return APP.reglaServicio(n).consentimiento === 'sueroterapia'; }
+function llevaDetox(n) { return APP.reglaServicio(n).detox; }
 var PASOS = ['Datos del paciente', 'Valoración inicial', 'Cuestionario detox', 'Resultados', 'Diagnóstico y objetivos'];
 function aplicaFisio(elegidos) { return !elegidos.length || elegidos.some(function (n) { return !esSuero(n); }); }
 
@@ -1963,7 +1967,7 @@ class Component extends DCLogic {
         return { nombre: o.nombre, marca: on ? '✓ ' : '', on: on ? 'true' : 'false', bg: on ? '#EFF6FF' : '#FFFFFF', borde: on ? '#1D4ED8' : '#CBD5E1', fg: on ? '#1E3A8A' : '#334155',
           pick: function () {
             var l = self.state.elegidos.slice(), i = l.indexOf(o.nombre), cambio = {};
-            if (i >= 0) l.splice(i, 1); else { l.push(o.nombre); if (esSuero(o.nombre) && !self.state.conDetox) { cambio.conDetox = true; self.toastMsg('Se agregó el cuestionario detox por la sueroterapia'); } }
+            if (i >= 0) l.splice(i, 1); else { l.push(o.nombre); if (llevaDetox(o.nombre) && !self.state.conDetox) { cambio.conDetox = true; self.toastMsg('Se agregó el cuestionario detox por ' + o.nombre.toLowerCase()); } }
             cambio.elegidos = l; self.setState(cambio);
           } };
       }),
@@ -2072,7 +2076,7 @@ class Component extends DCLogic {
 <button type="button" onClick="{{t.pick}}" aria-pressed="{{t.on}}" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 2px solid {{t.borde}}; background: {{t.bg}}; color: {{t.fg}}; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer">{{t.marca}}{{t.nombre}}</button>
 </template>
 </div>
-<a href="Terapias.dc.html" style="align-self: flex-start; font-size: 13px; font-weight: 700">Editar lista de terapias</a>
+<a href="Terapias.dc.html" style="align-self: flex-start; font-size: 13px; font-weight: 700">Editar mis servicios</a>
 </fieldset>
 <template data-sc="if" value="{{hayRequisitos}}" hint-placeholder-val="{{ false }}">
 <div style="display: flex; flex-direction: column; gap: 8px; padding-top: 4px">
@@ -2361,10 +2365,11 @@ class Component extends DCLogic {
       return c ? new Date(c.firmado_en || Date.now()).toLocaleDateString('es-CO') : null;
     };
     var req = [];
-    if (lista.some(function (x) { return /sueroterapia/i.test(x); }))
+    var regla = function (x) { return APP.reglaServicio(x).consentimiento; };
+    if (lista.some(function (x) { return regla(x) === 'sueroterapia'; }))
       req.push({ nombre: 'Sueroterapia', detalle: 'Intravenosa o nebulizada, según el procedimiento', fecha: fechaDe(/sueroterapia/i), botones: [['iv', 'Firmar intravenosa'], ['neb', 'Firmar nebulizada']] });
-    var agujas = lista.filter(function (x) { return /punci|electropunci|neural/i.test(x); });
-    var otras = lista.filter(function (x) { return !/sueroterapia|punci|electropunci|neural|^valoraci/i.test(x); });
+    var agujas = lista.filter(function (x) { return regla(x) === 'agujas'; });
+    var otras = lista.filter(function (x) { return regla(x) === 'general'; });
     if (agujas.length) req.push({ nombre: 'Fisioterapia con técnicas con agujas', detalle: 'Por ' + agujas.join(', ').toLowerCase() + ': el paciente debe marcar la casilla de agujas', fecha: fechaDe(/agujas/i), botones: [['fisio', 'Firmar ahora']] });
     else if (otras.length) req.push({ nombre: 'Fisioterapia', detalle: 'Por ' + otras.join(', ').toLowerCase(), fecha: fechaDe(/^fisioterapia/i), botones: [['fisio', 'Firmar ahora']] });
     this._faltantes = req.filter(function (r) { return !r.fecha; }).map(function (r) { return r.nombre; });
@@ -3283,7 +3288,7 @@ class Component extends DCLogic {
       + fila('Consentimientos firmados', u.consentimientos) + '</table>'
       + '<h2>Valor del servicio</h2><table>' + fila('Cálculo', k.c.detalle) + '<tr><th>' + (k.c.porUso && r.enCurso ? 'Acumulado hasta hoy' : 'Total del mes') + '</th><td><b>' + esc(C.cop(k.c.valor)) + ' COP</b></td></tr>'
       + (k.proy !== null ? fila('Proyección al cierre del mes', C.cop(k.proy) + ' COP') : '') + '</table>'
-      + '<p class="nota">Tarifas vigentes: Plan Inicio ' + esc(C.cop(T.inicio)) + ', Plan Profesional ' + esc(C.cop(T.profesional)) + ', por sesión ' + esc(C.cop(T.por_sesion)) + ', por paciente ' + esc(C.cop(T.por_paciente)) + ' (tope ' + esc(C.cop(T.tope)) + ').</p>';
+      + '<p class="nota">Tarifas vigentes: Plan Inicio ' + esc(C.cop(T.inicio)) + ', Plan Profesional ' + esc(C.cop(T.profesional)) + ', pago por uso ' + esc(C.cop(T.por_sesion)) + ' por sesión (mínimo ' + esc(C.cop(T.minimo_uso)) + ', tope ' + esc(C.cop(T.tope)) + ').</p>';
     APP.u.imprimir('Mi plan YoFisio · ' + mesTexto(s.mes), cuerpo);
   }
   renderVals() {
@@ -3314,8 +3319,7 @@ class Component extends DCLogic {
     var ops = [
       { k: 'inicio', label: 'Plan Inicio', v: k.m.inicio, nota: 'hasta ' + T.limite_inicio + ' pacientes', ok: u.pacientes_atendidos <= T.limite_inicio },
       { k: 'profesional', label: 'Plan Profesional', v: k.m.profesional, nota: 'pacientes ilimitados', ok: true },
-      { k: 'por_sesion', label: 'Pago por sesión', v: k.m.por_sesion, nota: u.sesiones + ' × ' + C.cop(T.por_sesion), ok: true },
-      { k: 'por_paciente', label: 'Pago por paciente', v: k.m.por_paciente, nota: u.pacientes_atendidos + ' × ' + C.cop(T.por_paciente), ok: true }
+      { k: 'por_sesion', label: 'Pago por uso', v: k.m.por_sesion, nota: u.sesiones + ' × ' + C.cop(T.por_sesion) + ' · mínimo ' + C.cop(T.minimo_uso), ok: true }
     ];
     var validas = ops.filter(function (o) { return o.ok; });
     var menor = validas.reduce(function (a, o) { return o.v < a.v ? o : a; }, validas[0]);
@@ -3429,6 +3433,14 @@ class Component extends DCLogic {
 </div>
 </form>
 
+<section aria-labelledby="t-serv" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 22px; padding: 22px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px">
+<div style="flex: 1 1 260px; display: flex; flex-direction: column; gap: 4px">
+<h2 id="t-serv" style="margin: 0; font-size: 18px; font-weight: 800">Mis servicios</h2>
+<span style="font-size: 14px; color: #475569">{{textoServicios}}</span>
+</div>
+<a href="Terapias.dc.html" style="min-height: 46px; padding: 0 20px; border-radius: 999px; background: #FDF2F8; color: #BE185D; text-decoration: none; font-weight: 800; font-size: 14px; display: flex; align-items: center">Editar mis servicios</a>
+</section>
+
 <section aria-labelledby="t-politica" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 22px; padding: 22px; display: flex; flex-direction: column; gap: 12px">
 <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap"><h2 id="t-politica" style="margin: 0; font-size: 18px; font-weight: 800">Política de tratamiento de datos</h2>
 <span style="padding: 4px 10px; border-radius: 999px; background: {{polBg}}; color: {{polFg}}; font-size: 12px; font-weight: 800">{{polEstado}}</span></div>
@@ -3471,7 +3483,7 @@ class Component extends DCLogic {
   constructor(props) {
     super(props);
     this.state = { f: this.desde(APP.perfil), foto: APP.perfil.foto || '', cuenta: '', ocupado: false, estado: '', error: false,
-      plan: null, firmaGuardada: false, firmaCambio: false, exportando: false, verPolitica: false };
+      servicios: [], plan: null, firmaGuardada: false, firmaCambio: false, exportando: false, verPolitica: false };
   }
   desde(p) {
     var f = {}; p = p || {};
@@ -3484,6 +3496,7 @@ class Component extends DCLogic {
     var self = this, hoy = APP.f.hoy();
     this.setState({ f: this.desde(APP.perfil), foto: APP.perfil.foto || '', estado: '', firmaCambio: false });
     APP.db.usuario().then(function (u) { self.setState({ cuenta: (u && u.email) || '' }); });
+    APP.db.servicios().then(function (l) { self.setState({ servicios: l }); }).catch(function () {});
     APP.db.ajuste('firma_profesional').then(function (url) {
       self.setState({ firmaGuardada: !!url });
       setTimeout(function () {
@@ -3568,6 +3581,7 @@ class Component extends DCLogic {
       guardar: function (ev) { self.guardar(ev); }, ocupado: s.ocupado,
       hayEstado: !!s.estado, estado: s.estado, estadoColor: s.error ? '#991B1B' : '#065F46',
       cuenta: s.cuenta || '—',
+      textoServicios: s.servicios.length ? s.servicios.map(function (x) { return x.nombre; }).join(' · ') : 'Agrega los servicios que ofreces y el consentimiento que exige cada uno.',
       hayPlan: !!s.plan, plan: s.plan || {},
       exportar: function () { self.exportar(); }, exportando: s.exportando,
       polEstado: APP.politica.aceptada() ? 'Aceptada el ' + APP.f.corta(APP.f.local(APP.politicaAceptada.aceptada_en)) + ' ' + String(APP.politicaAceptada.aceptada_en).slice(0, 4) : 'Pendiente',
@@ -3787,8 +3801,9 @@ var modalidades = APP.cobro.modalidades, cobro = APP.cobro.cobro;
 var ESTADOS = [{ k: 'activa', label: 'Activa' }, { k: 'suspendida', label: 'Suspendida' }, { k: 'cancelada', label: 'Cancelada' }];
 var CAMPOS_TARIFA = [
   { k: 'inicio', label: 'Plan Inicio (COP/mes)' }, { k: 'limite_inicio', label: 'Límite de pacientes atendidos del Plan Inicio' },
-  { k: 'profesional', label: 'Plan Profesional (COP/mes)' }, { k: 'por_sesion', label: 'Valor por sesión registrada (COP)' },
-  { k: 'por_paciente', label: 'Valor por paciente atendido (COP)' }, { k: 'tope', label: 'Tope mensual del pago por uso (COP)' },
+  { k: 'profesional', label: 'Plan Profesional (COP/mes)' }, { k: 'por_sesion', label: 'Pago por uso: valor por sesión (COP)' },
+  { k: 'minimo_uso', label: 'Pago por uso: mínimo mensual (COP)' }, { k: 'tope', label: 'Pago por uso: tope mensual (COP)' },
+  { k: 'activacion', label: 'Activación, pago único (COP)' },
   { k: 'prueba_dias', label: 'Días de prueba gratis' }
 ];
 var MESES_C = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
@@ -3919,8 +3934,8 @@ class Component extends DCLogic {
       + '<tr><th>Total del periodo</th><td><b>' + esc(cop(f.c.valor)) + ' COP</b></td></tr></table>'
       + '<h2>Referencia de otras modalidades para este uso</h2><table>'
       + fila('Plan Inicio (hasta ' + T.limite_inicio + ' pacientes atendidos)', cop(f.m.inicio)) + fila('Plan Profesional', cop(f.m.profesional))
-      + fila('Pago por sesión (' + cop(T.por_sesion) + ', tope ' + cop(T.tope) + ')', cop(f.m.por_sesion))
-      + fila('Pago por paciente atendido (' + cop(T.por_paciente) + ', tope ' + cop(T.tope) + ')', cop(f.m.por_paciente)) + '</table>'
+      + fila('Pago por uso (' + cop(T.por_sesion) + ' por sesión, mínimo ' + cop(T.minimo_uso) + ', tope ' + cop(T.tope) + ')', cop(f.m.por_sesion))
+      + '</table>'
       + '<p class="nota">Este reporte contiene solo cantidades de uso. No incluye nombres, documentos ni información clínica de los pacientes.</p>';
     APP.u.imprimir('Reporte de uso · ' + mesTexto(s.mes), cuerpo, 'YoFisio · Reporte para facturación');
   }
@@ -3954,7 +3969,7 @@ class Component extends DCLogic {
       var u = f.u, ten = self.tendencia(u.user_id), max = Math.max.apply(null, ten.map(function (b) { return b.n; }).concat([1]));
       var opciones = [
         { k: 'inicio', label: 'Inicio', v: f.m.inicio }, { k: 'profesional', label: 'Profesional', v: f.m.profesional },
-        { k: 'por_sesion', label: 'Por sesión', v: f.m.por_sesion }, { k: 'por_paciente', label: 'Por paciente', v: f.m.por_paciente }
+        { k: 'por_sesion', label: 'Por uso', v: f.m.por_sesion }
       ];
       var validas = opciones.filter(function (o) { return o.k !== 'inicio' || u.pacientes_atendidos <= T.limite_inicio; });
       var menor = validas.reduce(function (a, o) { return o.v < a.v ? o : a; }, validas[0]);
@@ -3996,7 +4011,7 @@ class Component extends DCLogic {
       vacio: !s.cargando && !s.error && !filas.length,
       hayError: !!s.error, error: s.error,
       exportar: function () { self.csv(); },
-      tarifasTxt: 'Inicio ' + cop(T.inicio) + ' (hasta ' + T.limite_inicio + ' pacientes) · Profesional ' + cop(T.profesional) + ' · Por sesión ' + cop(T.por_sesion) + ' · Por paciente ' + cop(T.por_paciente) + ' · Tope ' + cop(T.tope),
+      tarifasTxt: 'Inicio ' + cop(T.inicio) + ' (hasta ' + T.limite_inicio + ' pacientes) · Profesional ' + cop(T.profesional) + ' · Por uso ' + cop(T.por_sesion) + ' por sesión (mínimo ' + cop(T.minimo_uso) + ', tope ' + cop(T.tope) + ') · Activación ' + cop(T.activacion),
       abrirTarifas: function () { var f0 = {}; CAMPOS_TARIFA.forEach(function (c) { f0[c.k] = String(T[c.k]); }); self.setState({ verTarifas: true, tarifasForm: f0, aviso: '' }); },
       verTarifas: s.verTarifas,
       camposTarifa: CAMPOS_TARIFA.map(function (c) {
@@ -4309,7 +4324,7 @@ class Component extends DCLogic {
         if (lista.length) return lista;
         return Promise.all(SERVICIOS_INICIALES.map(function (s) { return DB.crear('servicios', s); }))
           .then(function () { return DB.listar('servicios', { order: ['orden'] }); });
-      });
+      }).then(function (l) { APP.catalogoServicios = l; return l; });
     };
     DB.esAdmin = function () { return Promise.resolve().then(function () { return DB.rpc('es_admin'); }).then(function (r) { return r === true; }).catch(function () { return false; }); };
     DB.ajuste = function (clave) {
@@ -4365,6 +4380,7 @@ class Component extends DCLogic {
     var m = (e && e.message) || String(e);
     if (/duplicate key|unique/i.test(m)) return 'Ya hay una cita en ese día y hora.';
     if (/column|schema cache/i.test(m) && /examenes|cie10|diagnostico_fisio|objetivos_fisio/i.test(m)) return 'Falta ejecutar el script 003_fisioterapia.sql en Supabase.';
+    if (/column|schema cache/i.test(m) && /consentimiento|detox/i.test(m)) return 'Falta ejecutar el script 005_servicios.sql en Supabase.';
     if (/foreign key/i.test(m)) return 'Este paciente tiene un consentimiento firmado. Ese documento debe conservarse, así que el paciente no se puede eliminar; puedes marcarlo como dado de alta.';
     if (/No autorizado/i.test(m)) return 'Tu cuenta no tiene permisos de administración.';
     if (/function .*does not exist|Could not find the function/i.test(m)) return 'Falta ejecutar el script 004_administracion.sql en Supabase.';
@@ -4382,15 +4398,16 @@ class Component extends DCLogic {
   // ---------- Planes y cobro mensual (lo usan Administración y Mi plan) ----------
   var PLANES = [
     { k: 'prueba', label: 'Prueba gratis' }, { k: 'inicio', label: 'Plan Inicio' }, { k: 'profesional', label: 'Plan Profesional' },
-    { k: 'por_sesion', label: 'Pago por sesión' }, { k: 'por_paciente', label: 'Pago por paciente' }, { k: 'cortesia', label: 'Cortesía (sin cobro)' }
+    { k: 'por_sesion', label: 'Pago por uso' }, { k: 'cortesia', label: 'Cortesía (sin cobro)' }
   ];
-  var TARIFAS_BASE = { inicio: 45000, limite_inicio: 30, profesional: 79000, por_sesion: 2000, por_paciente: 3500, tope: 79000, prueba_dias: 30 };
+  var TARIFAS_BASE = { inicio: 45000, limite_inicio: 30, profesional: 79000, por_sesion: 2500, minimo_uso: 20000, tope: 79000, activacion: 100000, prueba_dias: 30, por_paciente: 3500 };
+  var NOMBRES_ANTIGUOS = { por_paciente: 'Pago por paciente' };   // ya no se ofrece; se conserva para cuentas antiguas
   function cop(n) { return '$' + Math.round(n || 0).toLocaleString('es-CO'); }
-  function nombrePlan(k) { var p = PLANES.find(function (x) { return x.k === k; }); return p ? p.label : k; }
+  function nombrePlan(k) { var p = PLANES.find(function (x) { return x.k === k; }); return p ? p.label : (NOMBRES_ANTIGUOS[k] || k); }
   function modalidades(u, T) {
     var pac = +u.pacientes_atendidos || 0, ses = +u.sesiones || 0;
     return { inicio: T.inicio, profesional: T.profesional,
-      por_sesion: Math.min(ses * T.por_sesion, T.tope), por_paciente: Math.min(pac * T.por_paciente, T.tope) };
+      por_sesion: Math.min(Math.max(ses * T.por_sesion, T.minimo_uso || 0), T.tope), por_paciente: Math.min(pac * T.por_paciente, T.tope) };
   }
   // Valor del periodo según el plan asignado. hasta = último día del periodo (para saber si la prueba sigue vigente).
   function cobro(u, T, hasta) {
@@ -4403,7 +4420,7 @@ class Component extends DCLogic {
         : { valor: 0, detalle: 'La prueba terminó el ' + APP.f.corta(fin) + ': falta elegir un plan', vencida: true, finPrueba: fin };
     }
     var v = m[u.plan] || 0, det;
-    if (u.plan === 'por_sesion') det = u.sesiones + ' sesiones × ' + cop(T.por_sesion) + (v >= T.tope ? ' (tope)' : '');
+    if (u.plan === 'por_sesion') det = u.sesiones + ' sesiones × ' + cop(T.por_sesion) + (v >= T.tope ? ' (tope)' : (u.sesiones * T.por_sesion < (T.minimo_uso || 0) ? ' · se aplica el mínimo de ' + cop(T.minimo_uso) : ''));
     else if (u.plan === 'por_paciente') det = u.pacientes_atendidos + ' pacientes × ' + cop(T.por_paciente) + (v >= T.tope ? ' (tope)' : '');
     else det = nombrePlan(u.plan) + ' mensual';
     if (u.anual && (u.plan === 'inicio' || u.plan === 'profesional')) { v = v * 10 / 12; det += ' · pago anual (12 meses por 10)'; }
@@ -4415,6 +4432,17 @@ class Component extends DCLogic {
       .catch(function () { return Object.assign({}, TARIFAS_BASE); });
   }
   APP.cobro = { PLANES: PLANES, TARIFAS_BASE: TARIFAS_BASE, cop: cop, nombrePlan: nombrePlan, modalidades: modalidades, cobro: cobro, tarifas: tarifas };
+
+  // ---------- Reglas de cada servicio (consentimiento y detox), configurables en "Mis servicios" ----------
+  APP.catalogoServicios = [];
+  var CONSENTIMIENTOS = { general: 'Fisioterapia (general)', agujas: 'Fisioterapia con técnicas con agujas', sueroterapia: 'Sueroterapia (intravenosa o nebulizada)', ninguno: 'No requiere consentimiento' };
+  APP.reglaServicio = function (nombre) {
+    var n = String(nombre || '').trim(), x = APP.catalogoServicios.find(function (s) { return s.nombre.trim().toLowerCase() === n.toLowerCase(); });
+    var porNombre = /sueroterapia/i.test(n) ? 'sueroterapia' : /punci|neural/i.test(n) ? 'agujas' : /^valoraci/i.test(n) ? 'ninguno' : 'general';
+    var c = x && x.consentimiento ? x.consentimiento : porNombre;
+    return { consentimiento: c, detox: x && x.consentimiento ? !!x.detox : c === 'sueroterapia' };
+  };
+  APP.CONSENTIMIENTOS = CONSENTIMIENTOS;
   // ---------- Perfil de la profesional (se edita en la pantalla Perfil) ----------
   APP.perfil = {};
   var P = APP.p = {
