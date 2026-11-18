@@ -1652,6 +1652,13 @@ class Component extends DCLogic {
 <div style="display: flex; flex-direction: column; gap: 6px"><label for="se-fecha" style="font-size: 14px; font-weight: 700">Fecha</label><input id="se-fecha" type="date" value="{{fecha}}" onChange="{{setFecha}}" style="min-height: 48px; padding: 0 14px; border: 1.5px solid #CBD5E1; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A"></div>
 <div style="display: flex; flex-direction: column; gap: 6px"><label for="se-serv" style="font-size: 14px; font-weight: 700">Terapia aplicada</label><select id="se-serv" value="{{servicio}}" onChange="{{setServicio}}" style="min-height: 48px; padding: 0 12px; border: 1.5px solid #CBD5E1; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A; background: #FFFFFF"><option value="">Selecciona una terapia</option><template data-sc="for" list="{{serviciosOpts}}" as="o" hint-placeholder-count="7"><option value="{{o.nombre}}">{{o.nombre}}</option></template></select></div>
 </div>
+<template data-sc="if" value="{{faltaConsent}}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 14px 16px; border-radius: 14px; background: #FFF7ED; border: 1px solid #FED7AA; color: #7C2D12">
+<span style="flex: 1 1 260px; font-size: 15px; font-weight: 700">Este paciente no tiene firmado el consentimiento de sueroterapia.</span>
+<a href="Consentimiento.dc.html?p={{pidActual}}&amp;t=iv" style="min-height: 44px; display: inline-flex; align-items: center; padding: 0 16px; border-radius: 999px; background: #EA580C; color: #FFFFFF; text-decoration: none; font-weight: 800; font-size: 14px">Firmar intravenosa</a>
+<a href="Consentimiento.dc.html?p={{pidActual}}&amp;t=neb" style="min-height: 44px; display: inline-flex; align-items: center; padding: 0 16px; border-radius: 999px; background: #FFFFFF; border: 1.5px solid #EA580C; color: #9A3412; text-decoration: none; font-weight: 800; font-size: 14px">Firmar nebulizada</a>
+</div>
+</template>
 </section>
 
 <section aria-labelledby="t-s2" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 20px; padding: 22px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px">
@@ -1755,7 +1762,7 @@ class Component extends DCLogic {
   vacio() {
     return {
       cargando: true, ocupado: false, estado: '', error: false, toast: '',
-      pacientes: [], servicios: [], plantillas: [],
+      pacientes: [], servicios: [], plantillas: [], consentimientos: [],
       sesionId: null, cita: null, pacienteId: null, pacQuery: '', pacFijo: false,
       fecha: APP.f.hoy(), servicio: '', resumen: '', notas: '', ejercicios: '',
       fotos: [], dibujoRuta: null, guardada: false,
@@ -1778,9 +1785,10 @@ class Component extends DCLogic {
     Promise.all([
       APP.db.listar('pacientes', { order: ['nombre'] }),
       APP.db.servicios(),
-      APP.db.ajuste('plantillas_ejercicios').catch(function () { return null; })
+      APP.db.ajuste('plantillas_ejercicios').catch(function () { return null; }),
+      APP.db.listar('consentimientos').catch(function () { return []; })
     ]).then(function (r) {
-      self.setState({ pacientes: r[0], servicios: r[1], plantillas: r[2] || [] });
+      self.setState({ pacientes: r[0], servicios: r[1], plantillas: r[2] || [], consentimientos: r[3] });
       if (params.s) return self.cargarSesion(params.s);
       if (params.c) return self.cargarCita(params.c);
       if (params.p) self.fijarPaciente(params.p);
@@ -1895,9 +1903,13 @@ class Component extends DCLogic {
         pick: function () { self.setState({ pacienteId: p.id, pacQuery: p.nombre }); } };
     }) : [];
     var p = this.paciente();
+    var faltaConsent = !!s.pacienteId && /sueroterapia/i.test(s.servicio) && !s.consentimientos.some(function (c) {
+      return c.paciente_id === s.pacienteId && (c.servicios || []).some(function (x) { return /sueroterapia/i.test(x); });
+    });
     var puede = APP.u.puedeCompartirArchivos();
     var set = function (k) { return function (e) { var o = { guardada: false }; o[k] = e.target.value; self.setState(o); }; };
     return {
+      faltaConsent: faltaConsent, pidActual: s.pacienteId || '',
       titulo: s.sesionId ? 'Sesión del ' + APP.f.corta(s.fecha) : 'Registrar sesión',
       subtitulo: s.cargando ? 'Cargando…' : (p.nombre ? p.nombre : 'Elige el paciente para empezar') + (s.cita && s.cita.hora != null ? ' · cita de las ' + APP.f.hora(s.cita.hora) : ''),
       pacQuery: s.pacQuery, pacFijo: s.pacFijo,
@@ -2001,27 +2013,28 @@ class Component extends DCLogic {
 </template>
 
 <section aria-labelledby="t-c1" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 14px">
-<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px">
-<h2 id="t-c1" style="margin: 0; font-size: 18px; font-weight: 800">1. Procedimientos que se van a realizar</h2>
-</div>
-<div style="display: flex; flex-wrap: wrap; gap: 8px">
-<template data-sc="for" list="{{servicios}}" as="o" hint-placeholder-count="7">
-<button type="button" onClick="{{o.pick}}" aria-pressed="{{o.on}}" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 2px solid {{o.borde}}; background: {{o.bg}}; color: {{o.fg}}; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer">{{o.marca}}{{o.nombre}}</button>
+<h2 id="t-c1" style="margin: 0; font-size: 18px; font-weight: 800">1. Tipo de consentimiento</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px">
+<template data-sc="for" list="{{tipos}}" as="o" hint-placeholder-count="3">
+<button type="button" onClick="{{o.pick}}" aria-pressed="{{o.on}}" style="min-height: 64px; padding: 10px 14px; border-radius: 16px; border: 2px solid {{o.borde}}; background: {{o.bg}}; color: {{o.fg}}; font-family: inherit; text-align: left; display: flex; flex-direction: column; justify-content: center; gap: 2px; cursor: pointer">
+<span style="font-size: 15px; font-weight: 800">{{o.nombre}}</span>
+<span style="font-size: 13px; font-weight: 700; color: {{o.notaColor}}">{{o.nota}}</span>
+</button>
 </template>
 </div>
 </section>
 
 <section aria-labelledby="t-c2" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 12px">
 <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px">
-<h2 id="t-c2" style="margin: 0; font-size: 18px; font-weight: 800">2. Texto que se acepta</h2>
+<h2 id="t-c2" style="margin: 0; font-size: 18px; font-weight: 800">2. Texto: {{nombreTipo}}</h2>
 <button type="button" onClick="{{toggleEditar}}" style="min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1.5px solid #CBD5E1; background: #FFFFFF; color: #0F2A4A; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer">{{textoBotonEditar}}</button>
 </div>
 <template data-sc="if" value="{{esBorrador}}" hint-placeholder-val="{{ true }}">
-<p style="margin: 0; padding: 10px 14px; border-radius: 12px; background: #FFFBEB; color: #92400E; font-size: 14px; font-weight: 700">Texto de ejemplo. Reemplázalo por el formato de Angie con "Editar texto" y hazlo revisar por un asesor jurídico antes de usarlo con pacientes.</p>
+<p style="margin: 0; padding: 10px 14px; border-radius: 12px; background: #FFFBEB; color: #92400E; font-size: 14px; font-weight: 700">Texto provisional: Angie aún no ha enviado este formato. Reemplázalo con "Editar texto" cuando llegue.</p>
 </template>
 <template data-sc="if" value="{{editando}}" hint-placeholder-val="{{ false }}">
-<label for="c-plantilla" style="font-size: 14px; font-weight: 700">Plantilla (usa {paciente}, {documento}, {calidad}, {servicios} y {fecha}; se reemplazan solos)</label>
-<textarea id="c-plantilla" rows="16" value="{{plantilla}}" onChange="{{setPlantilla}}" style="padding: 12px 14px; border: 1.5px solid #CBD5E1; border-radius: 12px; font-family: inherit; font-size: 14px; line-height: 1.5; color: #0F2A4A; resize: vertical"></textarea>
+<label for="c-plantilla" style="font-size: 14px; font-weight: 700">Texto del formato. Deja {firmante}, {tipo_documento}, {documento}, {calidad} y {fecha} donde van esos datos: se llenan solos.</label>
+<textarea id="c-plantilla" rows="16" value="{{plantillaTxt}}" onChange="{{setPlantilla}}" style="padding: 12px 14px; border: 1.5px solid #CBD5E1; border-radius: 12px; font-family: inherit; font-size: 14px; line-height: 1.5; color: #0F2A4A; resize: vertical"></textarea>
 <div style="display: flex; gap: 10px; justify-content: flex-end"><button type="button" onClick="{{guardarPlantilla}}" style="min-height: 46px; padding: 0 20px; border-radius: 999px; border: 0; background: #1D4ED8; color: #FFFFFF; font-family: inherit; font-weight: 800; font-size: 14px; cursor: pointer">Guardar texto (versión {{versionSiguiente}})</button></div>
 </template>
 <div style="max-height: 340px; overflow-y: auto; padding: 16px 18px; border-radius: 14px; background: #F8FAFC; border: 1px solid #E2E8F0; font-size: 15px; line-height: 1.6; white-space: pre-wrap">{{textoFinal}}</div>
@@ -2031,13 +2044,13 @@ class Component extends DCLogic {
 <h2 id="t-c3" style="margin: 0; font-size: 18px; font-weight: 800">3. Quién firma</h2>
 <div style="display: flex; flex-wrap: wrap; gap: 8px">
 <button type="button" onClick="{{esPaciente}}" aria-pressed="{{pacOn}}" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 2px solid {{pacBorde}}; background: #FFFFFF; color: #0F2A4A; font-family: inherit; font-weight: 700; font-size: 14px; cursor: pointer">El paciente</button>
-<button type="button" onClick="{{esAcudiente}}" aria-pressed="{{acuOn}}" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 2px solid {{acuBorde}}; background: #FFFFFF; color: #0F2A4A; font-family: inherit; font-weight: 700; font-size: 14px; cursor: pointer">Un acudiente (menor de edad u otro)</button>
+<button type="button" onClick="{{esAcudiente}}" aria-pressed="{{acuOn}}" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 2px solid {{acuBorde}}; background: #FFFFFF; color: #0F2A4A; font-family: inherit; font-weight: 700; font-size: 14px; cursor: pointer">Un responsable (menor de edad u otro)</button>
 </div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px">
 <div style="display: flex; flex-direction: column; gap: 6px"><label for="c-nombre" style="font-size: 14px; font-weight: 700">Nombre de quien firma</label><input id="c-nombre" type="text" value="{{firmante}}" onChange="{{setFirmante}}" style="min-height: 48px; padding: 0 14px; border: 1.5px solid #CBD5E1; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A"></div>
-<div style="display: flex; flex-direction: column; gap: 6px"><label for="c-doc" style="font-size: 14px; font-weight: 700">Documento</label><input id="c-doc" type="text" value="{{documento}}" onChange="{{setDocumento}}" style="min-height: 48px; padding: 0 14px; border: 1.5px solid #CBD5E1; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A"></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="c-doc" style="font-size: 14px; font-weight: 700">Documento</label><div style="display: flex; gap: 8px"><label for="c-tipodoc" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Tipo de documento</label><select id="c-tipodoc" value="{{tipoDoc}}" onChange="{{setTipoDoc}}" style="min-height: 48px; padding: 0 10px; border: 1.5px solid #CBD5E1; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A; background: #FFFFFF"><template data-sc="for" list="{{tiposDoc}}" as="t" hint-placeholder-count="5"><option value="{{t.v}}">{{t.v}}</option></template></select><input id="c-doc" type="text" value="{{documento}}" onChange="{{setDocumento}}" style="flex: 1; min-width: 0; min-height: 48px; padding: 0 14px; border: 1.5px solid #CBD5E1; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A"></div></div>
 </div>
-<label style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #EFF6FF; font-size: 15px; line-height: 1.45; cursor: pointer"><input type="checkbox" checked="{{acepta}}" onChange="{{toggleAcepta}}" style="width: 22px; height: 22px; margin-top: 1px; flex: none; accent-color: #1D4ED8">Leí el texto anterior, me explicaron los procedimientos, sus riesgos y alternativas, resolví mis dudas y acepto de forma libre y voluntaria.</label>
+<label style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #EFF6FF; font-size: 15px; line-height: 1.45; cursor: pointer"><input type="checkbox" checked="{{acepta}}" onChange="{{toggleAcepta}}" style="width: 22px; height: 22px; margin-top: 1px; flex: none; accent-color: #1D4ED8">Leí el texto anterior, recibí información clara y suficiente, resolví mis dudas y autorizo el procedimiento de forma libre y voluntaria.</label>
 </section>
 
 <section aria-labelledby="t-c4" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 20px; padding: 22px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px">
@@ -2062,76 +2075,95 @@ class Component extends DCLogic {
 </div>
 </script>
 <script type="text/x-component" id="js-Consentimiento">
-var TEXTO_BASE = 'CONSENTIMIENTO INFORMADO PARA ATENCIÓN EN FISIOTERAPIA\n\n'
-  + 'Yo, {paciente}, identificado(a) con documento {documento}, {calidad}, declaro que la fisioterapeuta Angie Ferrucho me explicó de forma clara y suficiente:\n\n'
-  + '1. La valoración realizada y el plan de tratamiento propuesto, que incluye: {servicios}.\n\n'
-  + '2. Los beneficios esperados: alivio del dolor, mejoría de la movilidad y de la función, y prevención de lesiones. Entiendo que no se garantiza un resultado específico.\n\n'
-  + '3. Los riesgos y molestias posibles. En los procedimientos con aguja (punción seca, electropunción, terapia neural, sueroterapia): dolor o sensibilidad en la zona, hematoma, mareo o desmayo, reacción en el sitio de aplicación y, con poca frecuencia, infección. En el ejercicio terapéutico y las demás técnicas: cansancio o dolor muscular pasajero.\n\n'
-  + '4. Las alternativas de tratamiento disponibles y las consecuencias de no realizarlo.\n\n'
-  + '5. Que debo informar cualquier enfermedad, medicamento, alergia, embarazo o cambio en mi estado de salud.\n\n'
-  + '6. Que puedo hacer preguntas en cualquier momento y retirar este consentimiento cuando lo decida, sin que eso afecte mi atención.\n\n'
-  + '7. Que mis datos personales y de salud se tratarán de forma confidencial y solo para fines de mi atención.\n\n'
-  + 'Manifiesto que leí este documento, que mis preguntas fueron resueltas y que autorizo de manera libre y voluntaria los procedimientos indicados.\n\n'
-  + 'Fecha: {fecha}';
+var PLANTILLAS = [
+  { id: 'iv', nombre: 'Sueroterapia intravenosa', servicio: 'Sueroterapia', titulo: 'CONSENTIMIENTO INFORMADO PARA LA APLICACIÓN DE SUEROTERAPIA INTRAVENOSA',
+    texto: 'Yo, {firmante}, identificado(a) con {tipo_documento} No. {documento}{calidad}, autorizo de manera libre, voluntaria e informada a la fisioterapeuta ANGIE LORENA FERRUCHO, profesional certificada en sueroterapia, para la aplicación del procedimiento de sueroterapia intravenosa con fines terapéuticos.\n\n'
+      + 'Declaro que he sido informado(a) de manera clara, suficiente y comprensible sobre los siguientes aspectos:\n\n'
+      + 'DESCRIPCIÓN DEL PROCEDIMIENTO:\nLa sueroterapia intravenosa consiste en la administración de soluciones que contienen vitaminas, minerales, antioxidantes y/o medicamentos bioreguladores o homeopáticos, con el objetivo de mejorar el bienestar general, apoyar procesos de recuperación y contribuir al manejo de diferentes condiciones de salud, especialmente en el ámbito musculoesquelético y funcional.\n\n'
+      + 'BENEFICIOS ESPERADOS:\n• Disminución del dolor y la inflamación.\n• Mejora en la recuperación muscular y articular.\n• Aumento en los niveles de energía y bienestar general.\n• Fortalecimiento del sistema inmunológico.\n• Apoyo en procesos metabólicos y de recuperación funcional.\n\n'
+      + 'RIESGOS Y EFECTOS ADVERSOS:\nEntiendo que, aunque es un procedimiento generalmente seguro, pueden presentarse:\n• Dolor, hematoma o enrojecimiento en el sitio de punción.\n• Sensación de frío o calor durante la administración.\n• Mareo, náuseas o leve disminución de la presión arterial.\n• Reacciones alérgicas a alguno de los componentes.\n• En casos poco frecuentes, infección o flebitis en el sitio de aplicación.\n\n'
+      + 'En caso de presentar síntomas graves como dificultad respiratoria, inflamación severa o pérdida de conciencia, debo acudir inmediatamente a un servicio médico.\n\n'
+      + 'CONTRAINDICACIONES:\nSe me ha informado que este procedimiento no está recomendado en casos de:\n• Trastornos de la coagulación o uso de anticoagulantes sin control médico.\n• Enfermedad renal o hepática severa.\n• Alergia conocida a alguno de los componentes.\n• Hipertensión o hipotensión no controlada.\n• Embarazo o lactancia sin valoración médica previa.\n\n'
+      + 'Manifiesto que he informado verazmente sobre mis antecedentes médicos, alergias y medicamentos actuales, y que he tenido la oportunidad de realizar preguntas, las cuales han sido resueltas satisfactoriamente.\n\n'
+      + 'Entiendo que los resultados pueden variar según mi condición individual y que este procedimiento hace parte de un manejo integral en salud.\n\n'
+      + 'Fecha: {fecha}' },
+  { id: 'neb', nombre: 'Sueroterapia nebulizada', servicio: 'Sueroterapia', titulo: 'CONSENTIMIENTO INFORMADO APLICACIÓN SUEROTERAPIA NEBULIZADA',
+    texto: 'INFORMACIÓN SOBRE LA APLICACIÓN DE TERAPIA NEBULIZADA Y ADMINISTRACIÓN DE SOLUCIONES TERAPÉUTICAS\n\n'
+      + 'La sueroterapia nebulizada es una técnica mediante la cual se administran soluciones terapéuticas (como suero fisiológico, vitaminas, minerales y/o medicamentos bioreguladores u homeopáticos) a través de un nebulizador que permite su inhalación por medio de una máscara conectada a un compresor de aire, facilitando su acción directa sobre las vías respiratorias.\n\n'
+      + 'Esta técnica es considerada de bajo riesgo; sin embargo, pueden presentarse síntomas como: tos leve, irritación de vías respiratorias, cefalea, náuseas, mareo, somnolencia, hiperactividad o reacciones alérgicas, los cuales generalmente son transitorios. En casos poco frecuentes puede presentarse broncoespasmo o dificultad respiratoria, por lo que, en caso de síntomas graves, se debe acudir a un servicio médico.\n\n'
+      + 'El procedimiento no está recomendado en pacientes con alergia conocida a los componentes, enfermedades respiratorias descompensadas o dificultad para tolerar la nebulización.\n\n'
+      + 'CONSENTIMIENTO:\n\n'
+      + 'Yo, {firmante}, identificado(a) con {tipo_documento} No. {documento}{calidad}, autorizo de manera libre, voluntaria e informada a la fisioterapeuta ANGIE LORENA FERRUCHO, profesional certificada, para realizar el procedimiento de sueroterapia nebulizada y la administración de soluciones terapéuticas.\n\n'
+      + 'Declaro que he recibido información clara y suficiente, que he resuelto mis dudas satisfactoriamente y que me encuentro en capacidad de expresar mi consentimiento.\n\n'
+      + 'Fecha: {fecha}' },
+  { id: 'fisio', nombre: 'Fisioterapia', servicio: null, borrador: true, titulo: 'CONSENTIMIENTO INFORMADO PARA ATENCIÓN EN FISIOTERAPIA',
+    texto: 'Yo, {firmante}, identificado(a) con {tipo_documento} No. {documento}{calidad}, autorizo de manera libre, voluntaria e informada a la fisioterapeuta ANGIE LORENA FERRUCHO para realizar la valoración y el tratamiento de fisioterapia.\n\n'
+      + 'Declaro que me explicaron el plan de tratamiento, sus beneficios esperados, los riesgos y molestias posibles y las alternativas disponibles; que debo informar cualquier enfermedad, medicamento, alergia, embarazo o cambio en mi estado de salud; y que puedo retirar este consentimiento en cualquier momento sin que eso afecte mi atención.\n\n'
+      + 'Manifiesto que mis preguntas fueron resueltas y que autorizo de manera libre y voluntaria los procedimientos indicados.\n\n'
+      + 'Fecha: {fecha}' }
+];
+var TIPOS_DOC = ['CC', 'TI', 'CE', 'Pasaporte', 'Otro'];
+var CC_PROFESIONAL = '1001315761';
 
 class Component extends DCLogic {
   constructor(props) { super(props); this.state = this.vacio(); }
   vacio() {
-    return { cargando: true, ocupado: false, estado: '', error: false, paciente: null, servicios: [], elegidos: [],
-      plantilla: TEXTO_BASE, version: 0, editando: false, borrador: '', relacion: 'paciente', firmante: '', documento: '',
-      acepta: false, firmados: [], firmaGuardada: null, recordarFirma: true };
+    return { cargando: true, ocupado: false, estado: '', error: false, paciente: null, tipo: 'iv', textos: {},
+      editando: false, borrador: '', relacion: 'paciente', firmante: '', tipoDoc: 'CC', documento: '',
+      acepta: false, firmados: [], recordarFirma: true };
   }
   aviso(t, error) { this.setState({ estado: t, error: !!error }); }
   lz(id) { return APP.lienzo(id); }
+  plantilla() {
+    var id = this.state.tipo, base = PLANTILLAS.find(function (x) { return x.id === id; }) || PLANTILLAS[0];
+    var propio = this.state.textos[id];
+    return Object.assign({}, base, propio ? { texto: propio.texto, version: propio.version, borrador: false } : { version: 0 });
+  }
   alMostrar(params) {
     var self = this, pid = params && params.p;
-    this.setState(this.vacio());
+    var inicial = this.vacio();
+    if (params && params.t && PLANTILLAS.some(function (x) { return x.id === params.t; })) inicial.tipo = params.t;
+    this.setState(inicial);
     setTimeout(function () { ['firmaP', 'firmaA'].forEach(function (k) { var l = self.lz(k); if (l) { l.reiniciar(); l.grosor = 5; } }); }, 0);
     if (!pid) { this.aviso('Abre el consentimiento desde la tarjeta del paciente.', true); return; }
     Promise.all([
       APP.db.listar('pacientes', { eq: [['id', pid]] }),
-      APP.db.servicios(),
-      APP.db.ajuste('consentimiento_texto'),
+      APP.db.ajuste('consentimiento_plantillas'),
       APP.db.ajuste('firma_profesional'),
-      APP.db.listar('consentimientos', { eq: [['paciente_id', pid]], order: ['firmado_en', false] }),
-      APP.db.listar('sesiones', { eq: [['paciente_id', pid]] })
+      APP.db.listar('consentimientos', { eq: [['paciente_id', pid]], order: ['firmado_en', false] })
     ]).then(function (r) {
       var p = r[0][0];
       if (!p) { self.aviso('No se encontró el paciente.', true); return; }
-      var usados = {};
-      r[5].forEach(function (x) { if (x.servicio) usados[x.servicio] = true; });
-      self.setState({ cargando: false, paciente: p, servicios: r[1], firmante: p.nombre, documento: p.cc || '',
-        plantilla: r[2] && r[2].texto ? r[2].texto : TEXTO_BASE, version: r[2] && r[2].version ? r[2].version : 0,
-        firmaGuardada: r[3] || null, firmados: r[4], elegidos: Object.keys(usados) });
-      if (r[3]) setTimeout(function () { var l = self.lz('firmaA'); if (l) l.cargar(r[3]); }, 0);
+      self.setState({ cargando: false, paciente: p, firmante: p.nombre, documento: p.cc || '', textos: r[1] || {}, firmados: r[3] });
+      if (r[2]) setTimeout(function () { var l = self.lz('firmaA'); if (l) l.cargar(r[2]); }, 0);
     }).catch(function (e) {
       self.aviso(/consentimientos|ajustes/.test(String(e && e.message)) ? 'Falta ejecutar el script 002_mejoras.sql en Supabase.' : APP.mensajeError(e), true);
     });
   }
   texto() {
-    var s = this.state, F = APP.f;
-    var serv = s.elegidos.length ? s.elegidos.join(', ') : '[sin procedimientos seleccionados]';
-    var calidad = s.relacion === 'acudiente' ? 'en calidad de acudiente o representante de ' + (s.paciente ? s.paciente.nombre : '') : 'en nombre propio';
+    var s = this.state, F = APP.f, pl = this.plantilla();
+    var calidad = s.relacion === 'acudiente' && s.paciente ? ', en calidad de responsable de ' + s.paciente.nombre : '';
     var d = new Date();
-    var fecha = F.cap(F.larga(F.hoy())) + ' de ' + d.getFullYear() + ', ' + d.getHours() + ':' + ('0' + d.getMinutes()).slice(-2);
-    return s.plantilla.replace(/\{paciente\}/g, s.firmante || '________').replace(/\{documento\}/g, s.documento || '________')
-      .replace(/\{calidad\}/g, calidad).replace(/\{servicios\}/g, serv).replace(/\{fecha\}/g, fecha);
+    var fecha = ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2) + '/' + d.getFullYear() + ', ' + d.getHours() + ':' + ('0' + d.getMinutes()).slice(-2);
+    return pl.titulo + '\n\n' + pl.texto.replace(/\{firmante\}/g, s.firmante.trim() || '________')
+      .replace(/\{tipo_documento\}/g, s.tipoDoc).replace(/\{documento\}/g, s.documento.trim() || '________')
+      .replace(/\{calidad\}/g, calidad).replace(/\{fecha\}/g, fecha);
   }
   firmar() {
-    var self = this, s = this.state, lp = this.lz('firmaP'), la = this.lz('firmaA');
+    var self = this, s = this.state, lp = this.lz('firmaP'), la = this.lz('firmaA'), pl = this.plantilla();
     if (!s.paciente) return;
-    if (!s.elegidos.length) { this.aviso('Selecciona al menos un procedimiento.', true); return; }
     if (!s.firmante.trim()) { this.aviso('Escribe el nombre de quien firma.', true); return; }
+    if (!s.documento.trim()) { this.aviso('Escribe el número de documento.', true); return; }
     if (!s.acepta) { this.aviso('Falta marcar la casilla de aceptación.', true); return; }
-    if (!lp || lp.vacio) { this.aviso('Falta la firma ' + (s.relacion === 'acudiente' ? 'del acudiente' : 'del paciente') + '.', true); return; }
+    if (!lp || lp.vacio) { this.aviso('Falta la firma ' + (s.relacion === 'acudiente' ? 'del responsable' : 'del paciente') + '.', true); return; }
     if (!la || la.vacio) { this.aviso('Falta tu firma.', true); return; }
     var texto = this.texto(), fp = lp.png(), fa = la.png();
-    var datos = { texto: texto, servicios: s.elegidos, firmante: s.firmante.trim(), documento: s.documento.trim(), relacion: s.relacion, firma_paciente: fp, firma_profesional: fa };
+    var datos = { texto: texto, tipo: pl.nombre, firmante: s.firmante.trim(), documento: s.tipoDoc + ' ' + s.documento.trim(), relacion: s.relacion, firma_paciente: fp, firma_profesional: fa };
     this.setState({ ocupado: true }); this.aviso('Guardando…');
     APP.u.sha256(JSON.stringify(datos)).then(function (huella) {
       return APP.db.crear('consentimientos', {
-        paciente_id: s.paciente.id, version_texto: s.version || 1, texto: texto, servicios: s.elegidos,
-        firmante_nombre: datos.firmante, firmante_documento: datos.documento || null, firmante_relacion: s.relacion,
+        paciente_id: s.paciente.id, version_texto: pl.version || 1, texto: texto, servicios: [pl.nombre],
+        firmante_nombre: datos.firmante, firmante_documento: datos.documento, firmante_relacion: s.relacion,
         firma_paciente: fp, firma_profesional: fa, huella_sha256: huella, dispositivo: navigator.userAgent.slice(0, 200)
       });
     }).then(function (c) {
@@ -2145,56 +2177,59 @@ class Component extends DCLogic {
     }).catch(function (e) { self.setState({ ocupado: false }); self.aviso('No se pudo guardar: ' + APP.mensajeError(e), true); });
   }
   imprimir(c) {
-    var u = APP.u, s = this.state, F = APP.f;
+    var u = APP.u, s = this.state;
     var cuando = c.firmado_en ? new Date(c.firmado_en) : new Date();
+    var tipo = (c.servicios && c.servicios[0]) || 'Consentimiento';
     var cuerpo = '<pre style="font-size:11pt">' + u.esc(c.texto) + '</pre>'
       + '<div class="firma"><div><img src="' + c.firma_paciente + '" alt="Firma"><br><b>' + u.esc(c.firmante_nombre) + '</b><br>'
-      + (c.firmante_documento ? 'Documento ' + u.esc(c.firmante_documento) + '<br>' : '') + (c.firmante_relacion === 'acudiente' ? 'Acudiente de ' + u.esc(s.paciente.nombre) : 'Paciente') + '</div>'
-      + '<div><img src="' + c.firma_profesional + '" alt="Firma"><br><b>Angie Ferrucho</b><br>Fisioterapeuta</div></div>'
+      + (c.firmante_documento ? u.esc(c.firmante_documento) + '<br>' : '') + (c.firmante_relacion === 'acudiente' ? 'Responsable de ' + u.esc(s.paciente.nombre) : 'Paciente') + '</div>'
+      + '<div><img src="' + c.firma_profesional + '" alt="Firma"><br><b>Angie Lorena Ferrucho</b><br>Fisioterapeuta · CC ' + CC_PROFESIONAL + '</div></div>'
       + '<p class="nota">Firmado electrónicamente el ' + u.esc(cuando.toLocaleString('es-CO')) + '. Versión del texto: ' + (c.version_texto || 1)
       + '. Huella SHA-256 del documento: ' + u.esc(c.huella_sha256) + '. Registro ' + u.esc(c.id) + '.</p>';
-    u.imprimir('Consentimiento informado – ' + s.paciente.nombre, cuerpo);
+    u.imprimir('Consentimiento informado – ' + tipo, cuerpo);
   }
   renderVals() {
-    var self = this, s = this.state, F = APP.f;
+    var self = this, s = this.state, pl = this.plantilla();
     var lp = this.lz('firmaP'), la = this.lz('firmaA');
+    function firmadoDe(nombre) { return s.firmados.find(function (c) { return (c.servicios || []).indexOf(nombre) >= 0; }); }
     return {
       subtitulo: s.paciente ? s.paciente.nombre + (s.paciente.cc ? ' · CC ' + s.paciente.cc : '') : (s.cargando ? 'Cargando…' : ''),
       hayFirmados: s.firmados.length > 0,
       firmados: s.firmados.map(function (c) {
-        return { fecha: 'Firmado el ' + new Date(c.firmado_en || Date.now()).toLocaleString('es-CO', { dateStyle: 'long', timeStyle: 'short' }),
-          detalle: (c.firmante_relacion === 'acudiente' ? 'Acudiente: ' : '') + c.firmante_nombre + ' · ' + (c.servicios || []).join(', '),
+        return { fecha: ((c.servicios && c.servicios[0]) || 'Consentimiento') + ' · ' + new Date(c.firmado_en || Date.now()).toLocaleString('es-CO', { dateStyle: 'long', timeStyle: 'short' }),
+          detalle: (c.firmante_relacion === 'acudiente' ? 'Firmó como responsable: ' : 'Firmó: ') + c.firmante_nombre,
           imprimir: function () { self.imprimir(c); } };
       }),
-      servicios: s.servicios.map(function (o) {
-        var on = s.elegidos.indexOf(o.nombre) >= 0;
-        return { nombre: o.nombre, on: on ? 'true' : 'false', marca: on ? '✓ ' : '', bg: on ? '#EFF6FF' : '#FFFFFF', fg: on ? '#1E3A8A' : '#334155', borde: on ? '#1D4ED8' : '#CBD5E1',
-          pick: function () {
-            var l = self.state.elegidos.slice(), i = l.indexOf(o.nombre);
-            if (i >= 0) l.splice(i, 1); else l.push(o.nombre);
-            self.setState({ elegidos: l });
-          } };
+      tipos: PLANTILLAS.map(function (x) {
+        var on = s.tipo === x.id, f = firmadoDe(x.nombre);
+        return { nombre: x.nombre, on: on ? 'true' : 'false', bg: on ? '#EFF6FF' : '#FFFFFF', fg: on ? '#1E3A8A' : '#334155', borde: on ? '#1D4ED8' : '#CBD5E1',
+          nota: f ? 'Firmado el ' + new Date(f.firmado_en || Date.now()).toLocaleDateString('es-CO') : (x.borrador && !s.textos[x.id] ? 'Pendiente del formato' : 'Sin firmar'),
+          notaColor: f ? '#065F46' : '#64748B',
+          pick: function () { self.setState({ tipo: x.id, editando: false, acepta: false }); } };
       }),
-      esBorrador: s.version === 0,
-      editando: s.editando, plantilla: s.borrador, versionSiguiente: (s.version || 0) + 1,
+      esBorrador: !!pl.borrador,
+      editando: s.editando, plantillaTxt: s.borrador, versionSiguiente: (pl.version || 0) + 1, nombreTipo: pl.nombre,
       textoBotonEditar: s.editando ? 'Cerrar editor' : 'Editar texto',
-      toggleEditar: function () { self.setState({ editando: !s.editando, borrador: s.plantilla }); },
+      toggleEditar: function () { self.setState({ editando: !s.editando, borrador: pl.texto }); },
       setPlantilla: function (e) { self.setState({ borrador: e.target.value }); },
       guardarPlantilla: function () {
-        var v = (self.state.version || 0) + 1, t = self.state.borrador;
-        APP.db.guardarAjuste('consentimiento_texto', { version: v, texto: t }).then(function () {
-          self.setState({ plantilla: t, version: v, editando: false }); self.aviso('Texto guardado como versión ' + v + '.');
+        var v = (pl.version || 0) + 1, t = self.state.borrador, todos = Object.assign({}, self.state.textos);
+        todos[pl.id] = { version: v, texto: t };
+        APP.db.guardarAjuste('consentimiento_plantillas', todos).then(function () {
+          self.setState({ textos: todos, editando: false }); self.aviso('Texto de "' + pl.nombre + '" guardado como versión ' + v + '.');
         }).catch(function (e) { self.aviso(APP.mensajeError(e), true); });
       },
       textoFinal: this.texto(),
       pacOn: s.relacion === 'paciente' ? 'true' : 'false', acuOn: s.relacion === 'acudiente' ? 'true' : 'false',
       pacBorde: s.relacion === 'paciente' ? '#1D4ED8' : '#CBD5E1', acuBorde: s.relacion === 'acudiente' ? '#1D4ED8' : '#CBD5E1',
-      esPaciente: function () { self.setState({ relacion: 'paciente', firmante: s.paciente ? s.paciente.nombre : '', documento: s.paciente ? (s.paciente.cc || '') : '' }); },
-      esAcudiente: function () { self.setState({ relacion: 'acudiente', firmante: '', documento: '' }); },
-      quienFirma: s.relacion === 'acudiente' ? 'del acudiente' : 'del paciente',
-      firmante: s.firmante, documento: s.documento,
+      esPaciente: function () { self.setState({ relacion: 'paciente', firmante: s.paciente ? s.paciente.nombre : '', documento: s.paciente ? (s.paciente.cc || '') : '', tipoDoc: 'CC' }); },
+      esAcudiente: function () { self.setState({ relacion: 'acudiente', firmante: '', documento: '', tipoDoc: 'CC' }); },
+      quienFirma: s.relacion === 'acudiente' ? 'del responsable' : 'del paciente',
+      firmante: s.firmante, documento: s.documento, tipoDoc: s.tipoDoc,
+      tiposDoc: TIPOS_DOC.map(function (t) { return { v: t }; }),
       setFirmante: function (e) { self.setState({ firmante: e.target.value }); },
       setDocumento: function (e) { self.setState({ documento: e.target.value }); },
+      setTipoDoc: function (e) { self.setState({ tipoDoc: e.target.value }); },
       acepta: s.acepta, toggleAcepta: function () { self.setState({ acepta: !self.state.acepta }); },
       recordarFirma: s.recordarFirma, toggleRecordar: function () { self.setState({ recordarFirma: !self.state.recordarFirma }); },
       borrarFirmaP: function () { if (lp) lp.limpiar(); },
