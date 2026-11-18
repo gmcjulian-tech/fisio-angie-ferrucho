@@ -235,7 +235,7 @@ class Component extends DCLogic {
       avisos.push({ texto: p.nombre + (resta <= 0 ? ' completó su plan: programa la revaloración.' : ' termina su plan en ' + resta + (resta === 1 ? ' sesión' : ' sesiones') + '.') });
     });
     activos.forEach(function (p) {
-      var hc = s.historias.find(function (h) { return h.paciente_id === p.id; });
+      var hc = s.historias.find(function (h) { return h.paciente_id === p.id && !!h.nivel; });
       if (!hc) return;
       var desde = s.sesiones.filter(function (x) { return x.paciente_id === p.id && x.fecha >= f.local(hc.created_at); }).length;
       if (desde >= APP.REVALORAR_CADA) avisos.push({ texto: p.nombre + ': repetir el cuestionario detox (' + desde + ' sesiones desde la última valoración).' });
@@ -447,6 +447,7 @@ class Component extends DCLogic {
 <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
 <button type="button" onClick="{{enviarWa}}" style="min-height: 48px; border-radius: 999px; border: 0; background: #15803D; color: #FFFFFF; font-family: inherit; font-weight: 800; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21l1.7-5A8.5 8.5 0 1 1 8 19.4z"></path></svg>WhatsApp</button>
 <button type="button" onClick="{{enviarCorreo}}" style="min-height: 48px; border-radius: 999px; border: 1.5px solid #CBD5E1; background: #FFFFFF; color: #0F2A4A; font-family: inherit; font-weight: 800; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg>Correo</button>
+<button type="button" onClick="{{agregarGoogle}}" style="grid-column: 1 / -1; min-height: 46px; border-radius: 999px; border: 1.5px solid #CBD5E1; background: #FFFFFF; color: #0F2A4A; font-family: inherit; font-weight: 800; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4M12 13v5M9.5 15.5h5"></path></svg>Agregar a Google Calendar</button>
 <a href="Sesion.dc.html?c={{det.id}}" style="grid-column: 1 / -1; min-height: 52px; display: flex; align-items: center; justify-content: center; border-radius: 999px; background: #1D4ED8; color: #FFFFFF; text-decoration: none; font-weight: 800; font-size: 16px">{{det.textoSesion}}</a>
 <template data-sc="if" value="{{det.pendiente}}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{cancelarCita}}" disabled="{{ocupado}}" style="grid-column: 1 / -1; min-height: 44px; border-radius: 999px; border: 0; background: transparent; color: #B91C1C; font-family: inherit; font-weight: 700; font-size: 14px; cursor: pointer">Cancelar esta cita</button></template>
 </div>
@@ -651,6 +652,24 @@ class Component extends DCLogic {
           } };
       }),
       enviarWa: function () { var c = s.detalle; APP.u.whatsapp(c.telefono || self.paciente(c).celular, self.textoCita(c)); },
+      agregarGoogle: function () {
+        var c = s.detalle, t = TIPOS[c.tipo] || TIPOS.consultorio;
+        var sv = s.servicios.find(function (x) { return x.nombre === c.servicio; });
+        var min = sv && sv.duracion_min ? sv.duracion_min : 60;
+        function marca(fecha, h, m) {
+          var d = F.deIso(fecha); d.setHours(h, m, 0, 0);
+          return d.getFullYear() + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + 'T' + ('0' + d.getHours()).slice(-2) + ('0' + d.getMinutes()).slice(-2) + '00';
+        }
+        var fin = c.hora * 60 + min;
+        var detalles = [t.label, c.servicio ? 'Servicio: ' + c.servicio : '', c.telefono || self.paciente(c).celular ? 'Tel.: ' + (c.telefono || self.paciente(c).celular) : ''].filter(Boolean).join('\n');
+        var url = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+          + '&text=' + encodeURIComponent('Fisio · ' + c.paciente_nombre)
+          + '&dates=' + marca(c.fecha, c.hora, 0) + '/' + marca(c.fecha, Math.floor(fin / 60), fin % 60)
+          + '&ctz=America/Bogota'
+          + '&details=' + encodeURIComponent(detalles)
+          + '&location=' + encodeURIComponent(c.tipo === 'domicilio' ? (c.direccion || '') : 'Consultorio');
+        var w = window.open(url, '_blank', 'noopener'); if (!w) location.href = url;
+      },
       enviarCorreo: function () { var c = s.detalle; APP.u.correo(self.paciente(c).email, 'Confirmación de tu cita de fisioterapia', self.textoCita(c)); },
       setEmail: function (e) { self.setForm('email', e.target.value); },
       abierto: s.abierto,
@@ -859,7 +878,7 @@ class Component extends DCLogic {
       return {
         id: p.id, k: k, nombre: p.nombre, ini: ini,
         avBg: AV[i % AV.length].bg, avFg: AV[i % AV.length].fg,
-        dx: hc ? 'Detox: ' + (hc.nivel || '—') + ' (' + (hc.puntaje_global || 0) + ' pts)' : 'Sin historia clínica',
+        dx: !hc ? 'Sin historia clínica' : (hc.nivel ? 'Detox: ' + hc.nivel + ' (' + (hc.puntaje_global || 0) + ' pts)' : ((hc.objetivos && hc.objetivos._servicios && hc.objetivos._servicios.length) ? hc.objetivos._servicios.join(', ') : 'Historia clínica registrada')),
         contacto: p.celular ? 'Cel. ' + p.celular : '',
         estado: e.label, estBg: e.bg, estFg: e.fg, barra: e.barra,
         ses: plan ? hechas + ' de ' + plan : hechas + ' (sin plan)',
@@ -1105,6 +1124,20 @@ class Component extends DCLogic {
 <template data-sc="if" value="{{hayHistoria}}" hint-placeholder-val="{{ false }}"><div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 14px; color: #4C1D95; font-weight: 700">{{textoHistoria}}</span><button type="button" onClick="{{nuevaValoracion}}" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1.5px solid #DDD6FE; background: #FFFFFF; color: #4C1D95; font-family: inherit; font-size: 14px; font-weight: 800; cursor: pointer">Iniciar nueva valoración</button></div></template>
 <template data-sc="if" value="{{hayPacienteId}}" hint-placeholder-val="{{ false }}"><a href="Consentimiento.dc.html?p={{pacienteSel}}" style="min-height: 44px; display: inline-flex; align-items: center; padding: 0 16px; border-radius: 999px; background: #FFFFFF; border: 1.5px solid #DDD6FE; color: #5B21B6; text-decoration: none; font-weight: 800; font-size: 14px">Consentimiento informado</a> <a href="Evolucion.dc.html?p={{pacienteSel}}" style="min-height: 44px; display: inline-flex; align-items: center; padding: 0 16px; border-radius: 999px; background: #FFFFFF; border: 1.5px solid #BFDBFE; color: #1E3A8A; text-decoration: none; font-weight: 800; font-size: 14px">Ver evolución</a></template>
 </div>
+<fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 8px">
+<legend style="font-size: 14px; font-weight: 800; padding: 0; margin-bottom: 8px">Servicios que recibirá (puedes marcar varios)</legend>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<template data-sc="for" list="{{serviciosAtencion}}" as="o" hint-placeholder-count="7">
+<button type="button" onClick="{{o.pick}}" aria-pressed="{{o.on}}" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 2px solid {{o.borde}}; background: {{o.bg}}; color: {{o.fg}}; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer">{{o.marca}}{{o.nombre}}</button>
+</template>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+<span style="font-size: 13px; font-weight: 700; color: #5B21B6">{{ayudaDetox}}</span>
+<template data-sc="if" value="{{sinDetox}}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{agregarDetox}}" style="min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1.5px solid #C4B5FD; background: #FFFFFF; color: #5B21B6; font-family: inherit; font-size: 13px; font-weight: 800; cursor: pointer">+ Agregar cuestionario detox</button></template>
+<template data-sc="if" value="{{hayDetoxActivo}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{quitarDetox}}" style="min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1.5px solid #FECACA; background: #FFFFFF; color: #B91C1C; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Quitar cuestionario detox</button></template>
+</div>
+</fieldset>
+
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px">
 <div style="display: flex; flex-direction: column; gap: 6px"><label for="d-nombre" style="font-size: 14px; font-weight: 700">Nombre completo</label><input id="d-nombre" type="text" value="{{d.nombre}}" onChange="{{set.nombre}}" style="min-height: 48px; padding: 0 14px; border: 1.5px solid #C8D9EF; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A"></div>
 <div style="display: flex; flex-direction: column; gap: 6px"><label for="d-cc" style="font-size: 14px; font-weight: 700">Cédula (CC)</label><input id="d-cc" type="text" inputmode="numeric" value="{{d.cc}}" onChange="{{set.cc}}" style="min-height: 48px; padding: 0 14px; border: 1.5px solid #C8D9EF; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A"></div>
@@ -1115,6 +1148,7 @@ class Component extends DCLogic {
 <div style="display: flex; flex-direction: column; gap: 6px"><label for="d-rh" style="font-size: 14px; font-weight: 700">RH</label><select id="d-rh" value="{{d.rh}}" onChange="{{set.rh}}" style="min-height: 48px; padding: 0 12px; border: 1.5px solid #C8D9EF; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A; background: #FFFFFF"><option value="">Seleccionar</option><option value="O+">O+</option><option value="O-">O-</option><option value="A+">A+</option><option value="A-">A-</option><option value="B+">B+</option><option value="B-">B-</option><option value="AB+">AB+</option><option value="AB-">AB-</option></select></div>
 <div style="display: flex; flex-direction: column; gap: 6px"><label for="d-est" style="font-size: 14px; font-weight: 700">Estatura (m)</label><input id="d-est" type="text" inputmode="decimal" value="{{d.est}}" onChange="{{set.est}}" placeholder="Ej. 1.67" style="min-height: 48px; padding: 0 14px; border: 1.5px solid #C8D9EF; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A"></div>
 <div style="display: flex; flex-direction: column; gap: 6px"><label for="d-peso" style="font-size: 14px; font-weight: 700">Peso (kg)</label><input id="d-peso" type="text" inputmode="decimal" value="{{d.peso}}" onChange="{{set.peso}}" placeholder="Ej. 70" style="min-height: 48px; padding: 0 14px; border: 1.5px solid #C8D9EF; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A"></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="d-plan" style="font-size: 14px; font-weight: 700">Sesiones del plan</label><input id="d-plan" type="number" min="1" inputmode="numeric" value="{{d.plan}}" onChange="{{set.plan}}" placeholder="Ej. 10" style="min-height: 48px; padding: 0 14px; border: 1.5px solid #C8D9EF; border-radius: 12px; font-family: inherit; font-size: 15px; color: #0F2A4A"></div>
 </div>
 <div style="display: flex; flex-direction: column; gap: 6px"><label for="d-motivo" style="font-size: 14px; font-weight: 700">Motivo de consulta</label><textarea id="d-motivo" rows="4" value="{{d.motivo}}" onChange="{{set.motivo}}" style="padding: 12px 14px; border: 1.5px solid #C8D9EF; border-radius: 12px; font-family: inherit; font-size: 15px; line-height: 1.5; color: #0F2A4A; resize: vertical"></textarea></div>
 </section>
@@ -1144,6 +1178,12 @@ class Component extends DCLogic {
 <div style="display: flex; flex-direction: column; gap: 6px"><label for="a-far" style="font-size: 14px; font-weight: 800; color: #064E3B">Antecedentes farmacológicos</label><textarea id="a-far" rows="5" value="{{d.far}}" onChange="{{set.far}}" style="padding: 12px 14px; border: 1.5px solid #A7F3D0; border-radius: 14px; background: #F3FCF8; font-family: inherit; font-size: 15px; line-height: 1.5; color: #0F2A4A; resize: vertical"></textarea></div>
 <div style="display: flex; flex-direction: column; gap: 6px"><label for="a-tox" style="font-size: 14px; font-weight: 800; color: #9A3412">Antecedentes toxicoalérgicos</label><textarea id="a-tox" rows="5" value="{{d.tox}}" onChange="{{set.tox}}" style="padding: 12px 14px; border: 1.5px solid #FED7AA; border-radius: 14px; background: #FFF8F1; font-family: inherit; font-size: 15px; line-height: 1.5; color: #0F2A4A; resize: vertical"></textarea></div>
 </div>
+<template data-sc="if" value="{{sinDetox}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 14px; background: #F5F3FF; border: 1px dashed #C4B5FD">
+<span style="flex: 1 1 240px; font-size: 14px; color: #4C1D95; font-weight: 700">Esta valoración no incluye el cuestionario detox. Si el paciente lo necesita, agrégalo.</span>
+<button type="button" onClick="{{agregarDetox}}" style="min-height: 44px; padding: 0 18px; border-radius: 999px; border: 0; background: #6D28D9; color: #FFFFFF; font-family: inherit; font-weight: 800; font-size: 14px; cursor: pointer">+ Agregar cuestionario detox</button>
+</div>
+</template>
 </section>
 </template>
 
@@ -1445,6 +1485,7 @@ var PRIORIDAD_SINTOMA = [
   { item: 'art-0', umbral: 3, texto: 'Registrar EVA en cada sesión para seguir la evolución del dolor.' },
   { item: 'met-5', umbral: 2, texto: 'Incluir acondicionamiento físico y control del peso en los objetivos.' }
 ];
+function esSuero(n) { return /sueroterapia/i.test(n || ''); }
 var PASOS = ['Datos del paciente', 'Valoración inicial', 'Cuestionario detox', 'Resultados'];
 
 
@@ -1453,16 +1494,17 @@ function num(v) { var n = parseFloat(String(v || '').replace(',', '.')); return 
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { paso: 0, sis: 0, toast: '', punt: {}, obj: {}, d: this.datosVacios(),
+    this.state = { paso: 0, sis: 0, toast: '', punt: {}, obj: {}, d: this.datosVacios(), elegidos: [], conDetox: false, catalogo: [],
       pacientes: [], pacienteId: null, historiaId: null, historiaFecha: null, ocupado: false, error: '',
       historiasPac: [], umbrales: {}, verReglas: false };
   }
   datosVacios() {
-    return { nombre: '', cc: '', cel: '', email: '', nac: '', rh: '', est: '', peso: '', motivo: '', pat: '', qui: '', far: '', tox: '' };
+    return { nombre: '', cc: '', cel: '', email: '', plan: '', nac: '', rh: '', est: '', peso: '', motivo: '', pat: '', qui: '', far: '', tox: '' };
   }
   alMostrar(params) {
     var self = this, pid = params && params.p ? params.p : null;
     this.setState({ paso: 0, sis: 0, error: '' });
+    APP.db.servicios().then(function (l) { self.setState({ catalogo: l }); }).catch(function () {});
     APP.db.ajuste('reglas_alertas').then(function (u) { self.setState({ umbrales: u || {} }); }).catch(function () {});
     APP.db.listar('pacientes', { order: ['nombre'] }).then(function (ps) {
       self.setState({ pacientes: ps });
@@ -1470,7 +1512,7 @@ class Component extends DCLogic {
     }).catch(function (e) { self.setState({ error: APP.mensajeError(e) }); });
   }
   limpiarTodo() {
-    this.setState({ pacienteId: null, historiaId: null, historiaFecha: null, punt: {}, obj: {}, d: this.datosVacios(), historiasPac: [] });
+    this.setState({ pacienteId: null, historiaId: null, historiaFecha: null, punt: {}, obj: {}, d: this.datosVacios(), historiasPac: [], elegidos: [], conDetox: false });
   }
   cargarPaciente(pid) {
     var self = this;
@@ -1478,8 +1520,8 @@ class Component extends DCLogic {
     if (!p) { this.limpiarTodo(); return; }
     var d = this.datosVacios();
     d.nombre = p.nombre || ''; d.cc = p.cc || ''; d.cel = p.celular || ''; d.email = p.email || ''; d.nac = p.fecha_nacimiento || '';
-    d.rh = p.rh || ''; d.est = p.estatura != null ? String(p.estatura) : ''; d.peso = p.peso != null ? String(p.peso) : '';
-    this.setState({ pacienteId: pid, historiaId: null, historiaFecha: null, punt: {}, obj: {}, d: d, historiasPac: [] });
+    d.rh = p.rh || ''; d.plan = p.plan_sesiones ? String(p.plan_sesiones) : ''; d.est = p.estatura != null ? String(p.estatura) : ''; d.peso = p.peso != null ? String(p.peso) : '';
+    this.setState({ pacienteId: pid, historiaId: null, historiaFecha: null, punt: {}, obj: {}, d: d, historiasPac: [], elegidos: [], conDetox: false });
     APP.db.listar('historias', { eq: [['paciente_id', pid]], order: ['created_at', false] }).then(function (hs) {
       var h = hs[0];
       if (self.state.pacienteId !== pid) return;
@@ -1487,7 +1529,10 @@ class Component extends DCLogic {
       if (!h) return;
       var d2 = Object.assign({}, self.state.d, { motivo: h.motivo || '', pat: h.ant_patologicos || '', qui: h.ant_quirurgicos || '',
         far: h.ant_farmacologicos || '', tox: h.ant_toxicoalergicos || '' });
-      self.setState({ historiaId: h.id, historiaFecha: APP.f.local(h.created_at), d: d2, punt: h.detox || {}, obj: h.objetivos || {} });
+      var o = h.objetivos || {};
+      var conDetox = o._detox !== undefined ? !!o._detox : (o._tipo ? o._tipo !== 'fisio' : !!(h.detox && Object.keys(h.detox).length));
+      self.setState({ historiaId: h.id, historiaFecha: APP.f.local(h.created_at), d: d2, punt: h.detox || {}, obj: o,
+        elegidos: Array.isArray(o._servicios) ? o._servicios : [], conDetox: conDetox });
     }).catch(function (e) { self.setState({ error: APP.mensajeError(e) }); });
   }
   guardarTodo(global, nivel) {
@@ -1495,10 +1540,13 @@ class Component extends DCLogic {
     if (!d.nombre.trim()) { this.setState({ paso: 0 }); this.toastMsg('Escribe el nombre del paciente antes de guardar.'); return; }
     var est = num(d.est); if (est > 3) est = est / 100;
     var datosP = { nombre: d.nombre.trim(), cc: d.cc.trim() || null, celular: d.cel.trim() || null, email: d.email.trim() || null, fecha_nacimiento: d.nac || null,
-      rh: d.rh || null, estatura: est > 0 ? Math.round(est * 100) / 100 : null, peso: num(d.peso) > 0 ? num(d.peso) : null };
+      rh: d.rh || null, plan_sesiones: parseInt(d.plan, 10) > 0 ? parseInt(d.plan, 10) : null, estatura: est > 0 ? Math.round(est * 100) / 100 : null, peso: num(d.peso) > 0 ? num(d.peso) : null };
     var datosH = { motivo: d.motivo || null, ant_patologicos: d.pat || null, ant_quirurgicos: d.qui || null,
       ant_farmacologicos: d.far || null, ant_toxicoalergicos: d.tox || null, detox: s.punt, objetivos: Object.assign({}, s.obj, { _analisis: this._analisis || null }),
       puntaje_global: global, nivel: nivel, updated_at: new Date().toISOString() };
+    if (!s.conDetox) { datosH.detox = {}; datosH.puntaje_global = null; datosH.nivel = null; datosH.objetivos = {}; }
+    datosH.objetivos._servicios = s.elegidos;
+    datosH.objetivos._detox = !!s.conDetox;
     this.setState({ ocupado: true, error: '' });
     var pasoP = s.pacienteId ? APP.db.actualizar('pacientes', s.pacienteId, datosP) : APP.db.crear('pacientes', datosP);
     pasoP.then(function (p) {
@@ -1550,7 +1598,7 @@ class Component extends DCLogic {
   }
   previa() {
     var s = this.state;
-    return s.historiasPac.find(function (h) { return h.id !== s.historiaId && (!s.historiaFecha || APP.f.local(h.created_at) <= s.historiaFecha); }) || null;
+    return s.historiasPac.find(function (h) { return h.id !== s.historiaId && !!h.nivel && (!s.historiaFecha || APP.f.local(h.created_at) <= s.historiaFecha); }) || null;
   }
   comparar(prev, sistemas) {
     if (!prev) return null;
@@ -1583,7 +1631,7 @@ class Component extends DCLogic {
     } else t += 'Tus respuestas muestran pocas molestias. Seguiremos acompañando tu bienestar.\n';
     return t + '\nVolveremos a aplicar el cuestionario en unas 4 sesiones para ver cómo vas.\n\n' + APP.u.contacto;
   }
-  imprimir(sistemas, rank, global, nivel, edad, imc) {
+  imprimir(sistemas, rank, global, nivel, edad, imc, conDetox) {
     var u = APP.u, d = this.state.d, s = this.state;
     var e = u.esc;
     function fila(k, v) { return '<div><span class="k">' + e(k) + ':</span> ' + e(v || '—') + '</div>'; }
@@ -1596,7 +1644,8 @@ class Component extends DCLogic {
       + '<h2>Valoración inicial</h2>'
       + '<p><b>Antecedentes patológicos:</b> ' + e(d.pat || '—') + '</p><p><b>Antecedentes quirúrgicos:</b> ' + e(d.qui || '—') + '</p>'
       + '<p><b>Antecedentes farmacológicos:</b> ' + e(d.far || '—') + '</p><p><b>Antecedentes toxicoalérgicos:</b> ' + e(d.tox || '—') + '</p>'
-      + '<h2>Cuestionario detox</h2><p>Escala: 0 nunca o casi nunca · 1 ocasional · 2 ocasional e intenso · 3 frecuente, no intenso · 4 frecuente e intenso.</p>'
+      + '<p><b>Servicios:</b> ' + e(s.elegidos.length ? s.elegidos.join(', ') : 'Sin especificar') + '</p>'
+      + (!conDetox ? '<p class="k">Esta valoración no incluye cuestionario detox.</p>' : '<h2>Cuestionario detox</h2><p>Escala: 0 nunca o casi nunca · 1 ocasional · 2 ocasional e intenso · 3 frecuente, no intenso · 4 frecuente e intenso.</p>'
       + '<p><b>Puntaje global: ' + global + ' · Nivel de toxicidad ' + e(nivel.label) + '</b> (menos de 30 bajo, 30 a 60 moderado, más de 60 alto)</p>'
       + '<div class="grid">' + sistemas.map(function (x) {
         return '<div class="sis"><table><tr><th>' + e(x.sx.nombre) + '</th><th style="width:50px">Pts</th></tr>'
@@ -1624,7 +1673,7 @@ class Component extends DCLogic {
         var t = s.obj[x.sx.k] !== undefined ? s.obj[x.sx.k] : x.sx.obj;
         return '<p><b>' + e(x.sx.nombre) + ' (' + x.total + ' pts):</b> ' + e(t) + '</p>';
       }).join('') || '<p>Ningún sistema supera los 5 puntos.</p>')
-      + ((s.punt['emo-9'] || 0) > 0 ? '<p><b>Alerta:</b> se registró ideación suicida. Remisión prioritaria a valoración por salud mental.</p>' : '')
+      + ((s.punt['emo-9'] || 0) > 0 ? '<p><b>Alerta:</b> se registró ideación suicida. Remisión prioritaria a valoración por salud mental.</p>' : ''))
       + '<div class="firma"><div><div class="linea"></div><b>Angie Ferrucho</b><br>Fisioterapeuta</div><div><div class="linea"></div><b>' + e(d.nombre || 'Paciente') + '</b><br>Paciente</div></div>'
       + '<p class="nota">Documento generado el ' + e(new Date().toLocaleString('es-CO')) + (s.historiaFecha ? ' · Valoración del ' + e(s.historiaFecha) : '') + '.</p>';
     u.imprimir('Historia clínica – ' + (d.nombre || 'Paciente'), cuerpo);
@@ -1731,14 +1780,19 @@ class Component extends DCLogic {
     function resumen(x) { return { nombre: x.sx.nombre, total: x.total, dot: x.sx.dot }; }
 
     var set = {};
-    ['nombre', 'cc', 'cel', 'email', 'nac', 'rh', 'est', 'peso', 'motivo', 'pat', 'qui', 'far', 'tox'].forEach(function (k) {
+    ['nombre', 'cc', 'cel', 'email', 'plan', 'nac', 'rh', 'est', 'peso', 'motivo', 'pat', 'qui', 'far', 'tox'].forEach(function (k) {
       set[k] = function (ev) { self.setDato(k, ev.target.value); };
     });
 
-    var pasos = PASOS.map(function (label, i) {
-      var on = s.paso === i;
+    var conDetox = !!s.conDetox;
+    var visibles = conDetox ? [0, 1, 2, 3] : [0, 1];
+    var paso = visibles.indexOf(s.paso) >= 0 ? s.paso : visibles[visibles.length - 1];
+    var pos = visibles.indexOf(paso);
+    var pasos = visibles.map(function (i, n) {
+      var label = PASOS[i];
+      var on = paso === i;
       return {
-        n: i + 1, label: label, current: on ? 'step' : 'false',
+        n: n + 1, label: label, current: on ? 'step' : 'false',
         bg: on ? '#EEF5FF' : '#FFFFFF', borde: on ? '#1D6FE0' : '#DCE8F7',
         numBg: on ? '#1D6FE0' : '#E6F0FF', numFg: on ? '#FFFFFF' : '#1D5FD1',
         pick: function () { self.setState({ paso: i }); }
@@ -1746,7 +1800,23 @@ class Component extends DCLogic {
     });
 
     return {
-      pasos: pasos, p1: s.paso === 0, p2: s.paso === 1, p3: s.paso === 2, p4: s.paso === 3,
+      pasos: pasos, p1: paso === 0, p2: paso === 1, p3: paso === 2, p4: paso === 3,
+      serviciosAtencion: s.catalogo.map(function (o) {
+        var on = s.elegidos.indexOf(o.nombre) >= 0;
+        return { nombre: o.nombre, marca: on ? '✓ ' : '', on: on ? 'true' : 'false', bg: on ? '#EFF6FF' : '#FFFFFF', borde: on ? '#1D4ED8' : '#CBD5E1', fg: on ? '#1E3A8A' : '#334155',
+          pick: function () {
+            var l = self.state.elegidos.slice(), i = l.indexOf(o.nombre), cambio = {};
+            if (i >= 0) l.splice(i, 1); else { l.push(o.nombre); if (esSuero(o.nombre) && !self.state.conDetox) { cambio.conDetox = true; self.toastMsg('Se agregó el cuestionario detox por la sueroterapia'); } }
+            cambio.elegidos = l; self.setState(cambio);
+          } };
+      }),
+      ayudaDetox: conDetox ? 'Incluye cuestionario detox' : 'Sin cuestionario detox',
+      quitarDetox: function () {
+        if (Object.keys(self.state.punt).length && !window.confirm('Se descartarán las respuestas del cuestionario detox de esta valoración. ¿Continuar?')) return;
+        self.setState({ conDetox: false, punt: {}, paso: 0 });
+      },
+      sinDetox: !conDetox, hayDetoxActivo: conDetox,
+      agregarDetox: function () { self.setState({ conDetox: true, paso: 2 }); self.toastMsg('Cuestionario detox agregado a esta historia'); },
       d: d, set: set, edad: edad, imc: imc, imcTabla: imcTabla,
       escala: ESCALA, sisTabs: sisTabs, act: actView,
       sigLabel: s.sis < SIS.length - 1 ? 'Siguiente: ' + SIS[s.sis + 1].nombre : 'Ver resultados',
@@ -1790,14 +1860,14 @@ class Component extends DCLogic {
       enviarWaPaciente: function () { APP.u.whatsapp(self.state.d.cel, self.mensajePaciente(rank)); },
       enviarCorreoPaciente: function () { APP.u.correo(self.state.d.email, 'Resultado de tu cuestionario de síntomas', self.mensajePaciente(rank)); },
       verResultados: function () { self.setState({ paso: 3 }); },
-      esPrimero: s.paso === 0, esUltimo: s.paso === 3,
-      opAnt: s.paso === 0 ? '0.4' : '1', opSig: s.paso === 3 ? '0.4' : '1',
-      anterior: function () { if (s.paso > 0) self.setState({ paso: s.paso - 1 }); },
-      siguiente: function () { if (s.paso < 3) self.setState({ paso: s.paso + 1 }); },
-      guardar: function () { self.guardarTodo(global, nivel.label); },
+      esPrimero: pos === 0, esUltimo: pos === visibles.length - 1,
+      opAnt: pos === 0 ? '0.4' : '1', opSig: pos === visibles.length - 1 ? '0.4' : '1',
+      anterior: function () { if (pos > 0) self.setState({ paso: visibles[pos - 1] }); },
+      siguiente: function () { if (pos < visibles.length - 1) self.setState({ paso: visibles[pos + 1] }); },
+      guardar: function () { self.guardarTodo(conDetox ? global : null, conDetox ? nivel.label : null); },
       ocupado: s.ocupado, textoGuardar: s.ocupado ? 'Guardando…' : 'Guardar',
       hayPacienteId: !!s.pacienteId,
-      imprimir: function () { self.imprimir(sistemas, rank, global, nivel, edad, imc); },
+      imprimir: function () { self.imprimir(sistemas, rank, global, nivel, edad, imc, conDetox); },
       pacientesOpts: s.pacientes, pacienteSel: s.pacienteId || '',
       elegirPaciente: function (e) { var v = e.target.value; if (v) self.cargarPaciente(v); else self.limpiarTodo(); },
       hayHistoria: !!s.historiaId,
@@ -2566,7 +2636,8 @@ class Component extends DCLogic {
     });
     if (s.filtro === 'todo' || s.filtro === 'valoraciones') s.historias.forEach(function (h) {
       var fecha = F.local(h.created_at);
-      lista.push({ fecha: fecha, tipo: 'valoracion', titulo: 'Valoración y cuestionario detox', etiqueta: 'Detox ' + (h.nivel || '—') + ' · ' + (h.puntaje_global || 0) + ' pts',
+      var conDx = !!h.nivel;
+      lista.push({ fecha: fecha, tipo: 'valoracion', titulo: conDx ? 'Valoración y cuestionario detox' : 'Valoración inicial', etiqueta: conDx ? 'Detox ' + h.nivel + ' · ' + (h.puntaje_global || 0) + ' pts' : (((h.objetivos || {})._servicios || []).join(', ') || 'Valoración'),
         bg: '#EDE9FE', fg: '#5B21B6', tituloResumen: 'Motivo de consulta', resumen: h.motivo || '', notas: '', ejercicios: '', imagenes: [],
         enlace: 'HistoriaClinica.dc.html?p=' + h.paciente_id, textoEnlace: 'Abrir historia clínica', orden: h.created_at || fecha });
     });
@@ -2604,12 +2675,12 @@ class Component extends DCLogic {
   renderVals() {
     var self = this, s = this.state, F = APP.f, p = s.paciente;
     var ev = this.eventos();
-    var ult = s.sesiones[0], hc = s.historias[0];
+    var ult = s.sesiones[0], conDetox = s.historias.filter(function (h) { return !!h.nivel; }), hc = conDetox[0];
     var desde = hc ? s.sesiones.filter(function (x) { return x.fecha >= F.local(hc.created_at); }).length : s.sesiones.length;
-    var revalorar = !!p && s.sesiones.length > 0 && (!hc || desde >= APP.REVALORAR_CADA);
+    var revalorar = !!hc && desde >= APP.REVALORAR_CADA;
     var comp = null;
-    if (s.historias.length >= 2) {
-      var ini = s.historias[s.historias.length - 1], fin = s.historias[0];
+    if (conDetox.length >= 2) {
+      var ini = conDetox[conDetox.length - 1], fin = conDetox[0];
       var a = APP.totalesDetox(ini.detox), b = APP.totalesDetox(fin.detox);
       comp = { desde: F.corta(F.local(ini.created_at)), hasta: F.corta(F.local(fin.created_at)),
         global: (ini.puntaje_global || 0) + ' → ' + (fin.puntaje_global || 0),
@@ -2628,7 +2699,7 @@ class Component extends DCLogic {
         { label: 'Sesiones realizadas', valor: s.sesiones.length + (p && p.plan_sesiones ? ' de ' + p.plan_sesiones : ''), color: '#1E3A8A' },
         { label: 'Última sesión', valor: ult ? F.cap(F.corta(ult.fecha)) : '—', color: '#0F2A4A' },
         { label: 'Última terapia', valor: ult ? (ult.servicio || '—') : '—', color: '#0F2A4A' },
-        { label: 'Última valoración detox', valor: hc ? (hc.nivel || '—') + ' · ' + (hc.puntaje_global || 0) : '—', color: '#5B21B6' }
+        { label: 'Último cuestionario detox', valor: hc ? hc.nivel + ' · ' + (hc.puntaje_global || 0) : 'No aplica', color: '#5B21B6' }
       ],
       filtros: opciones.map(function (o) {
         var on = s.filtro === o.k;
@@ -2641,7 +2712,7 @@ class Component extends DCLogic {
           hayResumen: !!x.resumen, hayNotas: !!x.notas, hayEjercicios: !!x.ejercicios, hayImagenes: x.imagenes.length > 0 });
       }),
       revalorar: revalorar,
-      textoRevalorar: hc ? 'Han pasado ' + desde + ' sesiones desde la última valoración: es buen momento para repetir el cuestionario.' : 'Este paciente aún no tiene cuestionario detox.',
+      textoRevalorar: 'Han pasado ' + desde + ' sesiones desde el último cuestionario detox: es buen momento para repetirlo.',
       hayComp: !!comp, comp: comp || {},
       vacio: ev.length === 0,
       textoVacio: s.cargando ? 'Cargando…' : 'Todavía no hay registros. Empieza con "Registrar sesión".',
