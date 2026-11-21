@@ -51,6 +51,7 @@ body.demo .menu{height:calc(100vh - 38px)}
 .barra-acciones{position:sticky;bottom:0;z-index:20;margin:0 -8px;padding:12px 8px;background:rgba(245,248,252,.96);backdrop-filter:blur(6px);border-top:1px solid #E2E8F0;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .barra-acciones .espacio{flex:1}
 .txt-corto{display:none}
+.cal-movil{display:none}
 .solo-instalable{display:none !important}
 body.puede-instalar .solo-instalable{display:flex !important}
 .solo-admin{display:none !important}
@@ -76,6 +77,7 @@ body.es-admin .solo-clinico{display:none !important}
   body.puede-instalar.mostrar-aviso .aviso-instalar{display:flex}
   .menu{position:fixed;left:0;right:0;bottom:0;top:auto;height:auto;flex-direction:row;align-items:stretch;padding:4px 4px calc(4px + env(safe-area-inset-bottom));gap:0;border-right:0;border-top:1px solid #E2E8F0;z-index:40;box-shadow:0 -6px 18px rgba(15,42,74,.07)}
   .menu-marca{display:none}
+  .cal-escritorio{display:none}.cal-movil{display:flex}
   .menu-link.no-movil{display:none}
   .menu-links{flex-direction:row;flex:1;gap:0}
   .menu-link{flex:1;flex-direction:column;justify-content:center;gap:2px;min-height:56px;padding:4px 2px;font-size:11px;text-align:center}
@@ -284,7 +286,7 @@ class Component extends DCLogic {
       citasHoy: s.citas.map(function (c) {
         var t = TIPOS[c.tipo] || TIPOS.consultorio;
         return { hora: f.hora(c.hora), nombre: c.paciente_nombre, bg: t.bg, fg: t.fg, dot: t.dot,
-          detalle: t.label + (c.servicio ? ' · ' + c.servicio : '') + (c.estado === 'realizada' ? ' · realizada' : '') };
+          detalle: t.label + (c.servicio ? ' · ' + c.servicio : '') + (f.cumplida(c) ? ' · cumplida' : '') };
       }),
       sinCitas: s.citas.length === 0,
       textoSinCitas: s.cargando ? 'Cargando…' : 'No hay citas para hoy.',
@@ -334,7 +336,26 @@ class Component extends DCLogic {
 </div>
 </div>
 
-<section aria-label="Calendario semanal" data-scroll-id="cal" style="background: #FFFFFF; border: 1px solid #DCE8F7; border-radius: 22px; padding: 16px; overflow-x: auto">
+<section aria-label="Semana" class="cal-movil" style="flex-direction: column; gap: 10px">
+<template data-sc="for" list="{{semanaMovil}}" as="d" hint-placeholder-count="6">
+<div id="{{d.id}}" style="scroll-margin-top: 12px; background: {{d.bg}}; border: 1.5px solid {{d.borde}}; border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 8px">
+<b style="font-size: 17px">{{d.titulo}}</b>
+<template data-sc="if" value="{{d.esHoy}}" hint-placeholder-val="{{ false }}"><span style="padding: 2px 8px; border-radius: 999px; background: #1D6FE0; color: #FFFFFF; font-size: 12px; font-weight: 800">Hoy</span></template>
+<span style="font-size: 13px; color: #64748B">{{d.resumen}}</span>
+<button type="button" onClick="{{d.agendar}}" style="margin-left: auto; min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1.5px solid #BFDBFE; background: #FFFFFF; color: #1D4ED8; font-family: inherit; font-weight: 800; font-size: 13px; cursor: pointer">+ Agendar</button>
+</div>
+<template data-sc="for" list="{{d.citas}}" as="c" hint-placeholder-count="2">
+<button type="button" onClick="{{c.ver}}" style="display: flex; align-items: center; gap: 10px; width: 100%; min-height: 54px; padding: 8px 10px; border: 0; border-left: 4px solid {{c.dot}}; border-radius: 12px; background: {{c.bg}}; color: {{c.fg}}; font-family: inherit; text-align: left; cursor: pointer">
+<b style="font-size: 14px; min-width: 44px">{{c.hora}}</b>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column"><span style="font-size: 14.5px; font-weight: 800; color: #0F2A4A">{{c.nombre}}</span><span style="font-size: 12.5px">{{c.detalle}}</span></span>
+<span style="padding: 3px 8px; border-radius: 999px; background: {{c.estBg}}; color: {{c.estFg}}; font-size: 11.5px; font-weight: 800; white-space: nowrap">{{c.estado}}</span>
+</button>
+</template>
+</div>
+</template>
+</section>
+<section aria-label="Calendario semanal" class="cal-escritorio" style="background: #FFFFFF; border: 1px solid #DCE8F7; border-radius: 22px; padding: 16px; overflow-x: auto">
 <div style="min-width: 860px; display: flex; flex-direction: column">
 <div style="display: grid; grid-template-columns: 64px repeat(6, minmax(0, 1fr)); gap: 6px; padding-bottom: 10px; border-bottom: 1px solid #E6EEF8">
 <span></span>
@@ -472,7 +493,7 @@ class Component extends DCLogic {
 </div>
 <button type="button" onClick="{{cerrarDet}}" aria-label="Cerrar" style="width: 44px; height: 44px; border-radius: 12px; border: 0; background: #F3F8FF; color: #0F2A4A; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
 </div>
-<span style="align-self: flex-start; padding: 6px 12px; border-radius: 999px; background: {{det.bg}}; color: {{det.fg}}; font-size: 13px; font-weight: 800">{{det.tipoLabel}}</span>
+<div style="display: flex; gap: 8px; flex-wrap: wrap"><span style="padding: 6px 12px; border-radius: 999px; background: {{det.bg}}; color: {{det.fg}}; font-size: 13px; font-weight: 800">{{det.tipoLabel}}</span><span style="padding: 6px 12px; border-radius: 999px; background: #F1F5F9; color: #334155; font-size: 13px; font-weight: 800">{{det.estadoTexto}}</span></div>
 <div style="display: flex; flex-direction: column; gap: 8px; font-size: 15px">
 <span><strong>Detalle:</strong> {{det.detalle}}</span>
 <span><strong>Dirección:</strong> {{det.dir}}</span>
@@ -518,6 +539,7 @@ class Component extends DCLogic {
     var hoy = APP.f.hoy(), lun = APP.f.lunes(hoy);
     var d = Math.round((APP.f.deIso(hoy) - APP.f.deIso(lun)) / 864e5);
     this.setState({ sel: Math.min(d, 5) });
+    this._irHoy = true;
     this.cargar(this.state.lunes);
     var self = this;
     Promise.all([APP.db.listar('pacientes', { order: ['nombre'] }), APP.db.servicios(), APP.db.listar('citas', { gte: ['fecha', hoy], order: ['fecha'] })])
@@ -528,8 +550,18 @@ class Component extends DCLogic {
     var self = this;
     this.setState({ lunes: lunes, cargando: true, error: '' });
     APP.db.listar('citas', { gte: ['fecha', lunes], lte: ['fecha', APP.f.sumar(lunes, 5)], order: ['hora'] })
-      .then(function (c) { if (self.state.lunes === lunes) self.setState({ citas: c, cargando: false }); })
+      .then(function (c) {
+        if (self.state.lunes !== lunes) return;
+        self.setState({ citas: c, cargando: false });
+        if (self._irHoy) { self._irHoy = false; setTimeout(function () { self.mostrarHoy(); }, 60); }
+      })
       .catch(function (e) { self.setState({ cargando: false, error: APP.mensajeError(e) }); });
+  }
+  // En el celular, lleva la vista al día de hoy.
+  mostrarHoy() {
+    if (!(window.matchMedia && matchMedia('(max-width: 900px)').matches)) return;
+    var el = document.getElementById('dia-' + APP.f.hoy());
+    if (el) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
   }
   formVacio(dia, hora) {
     return { dia: dia, hora: hora, nombre: '', tel: '', email: '', tipo: 'domicilio', dir: '', motivo: '', rec: true, elegido: false };
@@ -629,7 +661,7 @@ class Component extends DCLogic {
           if (c) {
             var t = TIPOS[c.tipo] || TIPOS.consultorio;
             return { has: true, empty: false, colBg: colBg, nombre: c.paciente_nombre,
-              tipoLabel: (c.estado === 'realizada' ? '✓ ' : '') + (c.servicio || t.label),
+              tipoLabel: (F.cumplida(c) ? '✓ Cumplida · ' : '') + (c.servicio || t.label),
               bg: t.bg, fg: t.fg, dot: t.dot, ver: function () { self.setState({ detalle: c }); } };
           }
           return { has: false, empty: true, colBg: colBg, aria: 'Agendar ' + F.larga(fecha) + ' a las ' + F.hora(h),
@@ -650,17 +682,35 @@ class Component extends DCLogic {
         detalle: (c.servicio || 'Sin servicio seleccionado') + (c.telefono ? ' · Tel. ' + c.telefono : ''),
         dir: c.tipo === 'domicilio' ? (c.direccion || 'Sin dirección') : 'Consultorio',
         pendiente: c.estado !== 'realizada', realizada: c.estado === 'realizada', id: c.id,
+        cumplida: F.cumplida(c), estadoTexto: c.estado === 'realizada' ? 'Cumplida · sesión registrada' : F.cumplida(c) ? 'Cumplida · falta registrar la sesión' : 'Pendiente',
         textoSesion: c.estado === 'realizada' ? 'Ver sesión registrada' : 'Registrar sesión',
         ayudaEnvio: (c.telefono || self.paciente(c).celular) ? 'WhatsApp abre el chat del paciente con la confirmación lista para enviar.'
           : 'Este paciente no tiene celular registrado: WhatsApp te pedirá elegir el contacto.' };
     }
+    // Vista de celular: toda la semana como lista, día por día.
+    var semanaMovil = fechas.map(function (fecha, i) {
+      var esHoy = fecha === hoy, delDia = citas.filter(function (c) { return c.fecha === fecha; }).sort(F.ordenCitas);
+      return {
+        id: 'dia-' + fecha, titulo: F.cap(F.diaSemana(fecha)) + ' ' + F.deIso(fecha).getDate(), esHoy: esHoy,
+        bg: esHoy ? '#EFF6FF' : '#FFFFFF', borde: esHoy ? '#1D6FE0' : '#DCE8F7',
+        resumen: delDia.length ? (delDia.length === 1 ? '1 cita' : delDia.length + ' citas') : 'Sin citas',
+        vacio: !delDia.length, agendar: function () { self.abrir(i, 8); },
+        citas: delDia.map(function (c) {
+          var t = TIPOS[c.tipo] || TIPOS.consultorio, ok = F.cumplida(c);
+          return { hora: F.hora(c.hora), nombre: c.paciente_nombre, detalle: (c.servicio || t.label) + ' · ' + t.label.toLowerCase(),
+            bg: ok ? '#F8FAFC' : t.bg, fg: ok ? '#64748B' : t.fg, dot: ok ? '#94A3B8' : t.dot,
+            estado: ok ? '✓ Cumplida' : 'Pendiente', estBg: ok ? '#D1FAE5' : '#FFFFFF', estFg: ok ? '#065F46' : t.fg,
+            ver: function () { self.setState({ detalle: c }); } };
+        })
+      };
+    });
     var ini = fechas[0], fin = fechas[5];
     var rango = F.mes(ini) === F.mes(fin)
       ? 'Semana del ' + F.deIso(ini).getDate() + ' al ' + F.deIso(fin).getDate() + ' de ' + F.mes(fin)
       : 'Semana del ' + F.corta(ini) + ' al ' + F.corta(fin);
     var estado = s.error || (s.cargando ? 'Cargando citas…' : '');
     var r = {
-      rango: rango, dias: dias, filas: filas, tipos: tipos,
+      rango: rango, dias: dias, filas: filas, tipos: tipos, semanaMovil: semanaMovil,
       leyenda: Object.keys(TIPOS).map(function (k) { var t = TIPOS[k]; return { label: t.label, bg: t.bg, fg: t.fg, dot: t.dot, n: conteo[k] }; }),
       horas: HORAS.map(function (h) { return { key: String(h), label: F.hora(h) }; }),
       pacientesLista: s.pacientes, serviciosOpts: s.servicios,
@@ -715,7 +765,7 @@ class Component extends DCLogic {
       ocupado: s.ocupado,
       prev: function () { self.cargar(F.sumar(s.lunes, -7)); },
       next: function () { self.cargar(F.sumar(s.lunes, 7)); },
-      hoyBtn: function () { var h = F.hoy(); self.setState({ sel: Math.min(Math.round((F.deIso(h) - F.deIso(F.lunes(h))) / 864e5), 5) }); self.cargar(F.lunes(h)); },
+      hoyBtn: function () { var h = F.hoy(); self._irHoy = true; self.setState({ sel: Math.min(Math.round((F.deIso(h) - F.deIso(F.lunes(h))) / 864e5), 5) }); self.cargar(F.lunes(h)); },
       nuevaCita: function () { self.abrir(s.sel, 8); },
       cerrar: function () { self.setState({ abierto: false }); },
       cerrarDet: function () { self.setState({ detalle: null }); },
@@ -4097,6 +4147,13 @@ class Component extends DCLogic {
       if (!c || c.estado === 'realizada') return false;
       var hoy = iso(new Date());
       return c.fecha > hoy || (c.fecha === hoy && +c.hora >= new Date().getHours());
+    },
+    // Una cita ya pasó (o se registró su sesión): se muestra como cumplida.
+    cumplida: function (c) {
+      if (!c) return false;
+      if (c.estado === 'realizada') return true;
+      var hoy = iso(new Date());
+      return c.fecha < hoy || (c.fecha === hoy && new Date().getHours() > +c.hora);
     },
     ordenCitas: function (a, b) { return a.fecha < b.fecha ? -1 : a.fecha > b.fecha ? 1 : (+a.hora) - (+b.hora); }
   };
